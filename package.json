@@ -13,9 +13,12 @@
     "@gluestack-style/react": "^1.0.41",
     "@gluestack-ui/config": "^1.0.13",
     "@gluestack-ui/themed": "^1.0.37",
+    "axios": "^1.6.7",
     "react": "18.2.0",
     "react-native": "0.73.2",
-    "react-native-svg": "^13.4.0"
+    "react-native-gesture-handler": "^2.15.0",
+    "react-native-svg": "^14.1.0",
+    "react-navigation": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
