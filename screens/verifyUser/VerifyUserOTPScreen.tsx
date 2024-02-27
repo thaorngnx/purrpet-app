@@ -16,7 +16,7 @@ const VerifyUserOTPScreen = ({navigation}: any) => {
             <View>
                 <LabelFormInput text="Email" />
                 <TextInputBorder placeholderText="Nhập email của bạn"/>
-                <ButtonCommon title="Gửi mã xác thực" onPress={() => navigation.navigation('VerifyUserEmailScreen')} />
+                <ButtonCommon title="Gửi mã xác thực" onPress={() => navigation.navigate('ProductScreen')} />
             </View>
             {/* <View>
                 <TextHint text="OTP sẽ có hiệu lực trong vòng 5 phút!"/>
