@@ -77,7 +77,7 @@ const ProductScreen = ({navigation}:any) => {
         <View >
         <View style={styles.header}>    
             <Text style={styles.text}>PURRPET SHOP</Text>
-            <Image source={require('./Purrshop1.png')} style={{width: '15%', height: 55, alignSelf:'center'}}/>
+            {/* <Image source={require('https://res.cloudinary.com/djjxfywxl/image/upload/v1701870045/purrpet/xdtrlludhqf3f6kuauyj.png')} style={{width: '15%', height: 55, alignSelf:'center'}}/> */}
         </View>
         <View style={styles.search}>
             <SearchProduct />

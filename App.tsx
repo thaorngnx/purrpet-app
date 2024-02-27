@@ -3,7 +3,6 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { config } from '@gluestack-ui/config'; // Optional if you want to use default theme
-//import VerifyUserEmailScreen from './screens/verifyUser/VerifyUserEmailScreen';
 import ProductScreen from './screens/product/ProductScreen';
 import DetailProductScreen from './screens/product/DetailProductScreen';
 import VerifyUserEmailScreen from './screens/verifyUser/VerifyUserEmailScreen';
@@ -14,7 +13,7 @@ export default function App() {
   return (
     <GluestackUIProvider config={config}>
       <NavigationContainer>
-      <Stack.Navigator initialRouteName="ProductScreen">
+      <Stack.Navigator initialRouteName="VerifyUserEmailScreen">
         <Stack.Screen name="VerifyUserEmailScreen" component={VerifyUserEmailScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="VerifyUserOTPScreen" component={VerifyUserOTPScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="ProductScreen" component={ProductScreen} options={{ headerShown: false }}/>

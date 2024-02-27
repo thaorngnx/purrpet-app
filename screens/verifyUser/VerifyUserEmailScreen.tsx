@@ -1,52 +1,74 @@
-import React from "react";
-import { SafeAreaView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
+import { useState } from "react";
+import { Button, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { ArrowLeftIcon, Icon } from '@gluestack-ui/themed';
-import TextInputBorder from "../components/TextInput/TextInputBorder";
-import LabelFormInput from "../components/LabelFormInput/LabelFormInput";
-import TitlePage from "../components/TitlePage/TitlePage";
-import TextHint from "../components/Text/TextHint";
-import ButtonCommon from "../components/Button/ButtonCommon";
+import { sendOTP } from "../../api/otp";
+import textInputStyles from "../styles/TextInputStyles.ts";
+import buttonStyles from "../styles/ButtonStyles.ts";
+import textStyles from "../styles/TextStyles.ts";
 
 const VerifyUserEmailScreen = ({navigation}: any) => {
+    const [email, setEmail] = useState('');
+    const [error, setError] = useState(false);
+    const [success, setSuccess] = useState(false);
+
+    const handleEmailChange = (text: string) => {
+        if (text.length > 0) {
+            setError(false);
+        } else {
+            setError(true);
+        }
+        setEmail(text);
+    }
+
+    const handleSendOTP = () => {
+        console.log('send otp');
+        console.log(email);
+        if (!email) {
+            setError(true);
+            return;
+        }
+        sendOTP(email).then((res) => {
+            console.log(res);
+            if (res) {
+                navigation.navigate('VerifyUserOTPScreen', { email });
+            }
+        });
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
             <ArrowLeftIcon />
-            <TitlePage text="Xác thực người dùng" />
-            <View>
-                <LabelFormInput text="Email" />
-                <TextInputBorder placeholderText="Nhập email của bạn"/>
-                <ButtonCommon title="Gửi mã xác thực" onPress={() => navigation.navigate('VerifyUserOTPScreen')} />
+            <Text style={textStyles.title}>Xác thực người dùng</Text>
+            <View style={styles.form}>
+                <Text style={textStyles.label}>Email:</Text>
+                <TextInput
+                    style={textInputStyles.textInputBorder}
+                    placeholder="Nhập email của bạn"
+                    onChangeText={(text) => handleEmailChange(text)}
+                />
+                <View style={buttonStyles.buttonWrapper}>
+                    <TouchableOpacity style={buttonStyles.button} onPress={() => handleSendOTP()}>
+                        <Text style={buttonStyles.buttonText}>Gửi OTP</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-            {/* <View>
-                <TextHint text="OTP sẽ có hiệu lực trong vòng 5 phút!"/>
-            </View> */}
-
         </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        margin: 10,
+        paddingHorizontal: 15,
         flex: 1,
         backgroundColor: 'white',
+    },
+    form: {
+        padding: 15,
     },
     icon: {
         width: 24,
         height: 24,
-    },
-    title: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    titleText: {
-        color: 'black',
-        fontSize: 20,
-        fontWeight: 'bold',
-        textAlign: 'center',
     },
 });
 
