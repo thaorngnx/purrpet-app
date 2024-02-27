@@ -3,9 +3,6 @@ import React from 'react';
 import { Button, Image, SafeAreaView, Text, TouchableOpacity } from 'react-native';
 import SearchProduct from '../components/Search/SearchProduct';
 import { StyleSheet } from 'react-native';
-import MenuBottom from '../components/Menu/MenuBottom';
-
-
 
 const DetailProductScreen = ({navigation}:any) => {
     const [selected, setSelected] = React.useState(1);
@@ -46,7 +43,7 @@ const DetailProductScreen = ({navigation}:any) => {
                     <Button title='Thêm vào giỏ hàng' color='#C54600' />
                 </View>
             </View>
-            <MenuBottom selected={selected} />
+            {/* <MenuBottom selected={selected} /> */}
         </SafeAreaView>
     );
     }
@@ -70,7 +67,7 @@ const DetailProductScreen = ({navigation}:any) => {
             alignSelf: 'center',
         },
         content:{
-            marginTop: 40,
+            marginTop: 50,
             padding:20,
             backgroundColor: '#fff',
             borderTopLeftRadius: 32,
@@ -78,7 +75,7 @@ const DetailProductScreen = ({navigation}:any) => {
             height: '100%',
         },
         name:{
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: 'bold',
             alignSelf: 'center',
             color: '#000',
@@ -89,7 +86,7 @@ const DetailProductScreen = ({navigation}:any) => {
             marginTop: 20,
         },
         price:{
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: 'bold',
             color: '#C54600',
         },

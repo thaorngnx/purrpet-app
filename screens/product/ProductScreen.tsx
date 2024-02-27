@@ -107,7 +107,7 @@ const ProductScreen = ({navigation}:any) => {
             {products.map((product) => (
                 <View key={product.id} style={styles.column}>
                     <Image source={{uri: product.image}} style={[styles.image,{width: 146, height: 133}]}/>
-                    <Text style={styles.name} onPress={()=>navigation.navigate('DetailProductScreen')}>{product.name}</Text>
+                    <Text style={styles.name} onPress={()=>navigation.navigate('Chi tiết sản phẩm')}>{product.name}</Text>
                     <Text style={styles.price}>{product.price} đ</Text>
                     <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                     <Text style={styles.start}>{product.start} <StarIcon color='#C54600'/></Text>
@@ -117,10 +117,8 @@ const ProductScreen = ({navigation}:any) => {
             ))}
         </View>
         </ScrollView>  
-        <MenuBottom selected={selected}/>
+        {/* <MenuBottom selected={selected}/> */}
         </SafeAreaView>
-        
-        
     );
     };
     const styles = StyleSheet.create({

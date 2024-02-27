@@ -7,18 +7,20 @@ import ProductScreen from './screens/product/ProductScreen';
 import DetailProductScreen from './screens/product/DetailProductScreen';
 import VerifyUserEmailScreen from './screens/verifyUser/VerifyUserEmailScreen';
 import VerifyUserOTPScreen from './screens/verifyUser/VerifyUserOTPScreen';
+import MenuBottom from './screens/components/Menu/MenuBottom';
+import { Text } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <GluestackUIProvider config={config}>
-      <NavigationContainer>
-      <Stack.Navigator initialRouteName="VerifyUserEmailScreen">
+      <NavigationContainer>  
+      <Stack.Navigator >
+        <Stack.Screen name="MenuBottom" component={MenuBottom} options={{ headerShown: false }}/>
         <Stack.Screen name="VerifyUserEmailScreen" component={VerifyUserEmailScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="VerifyUserOTPScreen" component={VerifyUserOTPScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="ProductScreen" component={ProductScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="DetailProductScreen" component={DetailProductScreen} options={{ headerShown: false }}/>
-      </Stack.Navigator>
+        <Stack.Screen name="Chi tiết sản phẩm" component={DetailProductScreen} options={{ headerShown: false }}/>
+      </Stack.Navigator> 
     </NavigationContainer>
 
     </GluestackUIProvider>
