@@ -21,6 +21,22 @@ const buttonStyles = StyleSheet.create({
     paddingHorizontal: 18,
     width: 'auto',
   },
+  buttomOutline: {
+    backgroundColor: '#F5F5F5',
+    borderWidth: 1,
+    borderColor: '#A16207',
+    padding: 8,
+    borderRadius: 5,
+    marginTop: 10,
+    width: 'auto',
+  },
+  buttonIncrease: {
+    backgroundColor: '#A16207',
+    padding: 8,
+    borderRadius: 13,
+    marginTop: 10,
+    width: 40,
+  },
 });
 
 export default buttonStyles;

@@ -1,28 +1,20 @@
-import { ArrowLeftIcon, View } from '@gluestack-ui/themed';
+import { AddIcon, ArrowLeftIcon, RemoveIcon, View } from '@gluestack-ui/themed';
 import React from 'react';
 import {
   Button,
   Image,
   SafeAreaView,
+  ScrollView,
   Text,
   TouchableOpacity,
 } from 'react-native';
 import SearchProduct from '../components/Search/SearchProduct';
 import { StyleSheet } from 'react-native';
+import buttonStyles from '../styles/ButtonStyles';
 
-const DetailProductScreen = ({ navigation }: any) => {
-  const [selected, setSelected] = React.useState(1);
+const DetailProductScreen = ({ navigation, route }: any) => {
   const [quantity, setQuantity] = React.useState(1);
-  const product = {
-    id: 1,
-    name: 'Pate Cá ngừ cá hồi cho mèo',
-    price: 20000,
-    image:
-      'https://res.cloudinary.com/djjxfywxl/image/upload/v1701870045/purrpet/xdtrlludhqf3f6kuauyj.png',
-    description:
-      'Độ ẩm ( tối đa) 90%, protein thô ( tối thiểu) 8%, béo thô ( tối thiểu) 0,2%, xơ thô ( tối đa) 1%, khoáng tổng số ( tối đa) 3%, hóa chất/ kháng sinh: không có.',
-    inventory: 5,
-  };
+  const { product } = route.params;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -34,49 +26,84 @@ const DetailProductScreen = ({ navigation }: any) => {
           <ArrowLeftIcon size='xl' color='#C54600' alignSelf='center' />
         </TouchableOpacity>
         <View style={styles.search}>
-          <SearchProduct />
+          <SearchProduct navigation={navigation} />
         </View>
       </View>
-      <View>
-        <Image
-          source={{ uri: product.image }}
-          style={[styles.image, { width: '100%', height: 300 }]}
-        />
-        <View style={styles.content}>
-          <Text style={styles.name}>{product.name}</Text>
-          <View style={styles.count}>
-            <Text style={styles.price}>đ {product.price}</Text>
-            <View style={styles.button}>
-              <Button
-                title='-'
-                onPress={() => setQuantity(quantity - 1)}
-                disabled={quantity === 1}
-              />
-              <Text style={{ fontSize: 20, margin: 5 }}>{quantity}</Text>
-              <Button
-                title='+'
-                onPress={() => setQuantity(quantity + 1)}
-                disabled={quantity === product.inventory}
-              />
+      <ScrollView style={styles.scrollView}>
+        <View>
+          <Image
+            source={{ uri: product.images[0]?.path }}
+            style={[styles.image, { width: '100%', height: 300 }]}
+          />
+          <View style={styles.content}>
+            <Text style={styles.name}>{product.productName}</Text>
+            <View style={styles.count}>
+              <Text style={styles.price}>đ {product.price}</Text>
+              <View style={styles.button}>
+                <View>
+                  <TouchableOpacity
+                    onPress={() => setQuantity(quantity - 1)}
+                    disabled={quantity === 1}
+                    style={[
+                      buttonStyles.buttonIncrease,
+                      quantity === 1 ? { backgroundColor: '#ccc' } : {},
+                    ]}
+                  >
+                    <RemoveIcon size='xl' color='#fff' alignSelf='center' />
+                  </TouchableOpacity>
+                </View>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    margin: 15,
+                    alignSelf: 'center',
+                    color: '#000',
+                  }}
+                >
+                  {quantity}
+                </Text>
+                <View>
+                  <TouchableOpacity
+                    onPress={() => setQuantity(quantity + 1)}
+                    disabled={quantity === product.inventory}
+                    style={[
+                      buttonStyles.buttonIncrease,
+                      quantity === product.inventory
+                        ? { backgroundColor: '#ccc' }
+                        : {},
+                    ]}
+                  >
+                    <AddIcon size='xl' color='#fff' alignSelf='center' />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+
+            <Text
+              style={{
+                fontSize: 18,
+                color: '#A16207',
+                fontWeight: 'bold',
+                marginTop: 10,
+              }}
+            >
+              Mô tả
+            </Text>
+
+            <Text style={{ marginTop: 10, marginBottom: 20 }}>
+              {product.description}
+            </Text>
+
+            <View style={buttonStyles.buttomOutline}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('SearchScreen')}
+              >
+                <Text style={styles.textButton}>Thêm vào giỏ hàng</Text>
+              </TouchableOpacity>
             </View>
           </View>
-          <Text
-            style={{
-              fontSize: 18,
-              color: '#A16207',
-              fontWeight: 'bold',
-              marginTop: 10,
-            }}
-          >
-            Mô tả
-          </Text>
-          <Text style={{ marginTop: 10, marginBottom: 20 }}>
-            {product.description}
-          </Text>
-          <Button title='Thêm vào giỏ hàng' color='#C54600' />
         </View>
-      </View>
-      {/* <MenuBottom selected={selected} /> */}
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -119,6 +146,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   price: {
+    marginTop: 5,
     fontSize: 20,
     fontWeight: 'bold',
     color: '#C54600',
@@ -126,6 +154,16 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  scrollView: {
+    flex: 1,
+    height: 100,
+  },
+  textButton: {
+    color: '#DC2626',
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });
 

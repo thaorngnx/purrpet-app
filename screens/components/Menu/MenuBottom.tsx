@@ -8,6 +8,7 @@ import NotificationScreen from '../../notification/NotificationScreen';
 import AccountScreen from '../../account/AccountSrceen';
 import { BellIcon, MenuIcon } from '@gluestack-ui/themed';
 import { Image } from 'react-native';
+import SearchProduct from '../Search/SearchProduct';
 
 const MenuBottom = () => {
   const Tab = createBottomTabNavigator();
@@ -21,6 +22,7 @@ const MenuBottom = () => {
           tabBarIcon: ({ color, size }) => (
             <Image source={require('../../../assets/iconProduct.png')} />
           ),
+          headerRight: () => <SearchProduct navigation={'SearchScreen'} />,
         }}
       />
       <Tab.Screen
