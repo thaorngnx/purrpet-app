@@ -1,13 +1,35 @@
 import { MenuIcon, SearchIcon, SunIcon } from '@gluestack-ui/themed';
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Button,
+} from 'react-native';
 
-const SearchProduct = () => {
+const SearchProduct = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
-      <TextInput style={styles.input} placeholder='Tìm kiếm...' />
-      <SearchIcon color='#FDE047' size='lg' alignSelf='center' margin={9} />
-      <SunIcon color='#FDE047' size='lg' alignSelf='center' margin={9} />
+      <TouchableOpacity
+        style={styles.input}
+        onPress={() => navigation.navigate('SearchScreen')}
+      >
+        <Text style={{ fontSize: 16, color: '#C54600' }}>Tìm kiếm...</Text>
+      </TouchableOpacity>
+      <View style={styles.icon}>
+        <TouchableOpacity onPress={() => navigation.navigate('SearchScreen')}>
+          <SearchIcon color='#FDE047' size='xl' alignSelf='center' margin={9} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Giỏ hàng')}>
+          <Image
+            source={require('../../../assets/iconCart.png')}
+            style={styles.image}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -25,6 +47,15 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginLeft: 10,
+    alignSelf: 'center',
+  },
+  image: {
+    alignSelf: 'center',
+    margin: 9,
+  },
+  icon: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 

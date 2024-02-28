@@ -1,5 +1,5 @@
 import { VStack } from '@gluestack-ui/themed';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Image,
   SafeAreaView,
@@ -22,92 +22,70 @@ import {
   SelectPortal,
   SelectTrigger,
 } from '@gluestack-ui/themed';
-import MenuBottom from '../components/Menu/MenuBottom';
+import { getActiveCategories } from '../../api/category';
+import * as CONST from '../constants';
+import { getActiveProducts } from '../../api/product';
 
 const ProductScreen = ({ navigation }: any) => {
-  const [selected, setSelected] = React.useState(1);
+  const [categories, setCategories] = React.useState([
+    {
+      categoryName: '',
+      purrPetCode: '',
+    },
+  ]);
+  const [products, setProducts] = React.useState([
+    {
+      _id: '',
+      purrPetCode: '',
+      productName: '',
+      description: '',
+      price: '',
+      categoryCode: '',
+      images: [
+        {
+          path: 'https://res.cloudinary.com/djjxfywxl/image/upload/v1701868560/purrpet/qu9ybdtkmfuzupzynp2h.webp',
+        },
+      ],
+      inventory: '',
+      star: '',
+    },
+  ]);
+  const [selectedCategory, setSelectedCategory] = React.useState('');
+  useEffect(() => {
+    getActiveCategories({ categoryType: CONST.CATEGORY_TYPE.PRODUCT }).then(
+      (res) => {
+        setCategories(res.data);
+      },
+    );
+    const params = {
+      limit: 100,
+      key: selectedCategory,
+    };
+    getActiveProducts(params).then((res) => {
+      setProducts(res.data);
+    });
+  }, [selectedCategory]);
 
-  const categories = [
-    {
-      label: 'Thức ăn hạt',
-      value: '1',
-    },
-    {
-      label: 'Bánh thưởng',
-      value: '2',
-    },
-    {
-      label: 'Đồ chơi',
-      value: '3',
-    },
-    {
-      label: 'Pate',
-      value: '4',
-    },
-  ];
-  const products = [
-    {
-      id: 1,
-      name: 'Pate Cá ngừ  cái hồi cho mèo',
-      price: 20000,
-      image:
-        'https://res.cloudinary.com/djjxfywxl/image/upload/v1701969197/purrpet/ubq73unj7e6ndjtsu9dk.webp',
-      start: 4.9,
-    },
-    {
-      id: 2,
-      name: 'Pate Mèo vị cá ngừ rắc phô mai dạng thạch NEKKO 70g',
-      price: 100000,
-      image:
-        'https://res.cloudinary.com/djjxfywxl/image/upload/v1701868450/purrpet/ezrr3vbjb2mn591pl6ej.png',
-      start: 5.0,
-    },
-    {
-      id: 3,
-      name: 'Pate Mèo vị cá ngừ rắc trứng hấp và rong biển dạng thạch NEKKO 70g',
-      price: 50000,
-      image:
-        'https://res.cloudinary.com/djjxfywxl/image/upload/v1701868560/purrpet/qu9ybdtkmfuzupzynp2h.webp',
-      start: 3.9,
-    },
-    {
-      id: 4,
-      name: 'Pate Ostech Cat cho mèo dạng thạch 400gr',
-      price: 50000,
-      image:
-        'https://res.cloudinary.com/djjxfywxl/image/upload/v1701870045/purrpet/xdtrlludhqf3f6kuauyj.png',
-      start: 4.5,
-    },
-    {
-      id: 5,
-      name: 'Pate Mèo vị cá ngừ rắc trứng hấp và rong biển dạng thạch NEKKO 70g',
-      price: 50000,
-      image:
-        'https://res.cloudinary.com/djjxfywxl/image/upload/v1701868560/purrpet/qu9ybdtkmfuzupzynp2h.webp',
-      start: 4.5,
-    },
-    {
-      id: 6,
-      name: 'Pate Ostech Cat cho mèo dạng thạch 400gr',
-      price: 50000,
-      image:
-        'https://res.cloudinary.com/djjxfywxl/image/upload/v1701870045/purrpet/xdtrlludhqf3f6kuauyj.png',
-      start: 4.5,
-    },
-  ];
+  const handleSelectCategory = (value: string) => {
+    setSelectedCategory(value);
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView className='flex-1'>
       <View>
         <View style={styles.header}>
           <Text style={styles.text}>PURRPET SHOP</Text>
-          {/* <Image source={require('https://res.cloudinary.com/djjxfywxl/image/upload/v1701870045/purrpet/xdtrlludhqf3f6kuauyj.png')} style={{width: '15%', height: 55, alignSelf:'center'}}/> */}
+          <Image
+            source={require('../../assets/Purrshop1.png')}
+            className='w-15 h-55 self-center'
+          />
         </View>
         <View style={styles.search}>
-          <SearchProduct />
+          <SearchProduct navigation={navigation} />
         </View>
       </View>
       <View style={styles.filter}>
-        <Select>
+        <Select onValueChange={handleSelectCategory}>
           <SelectTrigger variant='underlined' size='md'>
             <SelectInput placeholder='Tất cả' />
             <Icon as={ChevronDownIcon} />
@@ -118,8 +96,12 @@ const ProductScreen = ({ navigation }: any) => {
               <SelectDragIndicatorWrapper>
                 <SelectDragIndicator />
               </SelectDragIndicatorWrapper>
-              {categories.map((category) => (
-                <SelectItem label={category.label} value={category.value} />
+              <SelectItem label='Tất cả' value='' />
+              {categories.map((categories) => (
+                <SelectItem
+                  label={categories.categoryName}
+                  value={categories.purrPetCode}
+                />
               ))}
             </SelectContent>
           </SelectPortal>
@@ -128,16 +110,18 @@ const ProductScreen = ({ navigation }: any) => {
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.row}>
           {products.map((product) => (
-            <View key={product.id} style={styles.column}>
+            <View key={product.purrPetCode} style={styles.column}>
               <Image
-                source={{ uri: product.image }}
+                source={{ uri: product.images[0]?.path }}
                 style={[styles.image, { width: 146, height: 133 }]}
               />
               <Text
                 style={styles.name}
-                onPress={() => navigation.navigate('Chi tiết sản phẩm')}
+                onPress={() =>
+                  navigation.navigate('DetailProductScreen', { product })
+                }
               >
-                {product.name}
+                {product.productName}
               </Text>
               <Text style={styles.price}>{product.price} đ</Text>
               <View
@@ -147,15 +131,17 @@ const ProductScreen = ({ navigation }: any) => {
                 }}
               >
                 <Text style={styles.start}>
-                  {product.start} <StarIcon color='#C54600' />
+                  {product.star} <StarIcon color='#C54600' />
                 </Text>
-                <AddIcon color='#881337' size='xl' />
+                <Image
+                  source={require('../../assets/iconAddCart.png')}
+                  className='w-{20} h-{20}'
+                />
               </View>
             </View>
           ))}
         </View>
       </ScrollView>
-      {/* <MenuBottom selected={selected}/> */}
     </SafeAreaView>
   );
 };
@@ -199,7 +185,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 10,
-    //  backgroundColor: '#FDE047',
   },
   name: {
     marginTop: 5,
