@@ -9,19 +9,62 @@ import AccountScreen from '../../account/AccountSrceen';
 import { BellIcon, MenuIcon } from '@gluestack-ui/themed';
 import { Image } from 'react-native';
 
+const MenuBottom = () => {
+  const Tab = createBottomTabNavigator();
+  return (
+    <Tab.Navigator initialRouteName='ProductScreen'>
+      <Tab.Screen
+        name='Sản phẩm'
+        component={ProductScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Image source={require('../../../assets/iconProduct.png')} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name='Giỏ hàng'
+        component={CartScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Image source={require('../../../assets/iconCart.png')} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name='Dịch vụ'
+        component={ServiceScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Image source={require('../../../assets/iconPets.png')} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name='Thông báo'
+        component={NotificationScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Image source={require('../../../assets/iconBell.png')} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name='Tài khoản'
+        component={AccountScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Image source={require('../../../assets/iconAccount.png')} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
 
-
-const  MenuBottom =() => {
-    const Tab = createBottomTabNavigator();
-    return(
-        <Tab.Navigator initialRouteName="ProductScreen">
-          <Tab.Screen name="Sản phẩm" component={ProductScreen} options={{ headerShown: false, tabBarIcon:({ color, size }) => (<Image source={require('../../../assets/iconProduct.png')}/>) }}/>
-          <Tab.Screen name="Giỏ hàng" component={CartScreen} options={{ headerShown: false, tabBarIcon:({ color, size }) =>(<Image source={require('../../../assets/iconCart.png')}/>) }}/>
-          <Tab.Screen name="Dịch vụ" component={ServiceScreen} options={{ headerShown: false, tabBarIcon:({ color, size }) =>(<Image source={require('../../../assets/iconPets.png')}/>) }}/>
-          <Tab.Screen name="Thông báo" component={NotificationScreen} options={{ headerShown: false, tabBarIcon:({ color, size }) => (<Image source={require('../../../assets/iconBell.png')}/>) }}/>
-          <Tab.Screen name="Tài khoản" component={AccountScreen} options={{ headerShown: false, tabBarIcon:({ color, size }) => (<Image source={require('../../../assets/iconAccount.png')}/>) }}/>
-        </Tab.Navigator>
-  
-    );
-}
 export default MenuBottom;

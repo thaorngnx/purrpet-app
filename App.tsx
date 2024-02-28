@@ -14,15 +14,30 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <GluestackUIProvider config={config}>
-      <NavigationContainer>  
-      <Stack.Navigator >
-        <Stack.Screen name="MenuBottom" component={MenuBottom} options={{ headerShown: false }}/>
-        <Stack.Screen name="VerifyUserEmailScreen" component={VerifyUserEmailScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="VerifyUserOTPScreen" component={VerifyUserOTPScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="Chi tiết sản phẩm" component={DetailProductScreen} options={{ headerShown: false }}/>
-      </Stack.Navigator> 
-    </NavigationContainer>
-
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name='MenuBottom'
+            component={MenuBottom}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='VerifyUserEmailScreen'
+            component={VerifyUserEmailScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='VerifyUserOTPScreen'
+            component={VerifyUserOTPScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='Chi tiết sản phẩm'
+            component={DetailProductScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </GluestackUIProvider>
   );
 }

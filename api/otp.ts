@@ -1,9 +1,9 @@
-import api from "./token";
+import api from './token';
 
 export async function sendOTP(email: string) {
   try {
     const response = await api.post('/otp/send', {
-      email: email
+      email: email,
     });
     return response.data;
   } catch (error) {
