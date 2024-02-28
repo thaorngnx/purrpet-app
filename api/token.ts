@@ -1,7 +1,13 @@
 import axios from 'axios';
+import Realm from 'realm';
+import TokenSchema from '../realmModel/TokenSchema';
+
+const realm = new Realm({ schema: [TokenSchema] });
 
 const api = axios.create({
-  baseURL: process.env.API_URL,
+  //   baseURL: process.env.API_URL,
+  baseURL:
+    'https://e236-2402-800-63e9-b572-81e6-5008-904c-1ca.ngrok-free.app/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -9,7 +15,13 @@ const api = axios.create({
 
 api.interceptors.request.use(
   function (config) {
-    console.log(api.defaults.baseURL);
+    //get token from realm
+    const token = realm.objects<TokenSchema>('Token') as any;
+    const accessToken = token[0]?.accessToken;
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
 
     return config;
   },
@@ -20,8 +32,6 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   function (response) {
-    console.log(response);
-
     return response;
   },
   function (error) {

@@ -17,29 +17,29 @@ import textStyles from '../styles/TextStyles.ts';
 
 const VerifyUserEmailScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
-  const [error, setError] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState({ message: '', status: false });
 
   const handleEmailChange = (text: string) => {
     if (text.length > 0) {
-      setError(false);
+      setError({ message: '', status: false });
     } else {
-      setError(true);
+      setError({ message: 'Email không hợp lệ', status: true });
     }
     setEmail(text);
   };
 
   const handleSendOTP = () => {
-    console.log('send otp');
-    console.log(email);
+    console.log('send otp:', email);
     if (!email) {
-      setError(true);
+      setError({ message: 'Email không hợp lệ', status: true });
       return;
     }
-    sendOTP(email).then((res) => {
+    sendOTP({ email }).then((res) => {
       console.log(res);
-      if (res) {
+      if (res.err === 0) {
         navigation.navigate('VerifyUserOTPScreen', { email });
+      } else {
+        setError({ message: 'Gửi OTP thất bại', status: true });
       }
     });
   };
@@ -47,7 +47,9 @@ const VerifyUserEmailScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-      <ArrowLeftIcon />
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <ArrowLeftIcon />
+      </TouchableOpacity>
       <Text style={textStyles.title}>Xác thực người dùng</Text>
       <View style={styles.form}>
         <Text style={textStyles.label}>Email:</Text>
