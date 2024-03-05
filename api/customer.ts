@@ -2,7 +2,7 @@ import api from './token';
 import Realm from 'realm';
 import TokenSchema from '../realmModel/TokenSchema';
 
-const realm = new Realm({ schema: [TokenSchema] });
+// const realm = new Realm({ schema: [TokenSchema] });
 
 export interface Customer {
   purrPetCode: string;

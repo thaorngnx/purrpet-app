@@ -38,6 +38,14 @@ const textStyles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
   },
+  labelCenter: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 14,
+    marginBottom: 5,
+    marginTop: 5,
+    textAlign: 'center',
+  },
 });
 
 export default textStyles;

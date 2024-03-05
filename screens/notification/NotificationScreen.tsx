@@ -28,7 +28,6 @@ const NotificationScreen = ({ navigation }: any) => {
           source={require('../../assets/image7.png')}
           style={{ alignSelf: 'center' }}
         />
-
         <Text style={textStyles.label}>Bạn chưa có thông báo nào!!</Text>
         <Text style={textStyles.label}>
           Hãy xác minh tài khoản để nhận thông báo!

@@ -16,7 +16,6 @@ import {
   SelectContent,
   SelectDragIndicator,
   SelectDragIndicatorWrapper,
-  SelectIcon,
   SelectInput,
   SelectItem,
   SelectPortal,
@@ -26,7 +25,7 @@ import { getActiveCategories } from '../../api/category';
 import * as CONST from '../constants';
 import { getActiveProducts } from '../../api/product';
 
-const ProductScreen = ({ navigation }: any) => {
+const ProductScreen = ({ navigation, route }: any) => {
   const [categories, setCategories] = React.useState([
     {
       categoryName: '',
@@ -50,7 +49,28 @@ const ProductScreen = ({ navigation }: any) => {
       star: '',
     },
   ]);
-  const [selectedCategory, setSelectedCategory] = React.useState('');
+  const [selectedCategory, setSelectedCategory] = React.useState({
+    categoryName: '',
+    purrPetCode: '',
+  });
+  const [search, setSearch] = React.useState('');
+  useEffect(() => {
+    if (route.params?.category) {
+      const { category } = route.params;
+      setSearch(category.purrPetCode);
+      setSelectedCategory({
+        categoryName: category.categoryName,
+        purrPetCode: category.purrPetCode,
+      });
+    } else if (route.params?.search) {
+      setSearch(route.params.search);
+      setSelectedCategory({
+        categoryName: '',
+        purrPetCode: '',
+      });
+    }
+  }, [route.params?.category, route.params?.search]);
+
   useEffect(() => {
     getActiveCategories({ categoryType: CONST.CATEGORY_TYPE.PRODUCT }).then(
       (res) => {
@@ -59,15 +79,33 @@ const ProductScreen = ({ navigation }: any) => {
     );
     const params = {
       limit: 100,
-      key: selectedCategory,
+      key: search,
     };
+    console.log(params);
     getActiveProducts(params).then((res) => {
       setProducts(res.data);
     });
-  }, [selectedCategory]);
+  }, [search]);
 
   const handleSelectCategory = (value: string) => {
-    setSelectedCategory(value);
+    if (value === '') {
+      setSearch('');
+      setSelectedCategory({
+        categoryName: '',
+        purrPetCode: '',
+      });
+    } else {
+      setSearch(value);
+      const category = categories.find(
+        (category) => category.purrPetCode === value,
+      );
+      if (category) {
+        setSelectedCategory({
+          categoryName: category.categoryName,
+          purrPetCode: category.purrPetCode,
+        });
+      }
+    }
   };
 
   return (
@@ -85,9 +123,15 @@ const ProductScreen = ({ navigation }: any) => {
         </View>
       </View>
       <View style={styles.filter}>
-        <Select onValueChange={handleSelectCategory}>
+        <Select
+          onValueChange={handleSelectCategory}
+          selectedValue={selectedCategory.purrPetCode}
+        >
           <SelectTrigger variant='underlined' size='md'>
-            <SelectInput placeholder='Tất cả' />
+            <SelectInput
+              placeholder='Tất cả'
+              value={selectedCategory.categoryName}
+            />
             <Icon as={ChevronDownIcon} />
           </SelectTrigger>
           <SelectPortal>
@@ -97,8 +141,9 @@ const ProductScreen = ({ navigation }: any) => {
                 <SelectDragIndicator />
               </SelectDragIndicatorWrapper>
               <SelectItem label='Tất cả' value='' />
-              {categories.map((categories) => (
+              {categories.map((categories, index) => (
                 <SelectItem
+                  key={index}
                   label={categories.categoryName}
                   value={categories.purrPetCode}
                 />

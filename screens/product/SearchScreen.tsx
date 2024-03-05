@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, SearchIcon } from '@gluestack-ui/themed';
+import { Badge, ChevronLeftIcon, SearchIcon } from '@gluestack-ui/themed';
 import React, { useEffect } from 'react';
 import {
   TextInput,
@@ -12,13 +12,19 @@ import {
 import { getActiveCategories } from '../../api/category';
 import * as CONST from '../constants';
 import textStyles from '../styles/TextStyles';
+import { useState } from 'react';
+import Realm from 'realm';
+import SearchHistorySchema from '../../realmModel/SearchHistorySchema';
+
 const SearchScreen = ({ navigation }: any) => {
-  const [categories, setCategories] = React.useState([
+  const [categories, setCategories] = useState([
     {
       categoryName: '',
       purrPetCode: '',
     },
   ]);
+  const [search, setSearch] = useState('');
+
   useEffect(() => {
     getActiveCategories({ categoryType: CONST.CATEGORY_TYPE.PRODUCT }).then(
       (res) => {
@@ -26,6 +32,14 @@ const SearchScreen = ({ navigation }: any) => {
       },
     );
   }, []);
+  const handleKeyPress = () => {
+    navigation.navigate('Sản phẩm', { search });
+  };
+
+  const handleChange = (text: string) => {
+    setSearch(text);
+  };
+
   return (
     <SafeAreaView>
       <View style={styles.header}>
@@ -43,7 +57,11 @@ const SearchScreen = ({ navigation }: any) => {
               alignSelf='center'
               margin={9}
             />
-            <TextInput placeholder='Bạn đang tìm gì ?' />
+            <TextInput
+              placeholder='Bạn đang tìm gì ?'
+              onChangeText={handleChange}
+              onSubmitEditing={handleKeyPress}
+            />
           </View>
           <TouchableOpacity
             style={styles.iconCart}
@@ -56,8 +74,9 @@ const SearchScreen = ({ navigation }: any) => {
       <View>
         <Text style={textStyles.label}> Gợi ý cho bạn:</Text>
         <View style={styles.content}>
-          {categories.map((category) => (
+          {categories.map((category, index) => (
             <TouchableOpacity
+              key={index}
               onPress={() => navigation.navigate('Sản phẩm', { category })}
             >
               <Text style={styles.textCate}>{category.categoryName}</Text>
