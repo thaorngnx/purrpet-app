@@ -4,7 +4,7 @@ import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { config } from '@gluestack-ui/config'; // Optional if you want to use default theme
 import Realm from 'realm';
 import TokenSchema from './realmModel/TokenSchema';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import 'core-js/stable/atob';
 import { useCustomerStore } from './zustand/customerStore';
@@ -12,15 +12,26 @@ import SearchScreen from './screens/product/SearchScreen';
 import SearchProduct from './screens/components/Search/SearchProduct';
 import SpaScreen from './screens/service/SpaScreen';
 import HomeSrceen from './screens/service/HomeScreen';
-import ProductScreen from './screens/product/ProductScreen';
 import DetailProductScreen from './screens/product/DetailProductScreen';
 import VerifyUserEmailScreen from './screens/verifyUser/VerifyUserEmailScreen';
 import VerifyUserOTPScreen from './screens/verifyUser/VerifyUserOTPScreen';
 import MenuBottom from './screens/components/Menu/MenuBottom';
+import { Appearance, StatusBar } from 'react-native';
+import AccountInfoScreen from './screens/account/AccountInfoScreen';
+import HistoryScreen from './screens/account/HistoryScreen';
+import OrderHistoryScreen from './screens/account/history/OrderHistoryScreen';
+import SpaHistoryScreen from './screens/account/history/SpaHistoryScreen';
+import HomestayHistoryScreen from './screens/account/history/HomestayHistoryScreen';
+import OrderDetailScreen from './screens/account/history/detail/OrderDetailScreen';
+import BookingSpaDetailScreen from './screens/account/history/detail/BookingSpaDetailScreen';
+import BookingHomeDetailScreen from './screens/account/history/detail/BookingHomeDetailScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
   const { getCustomerById } = useCustomerStore();
+  const [isDarkMode, setIsDarkMode] = useState(
+    Appearance.getColorScheme() === 'dark',
+  );
   //get customer from realm
   const realm = new Realm({ schema: [TokenSchema] });
   const token = realm.objects('Token') as any;
@@ -31,6 +42,17 @@ export default function App() {
     accessToken = token[0]?.accessToken;
     // console.log('accessToken App:', accessToken);
   }
+
+  //block dark mode
+  useEffect(() => {
+    StatusBar.setBackgroundColor('white');
+    StatusBar.setBarStyle('dark-content');
+    const subscription = Appearance.addChangeListener(({ colorScheme }) => {
+      setIsDarkMode(colorScheme === 'dark');
+    });
+
+    return () => subscription.remove();
+  }, []);
   //get customer info from server
   useEffect(() => {
     if (accessToken) {
@@ -42,6 +64,7 @@ export default function App() {
 
   return (
     <GluestackUIProvider config={config}>
+      <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
@@ -60,6 +83,54 @@ export default function App() {
             name='VerifyUserOTPScreen'
             component={VerifyUserOTPScreen}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='AccountInfoScreen'
+            component={AccountInfoScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='HistoryScreen'
+            component={HistoryScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='OrderHistoryScreen'
+            component={OrderHistoryScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name='SpaHistoryScreen'
+            component={SpaHistoryScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='HomestayHistoryScreen'
+            component={HomestayHistoryScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='OrderDetailScreen'
+            component={OrderDetailScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name='BookingSpaDetailScreen'
+            component={BookingSpaDetailScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name='BookingHomeDetailScreen'
+            component={BookingHomeDetailScreen}
+            options={{
+              headerShown: false,
+            }}
           />
           <Stack.Screen
             name='DetailProductScreen'

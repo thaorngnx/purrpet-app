@@ -5,13 +5,17 @@ import ProductScreen from '../../product/ProductScreen';
 import CartScreen from '../../cart/CartScreen';
 import ServiceScreen from '../../service/ServiceScreen';
 import NotificationScreen from '../../notification/NotificationScreen';
-import AccountScreen from '../../account/AccountSrceen';
+import AccountScreen from '../../account/AccountScreen';
 import { BellIcon, MenuIcon } from '@gluestack-ui/themed';
 import { Image } from 'react-native';
 import SearchProduct from '../Search/SearchProduct';
+import { useCustomerStore } from '../../../zustand/customerStore';
+import UnverifyAccountScreen from '../../account/UnverifyAccountScreen';
 
 const MenuBottom = () => {
   const Tab = createBottomTabNavigator();
+  const customerState = useCustomerStore((state) => state.customerState);
+
   return (
     <Tab.Navigator initialRouteName='ProductScreen'>
       <Tab.Screen
@@ -57,7 +61,11 @@ const MenuBottom = () => {
       />
       <Tab.Screen
         name='Tài khoản'
-        component={AccountScreen}
+        component={
+          Object.keys(customerState.data).length == 0
+            ? UnverifyAccountScreen
+            : AccountScreen
+        }
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (

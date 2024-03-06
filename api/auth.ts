@@ -6,6 +6,9 @@ const realm = new Realm({ schema: [TokenSchema] });
 
 export const saveToken = (accessToken: string, refreshToken: string) => {
   realm.write(() => {
+    //delete old token
+    realm.delete(realm.objects<TokenSchema>('Token'));
+    //save new token
     realm.create(
       'Token',
       {

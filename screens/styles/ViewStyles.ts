@@ -1,0 +1,118 @@
+import { StyleSheet } from 'react-native';
+
+const viewStyles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 15,
+    flex: 1,
+    backgroundColor: 'white',
+    width: '100%',
+  },
+  card: {
+    padding: 15,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    marginBottom: 10,
+    elevation: 5,
+    width: '100%',
+  },
+  form: {
+    padding: 15,
+  },
+  flexRow: {
+    flexDirection: 'row',
+    // width: 'auto',
+  },
+  flexColumn: {
+    flexDirection: 'column',
+  },
+  titlePageBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 10,
+  },
+  icon: {
+    color: 'black',
+    // marginRight: 5,
+  },
+  historyImagesWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginVertical: 10,
+  },
+  historyImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+    objectFit: 'contain',
+    marginRight: 10,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // backgroundColor: '#f2f2f2',
+    marginBottom: 10,
+    height: 50,
+    // flex: 1,
+    // flexGrow: 0,
+  },
+  tab: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+    width: 'auto',
+    borderWidth: 0.5,
+    borderColor: '#ccc',
+    margin: 5,
+    height: 44,
+    // height: 'fit-content',
+    // alignSelf: 'auto',
+    // flex: 1,
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  activeTab: {
+    backgroundColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+    width: 'auto',
+    margin: 5,
+    height: 44,
+    // height: 'auto',
+  },
+  orderCard: {
+    padding: 15,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    elevation: 5,
+    width: '98%',
+    margin: 8,
+  },
+  colorCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#A16207',
+    marginVertical: 10,
+  },
+  scrollContainer: {
+    backgroundColor: 'white',
+    alignItems: 'center',
+    // height: '100%',
+    // minHeight: '90%',
+    minHeight: 'auto',
+    paddingBottom: 10,
+    // flexGrow: 1,
+  },
+});
+
+export default viewStyles;

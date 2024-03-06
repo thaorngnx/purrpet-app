@@ -94,8 +94,10 @@ const DetailProductScreen = ({ navigation, route }: any) => {
               {product.description}
             </Text>
 
-            <View style={buttonStyles.buttomOutline}>
-              <TouchableOpacity>
+            <View style={buttonStyles.buttonOutline}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('SearchScreen')}
+              >
                 <Text style={styles.textButton}>Thêm vào giỏ hàng</Text>
               </TouchableOpacity>
             </View>

@@ -1,7 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import {
-  Button,
-  Linking,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -16,6 +14,7 @@ import textInputStyles from '../styles/TextInputStyles.ts';
 import buttonStyles from '../styles/ButtonStyles.ts';
 import textStyles from '../styles/TextStyles.ts';
 import { useCustomerStore } from '../../zustand/customerStore.ts';
+import viewStyles from '../styles/ViewStyles.ts';
 
 const VerifyUserOTPScreen = ({ navigation, route }: any) => {
   // const customerState = useCustomerStore((state) => state.customerState);
@@ -89,10 +88,12 @@ const VerifyUserOTPScreen = ({ navigation, route }: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <ArrowLeftIcon />
-      </TouchableOpacity>
-      <Text style={textStyles.title}>Xác thực email</Text>
+      <View style={viewStyles.titlePageBar}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <ArrowLeftIcon />
+        </TouchableOpacity>
+        <Text style={textStyles.title}>Xác thực email</Text>
+      </View>
       <View style={{ marginVertical: 5 }}>
         <Text style={textStyles.hint}>Mã OTP đã được gửi đến email</Text>
         <Text style={textStyles.hintBoldItalic}>{email}</Text>

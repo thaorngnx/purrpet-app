@@ -1,10 +1,24 @@
 import { StyleSheet } from 'react-native';
 
 const textStyles = StyleSheet.create({
+  normal: {
+    color: 'black',
+    fontSize: 14,
+  },
+  bold: {
+    color: 'black',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
   label: {
     color: 'black',
     fontWeight: 'bold',
     fontSize: 14,
+    marginBottom: 5,
+  },
+  miniLabel: {
+    color: 'black',
+    fontSize: 12,
     marginBottom: 5,
   },
   title: {
@@ -14,6 +28,8 @@ const textStyles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     marginVertical: 5,
+    marginLeft: 'auto',
+    marginRight: 'auto',
   },
   hint: {
     color: 'black',

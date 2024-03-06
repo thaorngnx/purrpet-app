@@ -21,7 +21,17 @@ const buttonStyles = StyleSheet.create({
     paddingHorizontal: 18,
     width: 'auto',
   },
-  buttomOutline: {
+  colorOutlineCard: {
+    padding: 15,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    margin: 10,
+    width: 'auto',
+    borderWidth: 1,
+    borderColor: '#A16207',
+    flexDirection: 'row',
+  },
+  buttonOutline: {
     backgroundColor: '#F5F5F5',
     borderWidth: 1,
     borderColor: '#A16207',

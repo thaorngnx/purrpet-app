@@ -1,22 +1,16 @@
+import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native';
+import { Text, View } from 'react-native';
+import textStyles from '../styles/TextStyles';
+import buttonStyles from '../styles/ButtonStyles';
+import { useCustomerStore } from '../../zustand/customerStore';
+import textInputStyles from '../styles/TextInputStyles';
 import { useState } from 'react';
-import {
-  Button,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { ArrowLeftIcon, Icon } from '@gluestack-ui/themed';
 import { sendOTP } from '../../api/otp';
-import textInputStyles from '../styles/TextInputStyles.ts';
-import buttonStyles from '../styles/ButtonStyles.ts';
-import textStyles from '../styles/TextStyles.ts';
-import viewStyles from '../styles/ViewStyles.ts';
 
-const VerifyUserEmailScreen = ({ navigation }: any) => {
+const UnverifyAccountScreen = ({ navigation }: any) => {
+  const customerState = useCustomerStore((state) => state.customerState);
+
   const [email, setEmail] = useState('');
   const [error, setError] = useState({ message: '', status: false });
 
@@ -46,18 +40,16 @@ const VerifyUserEmailScreen = ({ navigation }: any) => {
   };
 
   return (
-    <SafeAreaView style={viewStyles.container}>
-      <View style={viewStyles.titlePageBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowLeftIcon />
-        </TouchableOpacity>
-        <Text style={textStyles.title}>Xác thực người dùng</Text>
-      </View>
-      <View style={viewStyles.form}>
-        <Text style={textStyles.label}>Email:</Text>
+    <SafeAreaView style={styles.container}>
+      <Text style={textStyles.title}>Thông tin tài khoản</Text>
+      <View style={styles.form}>
+        <Text style={textStyles.normal} className='mb-3'>
+          Bạn chưa xác thực tài khoản. Vui lòng xác thực tài khoản để sử dụng
+          tính năng này
+        </Text>
         <TextInput
           style={textInputStyles.textInputBorder}
-          placeholder='Nhập email của bạn'
+          placeholder='Email'
           placeholderTextColor={'#A0A0A0'}
           onChangeText={(text) => handleEmailChange(text)}
         />
@@ -66,7 +58,7 @@ const VerifyUserEmailScreen = ({ navigation }: any) => {
             style={buttonStyles.button}
             onPress={() => handleSendOTP()}
           >
-            <Text style={buttonStyles.buttonText}>Gửi OTP</Text>
+            <Text style={buttonStyles.buttonText}>Tiếp tục</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -74,4 +66,19 @@ const VerifyUserEmailScreen = ({ navigation }: any) => {
   );
 };
 
-export default VerifyUserEmailScreen;
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 15,
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  form: {
+    padding: 15,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+  },
+});
+
+export default UnverifyAccountScreen;
