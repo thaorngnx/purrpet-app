@@ -132,7 +132,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
-    height: '100%',
   },
   name: {
     fontSize: 20,

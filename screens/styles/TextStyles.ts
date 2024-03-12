@@ -57,9 +57,8 @@ const textStyles = StyleSheet.create({
   labelCenter: {
     color: 'black',
     fontWeight: 'bold',
-    fontSize: 14,
-    marginBottom: 5,
-    marginTop: 5,
+    fontSize: 17,
+    marginBottom: 10,
     textAlign: 'center',
   },
 });

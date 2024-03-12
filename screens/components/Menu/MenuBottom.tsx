@@ -6,11 +6,17 @@ import CartScreen from '../../cart/CartScreen';
 import ServiceScreen from '../../service/ServiceScreen';
 import NotificationScreen from '../../notification/NotificationScreen';
 import AccountScreen from '../../account/AccountScreen';
-import { BellIcon, MenuIcon } from '@gluestack-ui/themed';
 import { Image } from 'react-native';
 import SearchProduct from '../Search/SearchProduct';
 import { useCustomerStore } from '../../../zustand/customerStore';
 import UnverifyAccountScreen from '../../account/UnverifyAccountScreen';
+import {
+  Menu,
+  ShoppingCart,
+  PawPrint,
+  Bell,
+  UserRound,
+} from 'lucide-react-native';
 
 const MenuBottom = () => {
   const Tab = createBottomTabNavigator();
@@ -23,9 +29,7 @@ const MenuBottom = () => {
         component={ProductScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Image source={require('../../../assets/iconProduct.png')} />
-          ),
+          tabBarIcon: ({ color, size }) => <Menu color='#ca8a04' />,
           headerRight: () => <SearchProduct navigation={'SearchScreen'} />,
         }}
       />
@@ -34,9 +38,7 @@ const MenuBottom = () => {
         component={CartScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Image source={require('../../../assets/iconCart.png')} />
-          ),
+          tabBarIcon: ({ color, size }) => <ShoppingCart color='#ca8a04' />,
         }}
       />
       <Tab.Screen
@@ -44,9 +46,7 @@ const MenuBottom = () => {
         component={ServiceScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Image source={require('../../../assets/iconPets.png')} />
-          ),
+          tabBarIcon: ({ color, size }) => <PawPrint color='#ca8a04' />,
         }}
       />
       <Tab.Screen
@@ -54,9 +54,7 @@ const MenuBottom = () => {
         component={NotificationScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Image source={require('../../../assets/iconBell.png')} />
-          ),
+          tabBarIcon: ({ color, size }) => <Bell color='#ca8a04' />,
         }}
       />
       <Tab.Screen
@@ -68,9 +66,7 @@ const MenuBottom = () => {
         }
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Image source={require('../../../assets/iconAccount.png')} />
-          ),
+          tabBarIcon: ({ color, size }) => <UserRound color='#ca8a04' />,
         }}
       />
     </Tab.Navigator>

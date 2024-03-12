@@ -1,4 +1,5 @@
 import { MenuIcon, SearchIcon, SunIcon } from '@gluestack-ui/themed';
+import { ShoppingCart } from 'lucide-react-native';
 import React from 'react';
 import {
   View,
@@ -24,10 +25,7 @@ const SearchProduct = ({ navigation }: any) => {
           <SearchIcon color='#FDE047' size='xl' alignSelf='center' margin={9} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Giỏ hàng')}>
-          <Image
-            source={require('../../../assets/iconCart.png')}
-            style={styles.image}
-          />
+          <ShoppingCart color='#ca8a04' style={styles.image} />
         </TouchableOpacity>
       </View>
     </View>

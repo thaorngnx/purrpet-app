@@ -83,3 +83,12 @@ export async function getProductStaff(params: any) {
     console.error(error);
   }
 }
+
+export async function getProductBestSeller(params: any) {
+  try {
+    const response = await api.get('product/best-seller', { params });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
