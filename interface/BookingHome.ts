@@ -18,3 +18,18 @@ export interface BookingHomeResponse {
   data: BookingHome[];
   totalPage: number;
 }
+
+export interface BookingHomeInfo {
+  petName: string;
+  homeCode: string;
+  bookingHomePrice: number;
+  customerCode: string;
+  customerNote: string;
+  homeSize: string;
+  petType: string;
+  categoryName: string;
+  categoryCode: string;
+  dateCheckIn: any;
+  dateCheckOut: any;
+  homePrice: number;
+}

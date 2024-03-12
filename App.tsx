@@ -25,6 +25,7 @@ import HomestayHistoryScreen from './screens/account/history/HomestayHistoryScre
 import OrderDetailScreen from './screens/account/history/detail/OrderDetailScreen';
 import BookingSpaDetailScreen from './screens/account/history/detail/BookingSpaDetailScreen';
 import BookingHomeDetailScreen from './screens/account/history/detail/BookingHomeDetailScreen';
+import BookingHomeScreen from './screens/service/BookingHomeScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -153,6 +154,11 @@ export default function App() {
           <Stack.Screen
             name='HomeScreen'
             component={HomeSrceen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='BookingHomeScreen'
+            component={BookingHomeScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

@@ -47,6 +47,13 @@ const buttonStyles = StyleSheet.create({
     marginTop: 10,
     width: 40,
   },
+  buttonConfirm: {
+    backgroundColor: '#A16207',
+    padding: 8,
+    borderRadius: 5,
+    marginTop: 10,
+    width: 'auto',
+  },
 });
 
 export default buttonStyles;

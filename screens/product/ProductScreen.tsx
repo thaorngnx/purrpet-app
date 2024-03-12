@@ -1,6 +1,7 @@
 import { VStack } from '@gluestack-ui/themed';
 import React, { useEffect } from 'react';
 import {
+  FlatList,
   Image,
   SafeAreaView,
   ScrollView,
@@ -23,37 +24,22 @@ import {
 } from '@gluestack-ui/themed';
 import { getActiveCategories } from '../../api/category';
 import * as CONST from '../constants';
-import { getActiveProducts } from '../../api/product';
+import { getActiveProducts, getProductBestSeller } from '../../api/product';
+import { Product } from '../../interface/Product';
+import { Category } from '../../interface/Category';
+import textStyles from '../styles/TextStyles';
+import { err } from 'react-native-svg';
 
 const ProductScreen = ({ navigation, route }: any) => {
-  const [categories, setCategories] = React.useState([
-    {
-      categoryName: '',
-      purrPetCode: '',
-    },
-  ]);
-  const [products, setProducts] = React.useState([
-    {
-      _id: '',
-      purrPetCode: '',
-      productName: '',
-      description: '',
-      price: '',
-      categoryCode: '',
-      images: [
-        {
-          path: 'https://res.cloudinary.com/djjxfywxl/image/upload/v1701868560/purrpet/qu9ybdtkmfuzupzynp2h.webp',
-        },
-      ],
-      inventory: '',
-      star: '',
-    },
-  ]);
+  const [categories, setCategories] = React.useState([{} as Category]);
+  const [products, setProducts] = React.useState([{} as Product]);
+  const [bestSeller, setBestSeller] = React.useState([{} as Product]);
   const [selectedCategory, setSelectedCategory] = React.useState({
     categoryName: '',
     purrPetCode: '',
   });
   const [search, setSearch] = React.useState('');
+  const [showFlatlist, setShowFlatlist] = React.useState(false);
   useEffect(() => {
     if (route.params?.category) {
       const { category } = route.params;
@@ -84,6 +70,14 @@ const ProductScreen = ({ navigation, route }: any) => {
     console.log(params);
     getActiveProducts(params).then((res) => {
       setProducts(res.data);
+    });
+    getProductBestSeller({}).then((res) => {
+      if (res.data.length > 0) {
+        setBestSeller(res.data);
+        setShowFlatlist(true);
+      } else {
+        err('Không có sản phẩm bán chạy');
+      }
     });
   }, [search]);
 
@@ -153,13 +147,62 @@ const ProductScreen = ({ navigation, route }: any) => {
         </Select>
       </View>
       <ScrollView style={styles.scrollContainer}>
+        <View style={{ margin: 20, borderColor: '#FDE047', borderWidth: 2 }}>
+          <Text style={textStyles.title}>SẢN PHẨM BÁN CHẠY</Text>
+          {showFlatlist && (
+            <FlatList
+              data={bestSeller}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <View>
+                  <View style={styles.flastlist}>
+                    <Image
+                      source={{ uri: item.images[0].path }}
+                      style={[styles.image, { width: '100%', height: 133 }]}
+                    />
+                    <Text
+                      style={styles.name}
+                      onPress={() =>
+                        navigation.navigate('DetailProductScreen', {
+                          product: item,
+                        })
+                      }
+                    >
+                      {item.productName}
+                    </Text>
+                    <Text style={styles.price}>{item.price} đ</Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <Text style={styles.start}>
+                        {item.star} <StarIcon color='#C54600' />
+                      </Text>
+                      <Image
+                        source={require('../../assets/iconAddCart.png')}
+                        className='w-{20} h-{20}'
+                      />
+                    </View>
+                  </View>
+                </View>
+              )}
+              horizontal={true}
+            />
+          )}
+        </View>
+        <Text style={textStyles.title}>SẢN PHẨM CỦA CỬA HÀNG</Text>
+
         <View style={styles.row}>
-          {products.map((product) => (
-            <View key={product.purrPetCode} style={styles.column}>
-              <Image
-                source={{ uri: product.images[0]?.path }}
-                style={[styles.image, { width: 146, height: 133 }]}
-              />
+          {products.map((product, index) => (
+            <View key={index} style={styles.column}>
+              {product.images && product.images.length > 0 && (
+                <Image
+                  source={{ uri: product.images[0].path }}
+                  style={[styles.image, { width: 146, height: 133 }]}
+                />
+              )}
               <Text
                 style={styles.name}
                 onPress={() =>
@@ -250,7 +293,18 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   scrollContainer: {
+    marginTop: 10,
     flex: 1,
+  },
+  flastlist: {
+    width: 170,
+    height: 270,
+    padding: 5,
+    borderColor: '#FDE047',
+    borderWidth: 1,
+    borderRadius: 5,
+    margin: 5,
+    backgroundColor: '#FDE047',
   },
 });
 

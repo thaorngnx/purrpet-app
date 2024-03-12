@@ -13,16 +13,10 @@ import { getActiveCategories } from '../../api/category';
 import * as CONST from '../constants';
 import textStyles from '../styles/TextStyles';
 import { useState } from 'react';
-import Realm from 'realm';
-import SearchHistorySchema from '../../realmModel/SearchHistorySchema';
+import { Category } from '../../interface/Category';
 
 const SearchScreen = ({ navigation }: any) => {
-  const [categories, setCategories] = useState([
-    {
-      categoryName: '',
-      purrPetCode: '',
-    },
-  ]);
+  const [categories, setCategories] = useState([{} as Category]);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
