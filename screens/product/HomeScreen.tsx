@@ -9,24 +9,6 @@ import {
   SectionList,
 } from 'react-native';
 import SearchProduct from '../components/Search/SearchProduct';
-import {
-  Icon,
-  ChevronDownIcon,
-  StarIcon,
-  Spinner,
-  SelectIcon,
-} from '@gluestack-ui/themed';
-import {
-  Select,
-  SelectBackdrop,
-  SelectContent,
-  SelectDragIndicator,
-  SelectDragIndicatorWrapper,
-  SelectInput,
-  SelectItem,
-  SelectPortal,
-  SelectTrigger,
-} from '@gluestack-ui/themed';
 import { getActiveCategories } from '../../api/category';
 import * as CONST from '../constants';
 import { getActiveProducts, getProductBestSeller } from '../../api/product';
@@ -36,18 +18,17 @@ import textStyles from '../styles/TextStyles';
 import { err } from 'react-native-svg';
 import { v4 as uuidv4 } from 'uuid';
 import ProductCard from '../components/Product/ProductCard';
-import { TouchableOpacity } from 'react-native';
-import { ArrowLeftIcon } from '@gluestack-ui/themed';
-import viewStyles from '../styles/ViewStyles';
 
-const ProductScreen = ({ navigation, route }: any) => {
+const HomeScreen = ({ navigation, route }: any) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [bestSeller, setBestSeller] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState({
     categoryName: '',
     purrPetCode: '',
   });
   const [search, setSearch] = useState('');
+  const [showFlatlist, setShowFlatlist] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 6,
@@ -88,6 +69,14 @@ const ProductScreen = ({ navigation, route }: any) => {
       setProducts(res.data);
       setPagination({ ...pagination, totalPage: res.totalPage });
     });
+    getProductBestSeller({}).then((res) => {
+      if (res.data.length > 0) {
+        setBestSeller(res.data);
+        setShowFlatlist(true);
+      } else {
+        err('Không có sản phẩm bán chạy');
+      }
+    });
   }, [search]);
 
   const handleLoadMore = () => {
@@ -114,6 +103,70 @@ const ProductScreen = ({ navigation, route }: any) => {
     }
   };
 
+  const sections = [
+    {
+      key: 'bestSeller',
+      title: 'Sản phẩm bán chạy',
+      data: bestSeller,
+      horizontal: true,
+      show: showFlatlist,
+      renderHeader: (section: any) => (
+        <>
+          <Text style={textStyles.title}>{section.title}</Text>
+          <FlatList
+            data={section.data}
+            horizontal={section.horizontal}
+            renderItem={({ item }) => (
+              <ProductCard
+                navigation={navigation}
+                product={item}
+                productKey={uuidv4()}
+              />
+            )}
+            keyExtractor={() => uuidv4()}
+            key={uuidv4()}
+          />
+        </>
+      ),
+    },
+    {
+      key: 'products',
+      title: 'Danh sách sản phẩm',
+      data: products,
+      horizontal: false,
+      show: true,
+      renderHeader: (section: any) => (
+        <>
+          <Text style={textStyles.title}>{section.title}</Text>
+          <FlatList
+            data={section.data}
+            horizontal={section.horizontal}
+            contentContainerStyle={styles.flatContainer}
+            numColumns={2}
+            renderItem={({ item }) => (
+              <ProductCard
+                navigation={navigation}
+                product={item}
+                productKey={uuidv4()}
+              />
+            )}
+            keyExtractor={() => uuidv4()}
+            onEndReached={() => handleLoadMore()}
+            onEndReachedThreshold={1}
+            // onScrollBeginDrag={() => {
+            //   setLoading(true);
+            // }}
+            scrollEnabled={!loading}
+            key={uuidv4()}
+            className='items-center'
+          />
+        </>
+      ),
+    },
+  ] as any;
+
+  const visibleSection = sections.filter((section: any) => section.show) as any;
+
   const handleSelectCategory = (value: string) => {
     if (value === '') {
       setSearch('');
@@ -136,68 +189,28 @@ const ProductScreen = ({ navigation, route }: any) => {
   };
 
   return (
-    <SafeAreaView className='h-screen w-max bg-white'>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.goBack()}
-        >
-          <ArrowLeftIcon size='xl' color='#C54600' alignSelf='center' />
-        </TouchableOpacity>
+    <SafeAreaView className='flex-1 bg-white'>
+      <View>
+        <View style={styles.header}>
+          <Text style={styles.text}>PURRPET SHOP</Text>
+          <Image
+            source={require('../../assets/Purrshop1.png')}
+            className='w-15 h-55 self-center'
+          />
+        </View>
         <View style={styles.search}>
           <SearchProduct navigation={navigation} />
         </View>
       </View>
-      <View style={styles.filter}>
-        <Select
-          onValueChange={handleSelectCategory}
-          selectedValue={selectedCategory.purrPetCode}
-        >
-          <SelectTrigger variant='rounded' size='md' paddingRight={10}>
-            <SelectInput
-              placeholder='Tất cả'
-              value={selectedCategory.categoryName}
-              className='items-center text-center justify-center'
-            />
-            <Icon as={ChevronDownIcon} className='m-5' />
-          </SelectTrigger>
-          <SelectPortal>
-            <SelectBackdrop />
-            <SelectContent>
-              <SelectDragIndicatorWrapper>
-                <SelectDragIndicator />
-              </SelectDragIndicatorWrapper>
-              <SelectItem label='Tất cả' value='' />
-              {categories.map((categories, index) => (
-                <SelectItem
-                  key={index}
-                  label={categories.categoryName}
-                  value={categories.purrPetCode}
-                />
-              ))}
-            </SelectContent>
-          </SelectPortal>
-        </Select>
-      </View>
-      <FlatList
-        data={products}
-        contentContainerStyle={styles.flatContainer}
-        numColumns={2}
-        renderItem={({ item }) => (
-          <ProductCard
-            navigation={navigation}
-            product={item}
-            productKey={uuidv4()}
-          />
-        )}
-        keyExtractor={() => uuidv4()}
-        onEndReached={() => handleLoadMore()}
-        onEndReachedThreshold={1}
-        // onScrollBeginDrag={() => {
-        //   setLoading(true);
-        // }}
-        key={uuidv4()}
-      />
+      {bestSeller.length > 0 && products.length > 0 && (
+        <SectionList
+          sections={visibleSection}
+          renderSectionHeader={({ section }) => section.renderHeader(section)}
+          renderItem={({}) => <></>}
+          keyExtractor={() => uuidv4()}
+          className='mt-5'
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -206,15 +219,9 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 10,
-    height: 70,
-    alignItems: 'center',
+    height: 94,
     backgroundColor: '#FDE047',
-  },
-  button: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '6%',
+    padding: 10,
   },
   text: {
     fontSize: 18,
@@ -224,11 +231,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   search: {
-    width: '94%',
+    position: 'absolute',
+    marginTop: 70,
+    width: '100%',
   },
   filter: {
-    width: '40%',
-    margin: 15,
+    marginTop: 40,
+    width: '30%',
+    marginLeft: 10,
   },
   row: {
     flexDirection: 'row',
@@ -285,4 +295,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductScreen;
+export default HomeScreen;

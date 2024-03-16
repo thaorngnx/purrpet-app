@@ -1,9 +1,4 @@
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ChevronRightIcon,
-  Tabs,
-} from '@gluestack-ui/themed';
+import { ArrowLeftIcon, ChevronRightIcon } from '@gluestack-ui/themed';
 import textStyles from '../../styles/TextStyles';
 import viewStyles from '../../styles/ViewStyles';
 import {
@@ -15,15 +10,29 @@ import {
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import { getOrders } from '../../../api/order';
-import { Order, OrderResponse } from '../../../interface/Order';
+import {
+  Order,
+  OrderRequestParams,
+  OrderResponse,
+} from '../../../interface/Order';
 import * as CONST from '../../constants';
 import { ScrollView } from 'react-native';
 import { formatCurrency, formatDateTime } from '../../../utils/formatData';
+import { useOrderStore } from '../../../zustand/orderStore';
+import { Pagination } from '../../../interface/Pagination';
 
 const OrderHistoryScreen = ({ navigation }: any) => {
-  const [resOrders, setResOrders] = useState({} as OrderResponse);
+  const listOrderState = useOrderStore((state) => state.listOrderState);
+
+  const { getOrders } = useOrderStore();
+
+  const [orders, setOrders] = useState<Order[]>([]);
   const [tabOrder, setTabOrder] = useState(0);
-  const [page, setPage] = useState(0);
+  const [pagination, setPagination] = useState({
+    limit: 10,
+    page: 1,
+    total: 1,
+  } as Pagination);
 
   useEffect(() => {
     const params = {
@@ -31,36 +40,33 @@ const OrderHistoryScreen = ({ navigation }: any) => {
       // page: page,
       // key: categoryCode || searchKey,
       // order: sort,
-    };
+    } as OrderRequestParams;
+    if (tabOrder !== 0) {
+      params['status'] = Object.values(CONST.STATUS_ORDER)[tabOrder - 1];
+    }
+    console.log('params:', params);
     //api get order
-    getOrders(params).then((res) => {
-      if (res.err === 0) {
-        setResOrders(res);
-      }
-      //get all productCode in orderItems
-      let productCodes: string[] = [];
-      res.data.forEach((order: Order) => {
-        order.orderItems.forEach((item) => {
-          if (productCodes.includes(item.productCode)) return;
-          productCodes.push(item.productCode);
-        });
-      });
+    getOrders(params);
+  }, [tabOrder]);
 
-      //
-    });
-  }, []);
+  useEffect(() => {
+    if (listOrderState.data) {
+      setOrders(listOrderState.data);
+      setPagination(listOrderState.pagination);
+    }
+  }, [listOrderState]);
 
-  const orders = resOrders.data;
-  let totalPage = resOrders.totalPage;
+  // const orders = orders.data;
+  // let totalPage = orders.totalPage;
 
-  let orderByStatus = [];
+  // let orders = [];
 
-  if (tabOrder === 0) {
-    orderByStatus = orders;
-  } else {
-    const status = Object.values(CONST.STATUS_ORDER)[tabOrder - 1];
-    orderByStatus = orders?.filter((order) => order.status === status) || [];
-  }
+  // if (tabOrder === 0) {
+  //   orders = orders;
+  // } else {
+  //   const status = Object.values(CONST.STATUS_ORDER)[tabOrder - 1];
+  //   orders = orders?.filter((order) => order.status === status) || [];
+  // }
 
   // const handleChangePage = (event, value) => {
   //   setPage(value);
@@ -80,6 +86,7 @@ const OrderHistoryScreen = ({ navigation }: any) => {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={viewStyles.tabContainer}
+          key={tabOrder}
         >
           <TouchableOpacity
             key={0}
@@ -105,8 +112,9 @@ const OrderHistoryScreen = ({ navigation }: any) => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={viewStyles.scrollContainer}
         >
-          {orderByStatus?.length > 0 &&
-            orderByStatus.map((order: Order) => (
+          {!listOrderState.loading &&
+            orders?.length > 0 &&
+            orders.map((order: Order) => (
               <View style={viewStyles.orderCard} key={order.purrPetCode}>
                 <View style={viewStyles.flexRow} className='justify-between'>
                   <View style={viewStyles.flexRow}>
@@ -137,6 +145,7 @@ const OrderHistoryScreen = ({ navigation }: any) => {
                     <Image
                       source={{ uri: item.image }}
                       style={viewStyles.historyImage}
+                      key={item.productCode}
                     />
                   ))}
                 </View>
@@ -144,7 +153,9 @@ const OrderHistoryScreen = ({ navigation }: any) => {
                   <TouchableOpacity
                     style={viewStyles.flexRow}
                     onPress={() =>
-                      navigation.navigate('OrderDetailScreen', { order })
+                      navigation.navigate('OrderDetailScreen', {
+                        order: order,
+                      })
                     }
                   >
                     <Text className='mr-1 text-[#A16207]'>Xem chi tiết</Text>
@@ -153,7 +164,7 @@ const OrderHistoryScreen = ({ navigation }: any) => {
                 </View>
               </View>
             ))}
-          {orderByStatus?.length === 0 && (
+          {orders?.length === 0 && (
             <View style={viewStyles.orderCard}>
               <Text style={textStyles.normal}>
                 Không có đơn hàng nào ở trạng thái này

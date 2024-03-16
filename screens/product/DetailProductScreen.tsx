@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
     height: 70,
+    alignItems: 'center',
   },
   search: {
     width: '100%',

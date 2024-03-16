@@ -72,6 +72,7 @@ const SpaHistoryScreen = ({ navigation }: any) => {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={viewStyles.tabContainer}
+          key={tabSpa}
         >
           <TouchableOpacity
             key={0}

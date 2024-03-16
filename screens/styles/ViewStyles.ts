@@ -107,11 +107,15 @@ const viewStyles = StyleSheet.create({
   scrollContainer: {
     backgroundColor: 'white',
     alignItems: 'center',
-    // height: '100%',
+    // height: '86%',
     // minHeight: '90%',
-    minHeight: 'auto',
+    // minHeight: 'auto',
     paddingBottom: 10,
-    // flexGrow: 1,
+  },
+  line: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'black',
+    marginVertical: 12,
   },
 });
 

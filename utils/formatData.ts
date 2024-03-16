@@ -1,9 +1,6 @@
 export const formatCurrency = (value: number) => {
-  const formatter = new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-  });
-  return formatter.format(value);
+  const formatter = value?.toLocaleString('vi-VN') + 'đ';
+  return formatter;
 };
 
 export const formatDateTime = (value: any) => {

@@ -24,7 +24,6 @@ import {
   Icon,
   ChevronDownIcon,
   ArrowLeftIcon,
-  set,
 } from '@gluestack-ui/themed';
 import axios from 'axios';
 import textInputStyles from '../styles/TextInputStyles';
@@ -89,27 +88,6 @@ const AccountInfoScreen = ({ navigation, route }: any) => {
 
     fetchData();
   }, []);
-
-  // useEffect(() => {
-  //   console.log('customer', customer);
-  //   console.log('cusInfo', customerInfo);
-  //   // setCustomerInfo({
-  //   //   purrPetCode: customer?.purrPetCode,
-  //   //   name: customer?.name,
-  //   //   email: customer?.email,
-  //   //   phoneNumber: customer?.phoneNumber,
-  //   //   address: {
-  //   //     province: customer?.address?.province || '',
-  //   //     district: customer?.address?.district || '',
-  //   //     ward: customer?.address?.ward || '',
-  //   //     street: customer?.address?.street || '',
-  //   //   },
-  //   // });
-  // }, [customer]);
-
-  // useEffect(() => {
-  //   console.log('customerInfo', customerInfo);
-  // }, [customerInfo]);
 
   const handleChangeProvince = (value: string) => {
     const selectedProvince = provinces.find(
@@ -214,21 +192,21 @@ const AccountInfoScreen = ({ navigation, route }: any) => {
       <View style={viewStyles.card}>
         {!editInfo && (
           <>
-            <View style={viewStyles.flexRow}>
-              <Text style={textStyles.label}>Tên khách hàng: </Text>
+            <View style={viewStyles.flexRow} className='mb-1'>
+              <Text style={textStyles.label}>Tên khách hàng:</Text>
               <Text style={textStyles.normal}>{customerInfo.name}</Text>
             </View>
-            <View style={viewStyles.flexRow}>
-              <Text style={textStyles.label}>Email: </Text>
+            <View style={viewStyles.flexRow} className='mb-1'>
+              <Text style={textStyles.label}>Email:</Text>
               <Text style={textStyles.normal}>{customerInfo.email}</Text>
             </View>
-            <View style={viewStyles.flexRow}>
-              <Text style={textStyles.label}>Số điện thoại: </Text>
+            <View style={viewStyles.flexRow} className='mb-1'>
+              <Text style={textStyles.label}>Số điện thoại:</Text>
               <Text style={textStyles.normal}>{customerInfo.phoneNumber}</Text>
             </View>
 
-            <View style={viewStyles.flexRow}>
-              <Text style={textStyles.label}>Địa chỉ: </Text>
+            <View style={viewStyles.flexColumn}>
+              <Text style={textStyles.label}>Địa chỉ:</Text>
               {customer.address?.province && (
                 <Text style={textStyles.normal}>
                   {customerInfo.address.street}, {customerInfo.address.ward},{' '}
@@ -253,7 +231,9 @@ const AccountInfoScreen = ({ navigation, route }: any) => {
         {editInfo && (
           <>
             <View>
-              <Text style={textStyles.label}>Tên khách hàng: </Text>
+              <Text style={textStyles.label} className='mb-1.5'>
+                Tên khách hàng:
+              </Text>
               <TextInput
                 style={textInputStyles.textInputBorder}
                 value={customerInfo.name}
@@ -263,12 +243,14 @@ const AccountInfoScreen = ({ navigation, route }: any) => {
                 editable={editInfo}
               />
             </View>
-            <View style={viewStyles.flexRow}>
-              <Text style={textStyles.label}>Email: </Text>
+            <View style={viewStyles.flexRow} className='my-1.5'>
+              <Text style={textStyles.label}>Email:</Text>
               <Text style={textStyles.normal}>{customerInfo.email}</Text>
             </View>
             <View>
-              <Text style={textStyles.label}>Số điện thoại: </Text>
+              <Text style={textStyles.label} className='mb-1.5'>
+                Số điện thoại:
+              </Text>
               <TextInput
                 style={textInputStyles.textInputBorder}
                 value={customerInfo.phoneNumber}
@@ -279,7 +261,9 @@ const AccountInfoScreen = ({ navigation, route }: any) => {
               />
             </View>
             <View>
-              <Text style={textStyles.label}>Địa chỉ: </Text>
+              <Text style={textStyles.label} className='my-1.5'>
+                Địa chỉ:
+              </Text>
               <View style={viewStyles.flexColumn}>
                 <Text style={textStyles.miniLabel}>Tỉnh/Thành phố:</Text>
                 <Select
@@ -316,7 +300,9 @@ const AccountInfoScreen = ({ navigation, route }: any) => {
                     </SelectContent>
                   </SelectPortal>
                 </Select>
-                <Text style={textStyles.miniLabel}>Quận/Huyện:</Text>
+                <Text style={textStyles.miniLabel} className='mt-1'>
+                  Quận/Huyện:
+                </Text>
                 <Select
                   selectedValue={customerInfo.address?.district || ''}
                   isDisabled={districts.length === 0 || !editInfo}
@@ -351,7 +337,9 @@ const AccountInfoScreen = ({ navigation, route }: any) => {
                     </SelectContent>
                   </SelectPortal>
                 </Select>
-                <Text style={textStyles.miniLabel}>Phường/Xã:</Text>
+                <Text style={textStyles.miniLabel} className='mt-1'>
+                  Phường/Xã:
+                </Text>
                 <Select
                   selectedValue={customerInfo.address?.ward || ''}
                   isDisabled={wards.length === 0 || !editInfo}
@@ -386,7 +374,9 @@ const AccountInfoScreen = ({ navigation, route }: any) => {
                     </SelectContent>
                   </SelectPortal>
                 </Select>
-                <Text style={textStyles.miniLabel}>Đường:</Text>
+                <Text style={textStyles.miniLabel} className='mt-1'>
+                  Đường:
+                </Text>
                 <TextInput
                   style={textInputStyles.textInputBorder}
                   value={customerInfo.address?.street}

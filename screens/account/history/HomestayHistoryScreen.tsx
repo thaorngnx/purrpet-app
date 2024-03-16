@@ -32,7 +32,6 @@ const HomestayHistoryScreen = ({ navigation }: any) => {
     const params = {
       // limit: 10,
       // page: page,
-      // key: categoryCode || searchKey,
       // spa: sort,
     };
     //api get spa
@@ -43,7 +42,7 @@ const HomestayHistoryScreen = ({ navigation }: any) => {
 
       //
     });
-  }, []); //page
+  }, [tabHome]); //page
 
   const bHomes = resBHomes.data;
   let totalPage = resBHomes.totalPage;
@@ -75,6 +74,7 @@ const HomestayHistoryScreen = ({ navigation }: any) => {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={viewStyles.tabContainer}
+          key={tabHome}
         >
           <TouchableOpacity
             key={0}
