@@ -165,7 +165,10 @@ const SpaScreen = ({ navigation }: any) => {
           >
             120.000đ - 750.000đ
           </Text>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('BookingSpaScreen')}
+          >
             <Text
               style={{
                 color: '#005DB4',
@@ -196,7 +199,10 @@ const SpaScreen = ({ navigation }: any) => {
           >
             140.000đ - 570.000đ
           </Text>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('BookingSpaScreen')}
+          >
             <Text
               style={{
                 color: '#005DB4',

@@ -36,9 +36,16 @@ import CalendarPicker from 'react-native-calendar-picker';
 import CustomerInfoForm from './CustomerInfoForm';
 import ButtonStyles from '../styles/ButtonStyles';
 import { getActiveProducts } from '../../api/product';
+import { flags } from 'realm';
 
 const BookingHomeScreen = ({ navigation }: any) => {
-  const [error, setError] = useState({});
+  const [error, setError] = useState({
+    petName: '',
+    petType: '',
+    category: '',
+    homeSize: '',
+    message: '',
+  });
   const [message, setMessage] = useState('');
   const [categories, setCategories] = useState([
     {
@@ -205,6 +212,14 @@ const BookingHomeScreen = ({ navigation }: any) => {
       bookingHomePrice: price,
     });
   };
+  const handleClickContinue = () => {
+    if (bookingInfo.petName === undefined) {
+      setError({ ...error, petName: 'Tên thú cưng không được để trống!' });
+      return;
+    }
+    setError({ ...error, petName: '' });
+    setOpenCustomerInfoForm(true);
+  };
 
   const handleCustomerInfo = (customerInfo: any) => {
     setBookingInfo({
@@ -219,6 +234,10 @@ const BookingHomeScreen = ({ navigation }: any) => {
   };
 
   const handleConfirmBooking = () => {
+    if (bookingInfo.petName === undefined) {
+      setError({ ...error, petName: 'Tên thú cưng không được để trống!' });
+      return;
+    }
     //setShowBtnConfirmBook(false);
     createBookingHome({
       petName: bookingInfo.petName,
@@ -265,6 +284,9 @@ const BookingHomeScreen = ({ navigation }: any) => {
             value={bookingInfo.petName}
             onChangeText={(text) => handleChangeBookingInfo(text, 'petName')}
           />
+          <Text style={textStyles.error}>
+            {error.petName ? error.petName : ''}
+          </Text>
           <View style={{ marginTop: 5 }}>
             <Text style={textStyles.label}>Thú cưng là:</Text>
             <RadioGroup
@@ -366,8 +388,6 @@ const BookingHomeScreen = ({ navigation }: any) => {
                     onDateChange={handleChangeDateCheckin}
                     disabledDates={unavailableDays.map((day) => new Date(day))}
                     minDate={new Date()}
-                    selectedDayColor={selectedDate ? '#FDE047' : '#FFFFFF'}
-                    selectedDayTextColor={selectedDate ? '#000000' : '#000000'}
                   />
                 )}
               </View>
@@ -428,7 +448,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
               !openCustomerInfoForm && (
                 <TouchableOpacity
                   style={ButtonStyles.button}
-                  onPress={() => setOpenCustomerInfoForm(true)}
+                  onPress={() => handleClickContinue()}
                 >
                   <Text style={{ color: '#FFFFFF', textAlign: 'center' }}>
                     Tiếp tục
