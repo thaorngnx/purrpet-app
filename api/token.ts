@@ -6,7 +6,7 @@ const realm = new Realm({ schema: [TokenSchema] });
 
 const api = axios.create({
   //   baseURL: process.env.API_URL,
-  baseURL: 'https://fc76-116-108-44-218.ngrok-free.app/api',
+  baseURL: 'https://86c6-27-64-247-191.ngrok-free.app/api',
   headers: {
     'Content-Type': 'application/json',
   },

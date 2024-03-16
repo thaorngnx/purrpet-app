@@ -26,6 +26,7 @@ import OrderDetailScreen from './screens/account/history/detail/OrderDetailScree
 import BookingSpaDetailScreen from './screens/account/history/detail/BookingSpaDetailScreen';
 import BookingHomeDetailScreen from './screens/account/history/detail/BookingHomeDetailScreen';
 import BookingHomeScreen from './screens/service/BookingHomeScreen';
+import BookingSpaScreen from './screens/service/BookingSpaScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -159,6 +160,11 @@ export default function App() {
           <Stack.Screen
             name='BookingHomeScreen'
             component={BookingHomeScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='BookingSpaScreen'
+            component={BookingSpaScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

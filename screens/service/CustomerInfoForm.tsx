@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
 import { useCustomerStore } from '../../zustand/customerStore';
 import textInputStyles from '../styles/TextInputStyles';
@@ -27,7 +28,13 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
   const hasCustomerInfo = Object.keys(customerState).length > 0;
   const [otpClick, setOtpClick] = useState(false);
   const [otpValid, setOtpValid] = useState(false);
-  const [error, setError] = useState({});
+  const [error, setError] = useState({
+    customerName: false,
+    customerEmail: false,
+    otp: false,
+    name: false,
+    customerPhone: false,
+  });
   const [backupCustomerInfo, setBackupCustomerInfo] = useState({
     customerPhone: '',
     otp: '',
@@ -88,7 +95,6 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
   };
 
   const handleSendOTPCLick = () => {
-    console.log('send otp', customerInfo.customerEmail);
     if (!customerInfo.customerEmail) {
       setError({ ...error, customerEmail: true });
       return;
@@ -97,6 +103,8 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
       setError({ ...error, customerEmail: true });
       return;
     }
+    setError({ ...error, customerEmail: false });
+
     //api send otp
     sendOTP({ email: customerInfo.customerEmail }).then((res) => {
       if (res.err === 0) {
@@ -116,6 +124,7 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
       setError({ ...error, otp: true });
       return;
     }
+    setError({ ...error, otp: false });
     //api check otp
     verifyOTP({
       email: customerInfo.customerEmail,
@@ -144,7 +153,6 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
     setEditInfo(false);
   };
   const handleEditInfo = () => {
-    console.log('edit info', editInfo, 'existCustomer', existCustomer);
     if (existCustomer && !editInfo) {
       setEditInfo(true);
       confirmInfo(false);
@@ -161,7 +169,7 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
         err = { ...err, customerPhone: true };
       }
       if (Object.keys(err).length > 0) {
-        setError(err);
+        setError({ ...error, ...err });
         return;
       }
       //api update customer
@@ -172,17 +180,24 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
       }).then((res) => {
         if (res.err === 0) {
           console.log('after update customer oke');
-          // setCustomerInfo({
-          //   ...customerInfo,
-          //   customerName: res.data.name,
-          //   customerPhone: res.data.phoneNumber,
-          // });
         }
       });
       //oke
       setEditInfo(false);
       confirmInfo(true);
     } else if (!existCustomer && editInfo) {
+      if (!customerInfo.customerName) {
+        setError({ ...error, customerName: true });
+        return;
+      }
+      if (
+        !customerInfo.customerPhone ||
+        !validatePhone(customerInfo.customerPhone)
+      ) {
+        setError({ ...error, customerPhone: true });
+        return;
+      }
+
       console.log('create customer');
       //api create customer
       createCustomer({
@@ -193,6 +208,7 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
         if (res.err === 0) {
           console.log('after create customer oke');
           setCustomer(res.data);
+          setError({ ...error, customerName: false, customerPhone: false });
         }
       });
 
@@ -219,6 +235,9 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
                   handleChangeCustomerInfo(event, 'customerEmail')
                 }
               />
+              {error.customerEmail && (
+                <Text style={textStyles.error}>Email không hợp lệ!</Text>
+              )}
 
               {otpClick && !otpValid && (
                 <View>
@@ -256,11 +275,22 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
                   style={textInputStyles.textInputBorder}
                   onChange={(event) => handleChangeCustomerInfo(event, 'otp')}
                 />
+                {error.otp && (
+                  <Text style={textStyles.error}>Mã OTP không hợp lệ!</Text>
+                )}
                 <TouchableOpacity
                   style={buttonStyles.buttonConfirm}
                   onPress={() => handleValidOTPCLick()}
                 >
-                  <Text>Xác thực</Text>
+                  <Text
+                    style={{
+                      color: '#fff',
+                      alignSelf: 'center',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Xác thực
+                  </Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -278,6 +308,9 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
                 handleChangeCustomerInfo(event, 'customerName')
               }
             />
+            {error.customerName && (
+              <Text style={textStyles.error}>Tên không được để trống!</Text>
+            )}
             <Text style={textStyles.label}>Số điện thoại</Text>
             <TextInput
               placeholder='Số điện thoại'
@@ -288,6 +321,9 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
                 handleChangeCustomerInfo(event, 'customerPhone')
               }
             />
+            {error.customerPhone && (
+              <Text style={textStyles.error}>Số điện thoại không hợp lệ!</Text>
+            )}
             <View
               style={{
                 flexDirection: 'row',
@@ -346,4 +382,5 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
     </SafeAreaView>
   );
 };
+
 export default CustomerInfoForm;
