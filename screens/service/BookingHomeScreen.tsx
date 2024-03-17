@@ -37,6 +37,9 @@ import CustomerInfoForm from './CustomerInfoForm';
 import ButtonStyles from '../styles/ButtonStyles';
 import { getActiveProducts } from '../../api/product';
 import { flags } from 'realm';
+import { createPaymentUrl } from '../../api/pay';
+import openInChrome from '../../utils/openInChrome';
+import * as WebBrowser from 'expo-web-browser';
 
 const BookingHomeScreen = ({ navigation }: any) => {
   const [error, setError] = useState({
@@ -249,10 +252,15 @@ const BookingHomeScreen = ({ navigation }: any) => {
       dateCheckOut: bookingInfo.dateCheckOut,
     }).then((res) => {
       if (res.err === 0) {
-        console.log('Đặt phòng thành công');
-        setTimeout(() => {
-          navigation.goBack();
-        }, 1000);
+        createPaymentUrl({
+          orderCode: res.data.purrPetCode,
+        }).then((res) => {
+          if (res.err === 0) {
+            WebBrowser.openBrowserAsync(res.data.paymentUrl, {
+              showTitle: true,
+            });
+          }
+        });
       } else {
         setError({ ...error, message: res.msg });
       }

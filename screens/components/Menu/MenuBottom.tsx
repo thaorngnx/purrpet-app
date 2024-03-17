@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProductScreen from '../../product/ProductScreen';
 import CartScreen from '../../cart/CartScreen';
 import ServiceScreen from '../../service/ServiceScreen';
 import NotificationScreen from '../../notification/NotificationScreen';
 import AccountScreen from '../../account/AccountScreen';
-import { StyleSheet } from 'react-native';
-import SearchProduct from '../Search/SearchProduct';
+import { BackHandler, StyleSheet } from 'react-native';
 import { useCustomerStore } from '../../../zustand/customerStore';
 import UnverifyAccountScreen from '../../account/UnverifyAccountScreen';
 import {
@@ -21,7 +20,18 @@ import HomeScreen from '../../product/HomeScreen';
 const MenuBottom = () => {
   const Tab = createBottomTabNavigator();
   const customerState = useCustomerStore((state) => state.customerState);
+  const handleBackButton = () => {
+    BackHandler.exitApp();
+    return true;
+  };
 
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+    };
+  }, []);
   return (
     <Tab.Navigator initialRouteName='HomeScreen'>
       <Tab.Screen

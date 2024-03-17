@@ -28,6 +28,7 @@ import BookingSpaDetailScreen from './screens/account/history/detail/BookingSpaD
 import BookingHomeDetailScreen from './screens/account/history/detail/BookingHomeDetailScreen';
 import BookingHomeScreen from './screens/service/BookingHomeScreen';
 import BookingSpaScreen from './screens/service/BookingSpaScreen';
+import WellcomeSrceen from './screens/components/Wellcome/WellcomeScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -70,6 +71,13 @@ export default function App() {
       <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
       <NavigationContainer>
         <Stack.Navigator>
+          <Stack.Screen
+            name='WelcomeScreen'
+            component={WellcomeSrceen}
+            options={{
+              headerShown: false,
+            }}
+          />
           <Stack.Screen
             name='MenuBottom'
             component={MenuBottom}
