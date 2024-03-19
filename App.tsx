@@ -29,26 +29,30 @@ import BookingHomeDetailScreen from './screens/account/history/detail/BookingHom
 import BookingHomeScreen from './screens/service/BookingHomeScreen';
 import BookingSpaScreen from './screens/service/BookingSpaScreen';
 import WellcomeSrceen from './screens/components/Wellcome/WellcomeScreen';
+import { useCartStore } from './zustand/cartStore';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
-  const { getCustomerById } = useCustomerStore();
+  // const { getCustomerById } = useCustomerStore();
+  // const { getCart } = useCartStore();
   const [isDarkMode, setIsDarkMode] = useState(
     Appearance.getColorScheme() === 'dark',
   );
-  //get customer from realm
-  const realm = new Realm({ schema: [TokenSchema] });
-  const token = realm.objects('Token') as any;
-  let accessToken = '';
-  if (token.length > 0) {
-    // console.log('token:', token[0].accessToken);
-    // console.log('token App:', token);
-    accessToken = token[0]?.accessToken;
-    // console.log('accessToken App:', accessToken);
-  }
+  // //get customer from realm
+  // const realm = new Realm({ schema: [TokenSchema] });
+  // const token = realm.objects('Token') as any;
+  // let accessToken = '';
+  // if (token.length > 0) {
+  //   // console.log('token:', token[0].accessToken);
+  //   // console.log('token App:', token);
+  //   accessToken = token[0]?.accessToken;
+  //   // console.log('accessToken App:', accessToken);
+  // }
 
-  //block dark mode
   useEffect(() => {
+    // //get cart from server
+    // getCart();
+    //block dark mode
     StatusBar.setBackgroundColor('white');
     StatusBar.setBarStyle('dark-content');
     const subscription = Appearance.addChangeListener(({ colorScheme }) => {
@@ -58,13 +62,13 @@ export default function App() {
     return () => subscription.remove();
   }, []);
   //get customer info from server
-  useEffect(() => {
-    if (accessToken) {
-      const decoded = jwtDecode(accessToken) as any;
-      //get customer info from server
-      getCustomerById(decoded.id);
-    }
-  }, [accessToken]);
+  // useEffect(() => {
+  //   if (accessToken) {
+  //     const decoded = jwtDecode(accessToken) as any;
+  //     //get customer info from server
+  //     getCustomerById(decoded.id);
+  //   }
+  // }, [accessToken]);
 
   return (
     <GluestackUIProvider config={config}>

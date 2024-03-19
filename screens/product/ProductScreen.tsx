@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   FlatList,
   Image,
@@ -6,16 +6,9 @@ import {
   StyleSheet,
   View,
   Text,
-  SectionList,
 } from 'react-native';
 import SearchProduct from '../components/Search/SearchProduct';
-import {
-  Icon,
-  ChevronDownIcon,
-  StarIcon,
-  Spinner,
-  SelectIcon,
-} from '@gluestack-ui/themed';
+import { Icon, ChevronDownIcon } from '@gluestack-ui/themed';
 import {
   Select,
   SelectBackdrop,
@@ -29,16 +22,12 @@ import {
 } from '@gluestack-ui/themed';
 import { getActiveCategories } from '../../api/category';
 import * as CONST from '../constants';
-import { getActiveProducts, getProductBestSeller } from '../../api/product';
+import { getActiveProducts } from '../../api/product';
 import { Product } from '../../interface/Product';
 import { Category } from '../../interface/Category';
-import textStyles from '../styles/TextStyles';
-import { err } from 'react-native-svg';
 import { v4 as uuidv4 } from 'uuid';
 import ProductCard from '../components/Product/ProductCard';
-import { TouchableOpacity } from 'react-native';
-import { ArrowLeftIcon } from '@gluestack-ui/themed';
-import viewStyles from '../styles/ViewStyles';
+import { Pagination } from '../../interface/Pagination';
 
 const ProductScreen = ({ navigation, route }: any) => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -51,9 +40,10 @@ const ProductScreen = ({ navigation, route }: any) => {
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 6,
-    totalPage: 1,
-  });
+    total: 1,
+  } as Pagination);
   const [loading, setLoading] = useState(false);
+  const [stopLoadMore, setStopLoadMore] = useState(true);
 
   useEffect(() => {
     if (route.params?.category) {
@@ -86,32 +76,34 @@ const ProductScreen = ({ navigation, route }: any) => {
     console.log(params);
     getActiveProducts(params).then((res) => {
       setProducts(res.data);
-      setPagination({ ...pagination, totalPage: res.totalPage });
+      setPagination(res.pagination);
     });
   }, [search]);
 
-  const handleLoadMore = () => {
+  const handleLoadMore = async () => {
     console.log('handleLoadMore');
-    if (!loading) {
-      setLoading(false);
-      if (pagination.page <= pagination.totalPage) {
-        const params = {
-          limit: 6,
-          page: pagination.page + 1,
-          key: search,
-        };
-        console.log(params);
+    setLoading(true);
+    if (!stopLoadMore) {
+      const params = {
+        limit: 6,
+        page: pagination.page + 1,
+        key: search,
+      };
+      console.log(params);
 
-        getActiveProducts(params).then((res) => {
-          setProducts([...products, ...res.data]);
-          setPagination({
-            ...pagination,
-            page: pagination.page + 1,
-            totalPage: res.totalPage,
-          });
-        });
+      try {
+        const res = await getActiveProducts(params);
+        if (res.data.length === 0) {
+          return setLoading(false);
+        }
+        setProducts([...products, ...res.data]);
+        setPagination(res.pagination);
+        setStopLoadMore(true);
+      } catch (error) {
+        console.error(error);
       }
     }
+    setLoading(false);
   };
 
   const handleSelectCategory = (value: string) => {
@@ -136,18 +128,20 @@ const ProductScreen = ({ navigation, route }: any) => {
   };
 
   return (
-    <SafeAreaView className='h-screen w-max bg-white'>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.goBack()}
-        >
-          <ArrowLeftIcon size='xl' color='#C54600' alignSelf='center' />
-        </TouchableOpacity>
-        <View style={styles.search}>
+    <SafeAreaView className='flex-1 w-max bg-white'>
+      <View>
+        <View style={styles.header}>
+          <Text style={styles.text}>PurrPet Shop</Text>
+          <Image
+            source={require('../../assets/Purrshop1.png')}
+            className='w-15 h-55 self-center'
+          />
+        </View>
+        <View style={styles.search} className=' z-10'>
           <SearchProduct navigation={navigation} />
         </View>
       </View>
+      {/* <View className=' bg-pink-200 h-10 z-0'></View> */}
       <View style={styles.filter}>
         <Select
           onValueChange={handleSelectCategory}
@@ -190,13 +184,20 @@ const ProductScreen = ({ navigation, route }: any) => {
             productKey={uuidv4()}
           />
         )}
-        keyExtractor={() => uuidv4()}
+        keyExtractor={(item) => item.purrPetCode}
         onEndReached={() => handleLoadMore()}
-        onEndReachedThreshold={1}
-        // onScrollBeginDrag={() => {
-        //   setLoading(true);
-        // }}
+        onEndReachedThreshold={0.5}
+        onScrollBeginDrag={() => {
+          setStopLoadMore(false);
+        }}
         key={uuidv4()}
+        ListFooterComponent={
+          loading ? (
+            <View>
+              <Text className=' text-black'>Loading...</Text>
+            </View>
+          ) : null
+        }
       />
     </SafeAreaView>
   );
@@ -206,29 +207,30 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    height: 94,
+    backgroundColor: '#BAE6FD',
     padding: 10,
-    height: 70,
-    alignItems: 'center',
-    backgroundColor: '#FDE047',
+  },
+  text: {
+    fontSize: 18,
+    color: 'black',
+    fontWeight: 'bold',
+    alignSelf: 'center',
+  },
+  search: {
+    position: 'absolute',
+    marginTop: 70,
+    width: '100%',
   },
   button: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '6%',
   },
-  text: {
-    fontSize: 18,
-    color: '#C54600',
-    fontWeight: 'bold',
-    fontStyle: 'italic',
-    alignSelf: 'center',
-  },
-  search: {
-    width: '94%',
-  },
   filter: {
     width: '40%',
-    margin: 15,
+    marginTop: 40,
+    margin: 10,
   },
   row: {
     flexDirection: 'row',

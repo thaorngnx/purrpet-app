@@ -18,6 +18,10 @@ import textStyles from '../styles/TextStyles';
 import { err } from 'react-native-svg';
 import { v4 as uuidv4 } from 'uuid';
 import ProductCard from '../components/Product/ProductCard';
+import { Pagination } from '../../interface/Pagination';
+import { TouchableOpacity } from 'react-native';
+import viewStyles from '../styles/ViewStyles';
+import { ChevronRightIcon } from 'lucide-react-native';
 
 const HomeScreen = ({ navigation, route }: any) => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -32,8 +36,8 @@ const HomeScreen = ({ navigation, route }: any) => {
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 6,
-    totalPage: 1,
-  });
+    total: 1,
+  } as Pagination);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -67,7 +71,7 @@ const HomeScreen = ({ navigation, route }: any) => {
     console.log(params);
     getActiveProducts(params).then((res) => {
       setProducts(res.data);
-      setPagination({ ...pagination, totalPage: res.totalPage });
+      setPagination(res.pagination);
     });
     getProductBestSeller({}).then((res) => {
       if (res.data.length > 0) {
@@ -83,7 +87,7 @@ const HomeScreen = ({ navigation, route }: any) => {
     console.log('handleLoadMore');
     if (!loading) {
       setLoading(false);
-      if (pagination.page <= pagination.totalPage) {
+      if (pagination.page < pagination.total) {
         const params = {
           limit: 6,
           page: pagination.page + 1,
@@ -93,11 +97,7 @@ const HomeScreen = ({ navigation, route }: any) => {
 
         getActiveProducts(params).then((res) => {
           setProducts([...products, ...res.data]);
-          setPagination({
-            ...pagination,
-            page: pagination.page + 1,
-            totalPage: res.totalPage,
-          });
+          setPagination(res.pagination);
         });
       }
     }
@@ -108,60 +108,36 @@ const HomeScreen = ({ navigation, route }: any) => {
       key: 'bestSeller',
       title: 'Sản phẩm bán chạy',
       data: bestSeller,
-      horizontal: true,
-      show: showFlatlist,
       renderHeader: (section: any) => (
-        <>
-          <Text style={textStyles.title}>{section.title}</Text>
+        <View>
+          <View style={viewStyles.flexRow} className='items-center'>
+            <Text style={textStyles.title}>{section.title}</Text>
+            <TouchableOpacity
+              style={viewStyles.flexRow}
+              onPress={() => navigation.navigate(section.screen)}
+            >
+              <Text className='mr-1 text-[#A16207]'>Xem thêm</Text>
+              <ChevronRightIcon color='#A16207' />
+            </TouchableOpacity>
+          </View>
           <FlatList
             data={section.data}
-            horizontal={section.horizontal}
             renderItem={({ item }) => (
               <ProductCard
-                navigation={navigation}
                 product={item}
+                navigation={navigation}
                 productKey={uuidv4()}
               />
             )}
+            horizontal
             keyExtractor={() => uuidv4()}
-            key={uuidv4()}
-          />
-        </>
-      ),
-    },
-    {
-      key: 'products',
-      title: 'Danh sách sản phẩm',
-      data: products,
-      horizontal: false,
-      show: true,
-      renderHeader: (section: any) => (
-        <>
-          <Text style={textStyles.title}>{section.title}</Text>
-          <FlatList
-            data={section.data}
-            horizontal={section.horizontal}
             contentContainerStyle={styles.flatContainer}
-            numColumns={2}
-            renderItem={({ item }) => (
-              <ProductCard
-                navigation={navigation}
-                product={item}
-                productKey={uuidv4()}
-              />
-            )}
-            keyExtractor={() => uuidv4()}
-            onEndReached={() => handleLoadMore()}
-            onEndReachedThreshold={1}
-            // onScrollBeginDrag={() => {
-            //   setLoading(true);
-            // }}
-            scrollEnabled={!loading}
-            key={uuidv4()}
-            className='items-center'
+            showsHorizontalScrollIndicator={false}
           />
-        </>
+        </View>
       ),
+      show: showFlatlist,
+      screen: 'ProductScreen',
     },
   ] as any;
 
@@ -192,7 +168,7 @@ const HomeScreen = ({ navigation, route }: any) => {
     <SafeAreaView className='flex-1 bg-white'>
       <View>
         <View style={styles.header}>
-          <Text style={styles.text}>PURRPET SHOP</Text>
+          <Text style={styles.text}>PurrPet Shop</Text>
           <Image
             source={require('../../assets/Purrshop1.png')}
             className='w-15 h-55 self-center'
@@ -206,9 +182,14 @@ const HomeScreen = ({ navigation, route }: any) => {
         <SectionList
           sections={visibleSection}
           renderSectionHeader={({ section }) => section.renderHeader(section)}
-          renderItem={({}) => <></>}
+          renderItem={({ item }) => <></>}
+          // horizontal
           keyExtractor={() => uuidv4()}
-          className='mt-5'
+          contentContainerStyle={{
+            paddingHorizontal: 10,
+            paddingVertical: 5,
+          }}
+          stickySectionHeadersEnabled={false} // Add this line to disable sticky section headers
         />
       )}
     </SafeAreaView>
@@ -220,19 +201,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     height: 94,
-    backgroundColor: '#FDE047',
+    backgroundColor: '#BAE6FD',
     padding: 10,
   },
   text: {
     fontSize: 18,
-    color: '#C54600',
+    color: 'black',
     fontWeight: 'bold',
-    fontStyle: 'italic',
     alignSelf: 'center',
   },
   search: {
-    position: 'absolute',
-    marginTop: 70,
+    // position: 'absolute',
+    // marginTop: 70,
     width: '100%',
   },
   filter: {

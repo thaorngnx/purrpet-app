@@ -14,6 +14,7 @@ import {
   Bell,
   UserRound,
   ShoppingBasket,
+  Home,
 } from 'lucide-react-native';
 import HomeScreen from '../../product/HomeScreen';
 
@@ -39,7 +40,7 @@ const MenuBottom = () => {
         component={HomeScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => <Menu color='#ca8a04' />,
+          tabBarIcon: ({ color, size }) => <Home color='#ca8a04' />,
           // headerRight: () => <SearchProduct navigation={'SearchScreen'} />,
           tabBarLabelStyle: styles.tabBarLabel,
         }}

@@ -39,7 +39,7 @@ import { getActiveProducts } from '../../api/product';
 import { flags } from 'realm';
 import { createPaymentUrl } from '../../api/pay';
 import openInChrome from '../../utils/openInChrome';
-import * as WebBrowser from 'expo-web-browser';
+// import * as WebBrowser from 'expo-web-browser';
 
 const BookingHomeScreen = ({ navigation }: any) => {
   const [error, setError] = useState({
@@ -256,9 +256,9 @@ const BookingHomeScreen = ({ navigation }: any) => {
           orderCode: res.data.purrPetCode,
         }).then((res) => {
           if (res.err === 0) {
-            WebBrowser.openBrowserAsync(res.data.paymentUrl, {
-              showTitle: true,
-            });
+            // WebBrowser.openBrowserAsync(res.data.paymentUrl, {
+            //   showTitle: true,
+            // });
           }
         });
       } else {

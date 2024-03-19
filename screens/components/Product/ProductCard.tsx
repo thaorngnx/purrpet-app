@@ -3,6 +3,7 @@ import { Product } from '../../../interface/Product';
 import { ShoppingCart, StarIcon } from 'lucide-react-native';
 import { formatCurrency } from '../../../utils/formatData';
 import viewStyles from '../../styles/ViewStyles';
+import { useCartStore } from '../../../zustand/cartStore';
 
 const ProductCard = ({
   navigation,
@@ -13,6 +14,15 @@ const ProductCard = ({
   product: Product;
   productKey: string;
 }) => {
+  const cart = useCartStore((state) => state.cartState.data);
+  const { addToCart } = useCartStore();
+
+  const handleAddToCart = () => {
+    addToCart({
+      productCode: product.purrPetCode,
+      quantity: 1,
+    });
+  };
   if (!product || !product.images) {
     return <></>;
   }
@@ -36,7 +46,12 @@ const ProductCard = ({
         <Text style={styles.start} className='flex-row items-end'>
           {product.star} <StarIcon color='#C54600' />
         </Text>
-        <ShoppingCart color='#C54600' />
+        <TouchableOpacity
+          onPress={() => handleAddToCart()}
+          style={viewStyles.flexRow}
+        >
+          <ShoppingCart color='#C54600' />
+        </TouchableOpacity>
       </View>
     </View>
   );

@@ -93,7 +93,8 @@ const viewStyles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 12,
     elevation: 5,
-    width: '98%',
+    minWidth: '98%',
+    maxWidth: '98%',
     margin: 8,
   },
   colorCard: {
