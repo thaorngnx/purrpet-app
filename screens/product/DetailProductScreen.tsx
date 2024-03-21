@@ -111,7 +111,7 @@ const DetailProductScreen = ({ navigation, route }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDE047',
+    backgroundColor: '#BAE6FD',
   },
   header: {
     flexDirection: 'row',

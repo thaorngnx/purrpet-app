@@ -32,4 +32,5 @@ export interface BookingHomeInfo {
   dateCheckIn: any;
   dateCheckOut: any;
   homePrice: number;
+  // payMethod: string;
 }

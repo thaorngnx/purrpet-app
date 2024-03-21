@@ -39,7 +39,6 @@ import { getActiveProducts } from '../../api/product';
 import { flags } from 'realm';
 import { createPaymentUrl } from '../../api/pay';
 import openInChrome from '../../utils/openInChrome';
-// import * as WebBrowser from 'expo-web-browser';
 
 const BookingHomeScreen = ({ navigation }: any) => {
   const [error, setError] = useState({
@@ -73,7 +72,9 @@ const BookingHomeScreen = ({ navigation }: any) => {
   const [maxDateCheckOut, setMaxDateCheckOut] = useState(
     dayjs().add(2, 'year'),
   );
-  const [bookingInfo, setBookingInfo] = useState({} as BookingHomeInfo);
+  const [bookingInfo, setBookingInfo] = useState({
+    petType: Object.values(CONST.PET_TYPE)[0],
+  } as BookingHomeInfo);
   const [showDatePickerCheckin, setShowDatePickerCheckin] = useState(false);
   const [showDatePickerCheckout, setShowDatePickerCheckout] = useState(false);
   const [dateCheckin, setDateCheckin] = useState('');
@@ -229,6 +230,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
       ...bookingInfo,
       customerCode: customerInfo.customerCode,
       customerNote: customerInfo.customerNote,
+      // payMethod: customerInfo.payMethod,
     });
   };
 
@@ -250,24 +252,31 @@ const BookingHomeScreen = ({ navigation }: any) => {
       customerNote: bookingInfo.customerNote,
       dateCheckIn: bookingInfo.dateCheckIn,
       dateCheckOut: bookingInfo.dateCheckOut,
+      // payMethod: bookingInfo.payMethod,
     }).then((res) => {
-      if (res.err === 0) {
+      if (
+        res.err === 0
+        // && res.data.payMethod === CONST.PAY_METHOD.VNPAY
+      ) {
         createPaymentUrl({
           orderCode: res.data.purrPetCode,
         }).then((res) => {
           if (res.err === 0) {
-            // WebBrowser.openBrowserAsync(res.data.paymentUrl, {
-            //   showTitle: true,
-            // });
+            openInChrome(res.data.paymentUrl);
           }
         });
+        // } else if (
+        //   res.err === 0 &&
+        //   res.data.payMethod === CONST.PAY_METHOD.CASH
+        // ) {
+        //   navigation.navigate('HomestayHistoryScreen', { HomestayHistoryScreen });
       } else {
         setError({ ...error, message: res.msg });
       }
     });
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <View
         style={{
           backgroundColor: '#FDE047',

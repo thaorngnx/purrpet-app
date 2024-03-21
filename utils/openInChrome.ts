@@ -1,10 +1,13 @@
 import { Linking } from 'react-native';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
-
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 // Hàm để mở URL trong trình duyệt Chrome
-async function openInChrome(this: any, url: string) {
+async function openInChrome(url: string) {
   try {
     if (await InAppBrowser.isAvailable()) {
+      console.log('InAppBrowser is available!');
       const result = await InAppBrowser.open(url, {
         // iOS Properties
         dismissButtonStyle: 'cancel',
@@ -25,8 +28,6 @@ async function openInChrome(this: any, url: string) {
         enableUrlBarHiding: true,
         enableDefaultShare: true,
         forceCloseOnRedirection: false,
-        // Specify full animation resource identifier(package:anim/name)
-        // or only resource name(in case of animation bundled with app).
         animations: {
           startEnter: 'slide_in_right',
           startExit: 'slide_out_left',
@@ -37,9 +38,13 @@ async function openInChrome(this: any, url: string) {
           'my-custom-header': 'my custom header value',
         },
       });
-      await this.sleep(800);
+      await sleep(800);
+      console.log('result:', result);
       console.log(result);
-    } else Linking.openURL(url);
+    } else {
+      console.log('InAppBrowser is not available!');
+      Linking.openURL(url);
+    }
   } catch (error) {
     console.error(error);
   }

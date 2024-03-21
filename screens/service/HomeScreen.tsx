@@ -17,6 +17,9 @@ import buttonStyles from '../styles/ButtonStyles';
 const HomeSrceen = ({ navigation }: any) => {
   const images = [
     {
+      source: require('../../assets/banner.png'),
+    },
+    {
       source: require('../../assets/Banner1.png'),
     },
     {
@@ -240,6 +243,36 @@ const HomeSrceen = ({ navigation }: any) => {
             </View>
           </View>
         </View>
+        <View style={{ marginTop: 40 }}>
+          <View style={{ margin: 10 }}>
+            <Text style={textStyles.title}>
+              QUY TRÌNH CHĂM SÓC THÚ CƯNG TẠI PURRPET
+            </Text>
+            <Image
+              source={require('../../assets/chamsoc.jpg')}
+              style={{
+                alignSelf: 'center',
+                marginTop: 10,
+                width: 410,
+                height: 700,
+              }}
+            />
+          </View>
+          <View style={{ margin: 40 }}>
+            <Text style={textStyles.title}>
+              QUY TRÌNH TIẾP NHẬN THÚ CƯNG TẠI PURRPET
+            </Text>
+            <Image
+              source={require('../../assets/tiepnhan.jpg')}
+              style={{
+                alignSelf: 'center',
+                marginTop: 10,
+                width: 420,
+                height: 700,
+              }}
+            />
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -247,7 +280,7 @@ const HomeSrceen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDE047',
+    backgroundColor: '#FBCFE8',
   },
   header: {
     flexDirection: 'row',
@@ -257,9 +290,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-    color: '#C54600',
+    color: '#000000',
     fontWeight: 'bold',
-    fontStyle: 'italic',
     alignSelf: 'center',
   },
   icon: {

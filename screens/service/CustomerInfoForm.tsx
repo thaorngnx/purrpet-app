@@ -17,9 +17,20 @@ import {
 } from '../../utils/validationData';
 import { useStore } from 'zustand';
 import { sendOTP, verifyOTP } from '../../api/otp';
-import { Textarea, TextareaInput } from '@gluestack-ui/themed';
+import {
+  CircleIcon,
+  Radio,
+  RadioGroup,
+  RadioIcon,
+  RadioIndicator,
+  RadioLabel,
+  Textarea,
+  TextareaInput,
+} from '@gluestack-ui/themed';
 import textStyles from '../styles/TextStyles';
 import buttonStyles from '../styles/ButtonStyles';
+import * as CONST from '../constants';
+import { Wallet } from 'lucide-react-native';
 
 const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
   const customerState = useCustomerStore((state) => state.customerState.data);
@@ -42,6 +53,7 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
     customerEmail: '',
     customerNote: '',
     customerCode: '',
+    // payMethod: '',
   });
   const [customerInfo, setCustomerInfo] = useState({
     customerPhone: '',
@@ -50,6 +62,7 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
     customerEmail: '',
     customerNote: '',
     customerCode: '',
+    // payMethod: Object.values(CONST.PAY_METHOD)[0],
   });
   const [editInfo, setEditInfo] = useState(true);
   const [existCustomer, setExistCustomer] = useState(false);
@@ -218,6 +231,9 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
       confirmInfo(true);
     }
   };
+  // const handleClickPayMenthod = (value: string, name: string) => {
+  //   setCustomerInfo({ ...customerInfo, [name]: value });
+  // };
   return (
     <SafeAreaView style={{ margin: 5 }}>
       <View>
@@ -273,6 +289,7 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
                   value={customerInfo.otp}
                   placeholder='Mã OTP'
                   style={textInputStyles.textInputBorder}
+                  keyboardType='numeric'
                   onChange={(event) => handleChangeCustomerInfo(event, 'otp')}
                 />
                 {error.otp && (
@@ -316,6 +333,7 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
               placeholder='Số điện thoại'
               style={textInputStyles.textInputBorder}
               value={customerInfo.customerPhone}
+              keyboardType='numeric'
               editable={editInfo}
               onChange={(event) =>
                 handleChangeCustomerInfo(event, 'customerPhone')
@@ -378,6 +396,30 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
             </Textarea>
           </View>
         )}
+        {/* {customerInfo.customerCode && (
+          <View>
+            <Text style={textStyles.label}>Phương thức thanh toán</Text>
+            <RadioGroup
+              value={customerInfo.payMethod}
+              style={{ flexDirection: 'row' }}
+              onChange={(value) => handleClickPayMenthod(value, 'payMethod')}
+            >
+              {Object.values(CONST.PAY_METHOD).map((value, index) => (
+                <Radio
+                  value={value}
+                  size='sm'
+                  style={{ marginRight: 30 }}
+                  key={index}
+                >
+                  <RadioIndicator mr='$2'>
+                    <RadioIcon as={CircleIcon} />
+                  </RadioIndicator>
+                  <RadioLabel>{value}</RadioLabel>
+                </Radio>
+              ))}
+            </RadioGroup>
+          </View>
+        )} */}
       </View>
     </SafeAreaView>
   );

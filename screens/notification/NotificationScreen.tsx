@@ -41,7 +41,7 @@ const NotificationScreen = ({ navigation }: any) => {
 };
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#FDE047',
+    backgroundColor: '#BAE6FD',
     height: 70,
   },
 });

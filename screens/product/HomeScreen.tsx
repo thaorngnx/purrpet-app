@@ -7,71 +7,28 @@ import {
   View,
   Text,
   SectionList,
+  ScrollView,
 } from 'react-native';
 import SearchProduct from '../components/Search/SearchProduct';
-import { getActiveCategories } from '../../api/category';
-import * as CONST from '../constants';
 import { getActiveProducts, getProductBestSeller } from '../../api/product';
 import { Product } from '../../interface/Product';
-import { Category } from '../../interface/Category';
 import textStyles from '../styles/TextStyles';
 import { err } from 'react-native-svg';
 import { v4 as uuidv4 } from 'uuid';
 import ProductCard from '../components/Product/ProductCard';
-import { Pagination } from '../../interface/Pagination';
 import { TouchableOpacity } from 'react-native';
 import viewStyles from '../styles/ViewStyles';
-import { ChevronRightIcon } from 'lucide-react-native';
+import { ChevronsRightIcon } from 'lucide-react-native';
 
 const HomeScreen = ({ navigation, route }: any) => {
-  const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [bestSeller, setBestSeller] = useState<Product[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState({
-    categoryName: '',
-    purrPetCode: '',
-  });
-  const [search, setSearch] = useState('');
+
   const [showFlatlist, setShowFlatlist] = useState(false);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 6,
-    total: 1,
-  } as Pagination);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (route.params?.category) {
-      const { category } = route.params;
-      setSearch(category.purrPetCode);
-      setSelectedCategory({
-        categoryName: category.categoryName,
-        purrPetCode: category.purrPetCode,
-      });
-    } else if (route.params?.search) {
-      setSearch(route.params.search);
-      setSelectedCategory({
-        categoryName: '',
-        purrPetCode: '',
-      });
-    }
-  }, [route.params?.category, route.params?.search]);
-
-  useEffect(() => {
-    getActiveCategories({ categoryType: CONST.CATEGORY_TYPE.PRODUCT }).then(
-      (res) => {
-        setCategories(res.data);
-      },
-    );
-    const params = {
-      limit: 6,
-      page: pagination.page,
-      key: search,
-    };
-    console.log(params);
-    getActiveProducts(params).then((res) => {
+    getActiveProducts({}).then((res) => {
       setProducts(res.data);
-      setPagination(res.pagination);
     });
     getProductBestSeller({}).then((res) => {
       if (res.data.length > 0) {
@@ -81,44 +38,120 @@ const HomeScreen = ({ navigation, route }: any) => {
         err('Không có sản phẩm bán chạy');
       }
     });
-  }, [search]);
-
-  const handleLoadMore = () => {
-    console.log('handleLoadMore');
-    if (!loading) {
-      setLoading(false);
-      if (pagination.page < pagination.total) {
-        const params = {
-          limit: 6,
-          page: pagination.page + 1,
-          key: search,
-        };
-        console.log(params);
-
-        getActiveProducts(params).then((res) => {
-          setProducts([...products, ...res.data]);
-          setPagination(res.pagination);
-        });
-      }
-    }
-  };
-
+  }, []);
+  const imageSpa = [
+    {
+      image: require('../../assets/cho1.jpg'),
+    },
+    {
+      image: require('../../assets/cho2.jpg'),
+    },
+    {
+      image: require('../../assets/cho3.jpg'),
+    },
+    {
+      image: require('../../assets/cho4.jpg'),
+    },
+    {
+      image: require('../../assets/cho5.jpg'),
+    },
+    {
+      image: require('../../assets/cho6.jpg'),
+    },
+    {
+      image: require('../../assets/cho7.jpg'),
+    },
+    {
+      image: require('../../assets/cho8.jpg'),
+    },
+  ];
+  const sectionSpa = [
+    {
+      key: 'spa',
+      title: 'Trước và sau khi sử dung dịch vụ spa tại PurrPet',
+      data: imageSpa,
+      renderHeader: (section: any) => (
+        <View>
+          <FlatList
+            data={section.data}
+            renderItem={({ item }) => (
+              <Image
+                source={item.image}
+                style={{ width: 100, height: 100, margin: 5 }}
+              />
+            )}
+            horizontal
+            keyExtractor={() => uuidv4()}
+            contentContainerStyle={styles.flatContainer}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+      ),
+      show: true,
+      screen: 'SpaScreen',
+    },
+  ];
+  const imageHomestay = [
+    {
+      image: require('../../assets/phong1.jpg'),
+    },
+    {
+      image: require('../../assets/phong2.jpg'),
+    },
+    {
+      image: require('../../assets/phong3.jpg'),
+    },
+    {
+      image: require('../../assets/phong4.jpg'),
+    },
+    {
+      image: require('../../assets/phong5.jpg'),
+    },
+    {
+      image: require('../../assets/phong6.jpg'),
+    },
+    {
+      image: require('../../assets/phong7.jpg'),
+    },
+    {
+      image: require('../../assets/phong8.jpg'),
+    },
+  ];
+  const sectionHomestay = [
+    {
+      key: 'homestay',
+      title: 'Phòng ở tại PurrPet',
+      data: imageHomestay,
+      renderHeader: (section: any) => (
+        <View>
+          <FlatList
+            data={section.data}
+            renderItem={({ item }) => (
+              <Image
+                source={item.image}
+                style={{ width: 100, height: 100, margin: 5 }}
+              />
+            )}
+            horizontal
+            keyExtractor={() => uuidv4()}
+            contentContainerStyle={styles.flatContainer}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+      ),
+      show: true,
+      screen: 'HomestayScreen',
+    },
+  ];
   const sections = [
     {
       key: 'bestSeller',
       title: 'Sản phẩm bán chạy',
       data: bestSeller,
       renderHeader: (section: any) => (
-        <View>
+        <View className='border rounded-md border-cyan-600'>
           <View style={viewStyles.flexRow} className='items-center'>
             <Text style={textStyles.title}>{section.title}</Text>
-            <TouchableOpacity
-              style={viewStyles.flexRow}
-              onPress={() => navigation.navigate(section.screen)}
-            >
-              <Text className='mr-1 text-[#A16207]'>Xem thêm</Text>
-              <ChevronRightIcon color='#A16207' />
-            </TouchableOpacity>
           </View>
           <FlatList
             data={section.data}
@@ -134,131 +167,241 @@ const HomeScreen = ({ navigation, route }: any) => {
             contentContainerStyle={styles.flatContainer}
             showsHorizontalScrollIndicator={false}
           />
+          <TouchableOpacity
+            style={viewStyles.flexRow}
+            className='self-center mt-2 mb-2'
+            onPress={() => navigation.navigate(section.screen)}
+          >
+            <Text className='mr-1 text-[#000000] text-sx'>Xem thêm</Text>
+            <ChevronsRightIcon color='#000000' />
+          </TouchableOpacity>
         </View>
       ),
       show: showFlatlist,
-      screen: 'ProductScreen',
+      screen: 'Sản phẩm',
     },
   ] as any;
 
   const visibleSection = sections.filter((section: any) => section.show) as any;
 
-  const handleSelectCategory = (value: string) => {
-    if (value === '') {
-      setSearch('');
-      setSelectedCategory({
-        categoryName: '',
-        purrPetCode: '',
-      });
-    } else {
-      setSearch(value);
-      const category = categories.find(
-        (category) => category.purrPetCode === value,
-      );
-      if (category) {
-        setSelectedCategory({
-          categoryName: category.categoryName,
-          purrPetCode: category.purrPetCode,
-        });
-      }
-    }
-  };
-
   return (
-    <SafeAreaView className='flex-1 bg-white'>
-      <View>
-        <View style={styles.header}>
-          <Text style={styles.text}>PurrPet Shop</Text>
-          <Image
-            source={require('../../assets/Purrshop1.png')}
-            className='w-15 h-55 self-center'
-          />
+    <SafeAreaView className=' bg-white'>
+      <ScrollView>
+        <View>
+          <View>
+            <Text
+              style={{
+                fontSize: 30,
+                alignSelf: 'center',
+                color: '#000000',
+                fontWeight: 'bold',
+                marginTop: 20,
+              }}
+            >
+              Healthy & Tasty
+            </Text>
+            <Text
+              style={{
+                fontSize: 18,
+                alignSelf: 'center',
+                color: '#000000',
+                fontWeight: 'bold',
+                marginTop: 10,
+              }}
+            >
+              Rest stop for your pet
+            </Text>
+          </View>
+          <View style={styles.search}>
+            <SearchProduct navigation={navigation} />
+          </View>
+          <View>
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-around' }}
+            >
+              <TouchableOpacity onPress={() => navigation.navigate('Sản phẩm')}>
+                <Image
+                  source={require('../../assets/foodpet.jpg')}
+                  style={styles.image}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('SpaScreen')}
+              >
+                <Image
+                  source={require('../../assets/spapet.jpg')}
+                  style={styles.image}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('HomeScreen')}
+              >
+                <Image
+                  source={require('../../assets/homepet.jpg')}
+                  style={styles.image}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.content1}>
+              <View style={{ margin: 10, width: '50%', alignItems: 'center' }}>
+                <Text
+                  style={{ color: '#4572E7', fontWeight: 'bold', fontSize: 18 }}
+                >
+                  PurrPet Food
+                </Text>
+                <Text
+                  style={{
+                    color: '#000000',
+                    textAlign: 'center',
+                    marginTop: 4,
+                  }}
+                >
+                  Dinh dưỡng hàng đầu cho bạn thân bốn chân của bạn
+                </Text>
+              </View>
+              <Image
+                source={require('../../assets/food.jpg')}
+                style={{
+                  width: 160,
+                  height: 80,
+                  alignSelf: 'center',
+                  objectFit: 'contain',
+                }}
+              />
+            </View>
+
+            {bestSeller.length > 0 && products.length > 0 && (
+              <SectionList
+                sections={visibleSection}
+                renderSectionHeader={({ section }) =>
+                  section.renderHeader(section)
+                }
+                renderItem={({ item }) => <></>}
+                // horizontal
+                keyExtractor={() => uuidv4()}
+                contentContainerStyle={{
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                }}
+                stickySectionHeadersEnabled={false} // Add this line to disable sticky section headers
+              />
+            )}
+            <View>
+              <Image
+                source={require('../../assets/petgrooming.jpg')}
+                style={{
+                  width: 160,
+                  height: 80,
+                  alignSelf: 'center',
+                  marginTop: 10,
+                }}
+              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  marginBottom: 20,
+                }}
+              >
+                <Image
+                  source={require('../../assets/image14.jpg')}
+                  style={{ width: 120, height: 120 }}
+                />
+                <View
+                  style={{
+                    width: 230,
+                    height: 82,
+                    backgroundColor: '#FFE4E6',
+                    padding: 20,
+                    borderRadius: 8,
+                    marginTop: 20,
+                  }}
+                >
+                  <Text style={textStyles.hint}>
+                    Gồm nhiều dịch vụ spa cho chó mèo cao cấp tại PurrPet
+                  </Text>
+                </View>
+              </View>
+              <SectionList
+                sections={sectionSpa}
+                renderSectionHeader={({ section }) =>
+                  section.renderHeader(section)
+                }
+                renderItem={({ item }) => <></>}
+                // horizontal
+                keyExtractor={() => uuidv4()}
+                contentContainerStyle={{
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                }}
+                stickySectionHeadersEnabled={false} // Add this line to disable sticky section headers
+              />
+            </View>
+            <View style={{ backgroundColor: '#BAE6FD', paddingBottom: 20 }}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  marginTop: 20,
+                  color: '#000000',
+                  alignSelf: 'center',
+                }}
+              >
+                HOMESTAY CHO THÚ CƯNG
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  marginBottom: 20,
+                }}
+              >
+                <Text style={textStyles.hint} className='mt-5 mr-35 ml-10 '>
+                  Kỳ nghỉ trọn vẹn cho chó mèo Homestay chất lượng và chăm sóc
+                  chu đáo!
+                </Text>
+                <Image
+                  source={require('../../assets/location.jpg')}
+                  style={{
+                    width: 84,
+                    height: 100,
+                    marginRight: 30,
+                  }}
+                />
+              </View>
+              <SectionList
+                sections={sectionHomestay}
+                renderSectionHeader={({ section }) =>
+                  section.renderHeader(section)
+                }
+                renderItem={({ item }) => <></>}
+                // horizontal
+                keyExtractor={() => uuidv4()}
+                contentContainerStyle={{
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                }}
+                stickySectionHeadersEnabled={false} // Add this line to disable sticky section headers
+              />
+            </View>
+          </View>
         </View>
-        <View style={styles.search}>
-          <SearchProduct navigation={navigation} />
-        </View>
-      </View>
-      {bestSeller.length > 0 && products.length > 0 && (
-        <SectionList
-          sections={visibleSection}
-          renderSectionHeader={({ section }) => section.renderHeader(section)}
-          renderItem={({ item }) => <></>}
-          // horizontal
-          keyExtractor={() => uuidv4()}
-          contentContainerStyle={{
-            paddingHorizontal: 10,
-            paddingVertical: 5,
-          }}
-          stickySectionHeadersEnabled={false} // Add this line to disable sticky section headers
-        />
-      )}
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 94,
-    backgroundColor: '#BAE6FD',
-    padding: 10,
-  },
-  text: {
-    fontSize: 18,
-    color: 'black',
-    fontWeight: 'bold',
-    alignSelf: 'center',
-  },
   search: {
     // position: 'absolute',
     // marginTop: 70,
     width: '100%',
   },
-  filter: {
-    marginTop: 40,
-    width: '30%',
-    marginLeft: 10,
-  },
-  row: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 5,
-    marginHorizontal: 7,
-  },
-  column: {
-    width: '48%',
-    padding: 10,
-    borderColor: '#FDE047',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  name: {
-    marginTop: 5,
-    fontSize: 15,
-    color: 'black',
-  },
-  price: {
-    marginTop: 5,
-    fontSize: 15,
-    color: '#C54600',
-  },
-  start: {
-    marginTop: 5,
-    fontSize: 15,
-    color: '#C54600',
-  },
   image: {
-    width: 165,
-    height: 160,
+    width: 100,
+    height: 100,
     alignSelf: 'center',
     objectFit: 'contain',
-  },
-  scrollContainer: {
-    marginTop: 10,
-    flex: 1,
   },
   productWrapper: {
     width: 178,
@@ -272,6 +415,16 @@ const styles = StyleSheet.create({
   flatContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  content1: {
+    flexDirection: 'row',
+    marginTop: 20,
+    marginBottom: 20,
+    alignSelf: 'center',
+    height: 108,
+    width: 370,
+    backgroundColor: '#BAE6FD',
+    borderRadius: 11,
   },
 });
 

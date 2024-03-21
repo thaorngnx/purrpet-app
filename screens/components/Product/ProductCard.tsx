@@ -89,11 +89,9 @@ const styles = StyleSheet.create({
   productWrapper: {
     width: 178,
     padding: 10,
-    borderColor: '#FDE047',
-    borderWidth: 1,
     borderRadius: 5,
     margin: 5,
-    // backgroundColor: '#FDE047',
+    backgroundColor: '#FFE4E6',
   },
   flatContainer: {
     justifyContent: 'center',

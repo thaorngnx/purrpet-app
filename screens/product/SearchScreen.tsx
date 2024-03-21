@@ -14,6 +14,7 @@ import * as CONST from '../constants';
 import textStyles from '../styles/TextStyles';
 import { useState } from 'react';
 import { Category } from '../../interface/Category';
+import { ShoppingCart } from 'lucide-react-native';
 
 const SearchScreen = ({ navigation }: any) => {
   const [categories, setCategories] = useState([{} as Category]);
@@ -41,12 +42,12 @@ const SearchScreen = ({ navigation }: any) => {
           style={styles.iconLeft}
           onPress={() => navigation.goBack()}
         >
-          <ChevronLeftIcon size='xl' color='#B91C1C' />
+          <ChevronLeftIcon size='xl' color='#1D4ED8' />
         </TouchableOpacity>
         <View style={styles.input}>
           <View style={styles.inputText}>
             <SearchIcon
-              color='#FDE047'
+              color='#1D4ED8'
               size='xl'
               alignSelf='center'
               margin={9}
@@ -55,13 +56,14 @@ const SearchScreen = ({ navigation }: any) => {
               placeholder='Bạn đang tìm gì ?'
               onChangeText={handleChange}
               onSubmitEditing={handleKeyPress}
+              style={{ color: '#000000' }}
             />
           </View>
           <TouchableOpacity
             style={styles.iconCart}
             onPress={() => navigation.navigate('Giỏ hàng')}
           >
-            <Image source={require('../../assets/iconCart.png')} />
+            <ShoppingCart color='#1d4e7e' />
           </TouchableOpacity>
         </View>
       </View>
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     height: 94,
-    backgroundColor: '#FDE047',
+    backgroundColor: '#BAE6FD',
     padding: 10,
   },
   input: {
@@ -103,6 +105,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginLeft: 10,
     alignSelf: 'center',
+    borderColor: '#BAE6FD',
   },
   iconLeft: {
     alignSelf: 'center',
@@ -122,6 +125,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: 100,
     textAlign: 'center',
+    color: '#000000',
   },
 });
 export default SearchScreen;

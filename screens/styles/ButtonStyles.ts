@@ -7,7 +7,7 @@ const buttonStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   button: {
-    backgroundColor: '#A16207',
+    backgroundColor: '#60A5FA',
     padding: 8,
     borderRadius: 5,
     marginTop: 10,
@@ -41,7 +41,7 @@ const buttonStyles = StyleSheet.create({
     width: 'auto',
   },
   buttonIncrease: {
-    backgroundColor: '#A16207',
+    backgroundColor: '#F9A8D4',
     padding: 8,
     borderRadius: 13,
     marginTop: 10,

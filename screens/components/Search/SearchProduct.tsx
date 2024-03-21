@@ -18,14 +18,14 @@ const SearchProduct = ({ navigation }: any) => {
         style={styles.input}
         onPress={() => navigation.navigate('SearchScreen')}
       >
-        <Text style={{ fontSize: 16, color: '#C54600' }}>Tìm kiếm...</Text>
+        <Text style={{ fontSize: 16, color: '#F43F5E' }}>Tìm kiếm...</Text>
       </TouchableOpacity>
       <View style={styles.icon}>
         <TouchableOpacity onPress={() => navigation.navigate('SearchScreen')}>
-          <SearchIcon color='#FDE047' size='xl' alignSelf='center' margin={9} />
+          <SearchIcon color='#3B82F6' size='xl' alignSelf='center' margin={9} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Giỏ hàng')}>
-          <ShoppingCart color='#ca8a04' style={styles.image} />
+          <ShoppingCart color='#3B82F6' style={styles.image} />
         </TouchableOpacity>
       </View>
     </View>
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
-    borderColor: '#CA8A04',
+    borderColor: '#3B82F6',
     borderWidth: 1,
     margin: 10,
     borderRadius: 12,
