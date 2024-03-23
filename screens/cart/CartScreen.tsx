@@ -15,7 +15,8 @@ import { getProductByCode } from '../../api/product';
 import { formatCurrency } from '../../utils/formatData';
 import viewStyles from '../styles/ViewStyles';
 import { ProductCartInfo } from '../../interface/Cart';
-import { ChevronRightIcon } from 'lucide-react-native';
+import { ChevronRightIcon, Minus, Plus, Trash2 } from 'lucide-react-native';
+import buttonStyles from '../styles/ButtonStyles';
 
 const ProductCart = ({
   navigation,
@@ -24,37 +25,77 @@ const ProductCart = ({
   navigation: any;
   product: ProductCartInfo;
 }) => {
+  const { updateCart, deleteCart, deleteProductCart } = useCartStore();
   return (
-    <View style={viewStyles.orderCard} className='flex'>
-      <View style={viewStyles.flexRow} className='flex'>
+    <View style={[viewStyles.orderCard, { marginVertical: 5 }]}>
+      <View style={viewStyles.flexRow}>
         <Image
           source={{ uri: product?.images[0]?.path }}
           style={[viewStyles.historyImage, { flex: 1, aspectRatio: 1 }]}
         />
         <View style={{ flex: 3 }}>
-          <Text
-            style={textStyles.normal}
-            numberOfLines={2}
-            ellipsizeMode='tail'
-          >
-            {product.productName}
-          </Text>
-          <View className=' flex justify-end'>
+          <View style={[viewStyles.flexRow]} className='justify-between'>
+            <Text
+              style={{
+                ...textStyles.normal,
+                marginBottom: 5,
+                flex: 3,
+              }}
+              numberOfLines={2}
+              ellipsizeMode='tail'
+            >
+              {product.productName}
+            </Text>
+            <TouchableOpacity
+              style={viewStyles.flexRow}
+              onPress={() =>
+                deleteProductCart({ productCode: product.purrPetCode })
+              }
+            >
+              <Trash2 size={20} strokeWidth={1.5} color='#c81414' />
+            </TouchableOpacity>
+          </View>
+
+          <View style={viewStyles.flexRow} className='justify-between'>
             <Text style={textStyles.normal}>
               {formatCurrency(product.price)}
             </Text>
-
-            <Text style={textStyles.normal}>Số lượng: {product.quantity}</Text>
-            <Text style={textStyles.normal}>
-              Thành tiền: {formatCurrency(product.totalPrice)}
-            </Text>
+            <View style={viewStyles.flexRow}>
+              <View style={viewStyles.flexRow} className='items-center'>
+                <TouchableOpacity
+                  style={[styles.changeQuantity, { marginRight: 10 }]}
+                  onPress={() =>
+                    updateCart({
+                      productCode: product.purrPetCode,
+                      quantity: product.quantity - 1,
+                    })
+                  }
+                >
+                  <Minus size={16} color={'black'} />
+                </TouchableOpacity>
+                <Text style={textStyles.normal}>{product.quantity}</Text>
+                <TouchableOpacity
+                  style={[styles.changeQuantity, { marginLeft: 10 }]}
+                  onPress={() =>
+                    updateCart({
+                      productCode: product.purrPetCode,
+                      quantity: product.quantity + 1,
+                    })
+                  }
+                >
+                  <Plus size={16} color={'black'} />
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </View>
       </View>
-      <View style={viewStyles.flexRow} className='justify-end'>
+      <View style={viewStyles.flexRow} className='justify-end pt-1'>
         <TouchableOpacity
           style={viewStyles.flexRow}
-          onPress={() => navigation.navigate('BookingHomeDetailScreen')}
+          onPress={() =>
+            navigation.navigate('DetailProductScreen', { product })
+          }
         >
           <Text className='mr-1 text-[#A16207]'>Xem chi tiết</Text>
           <ChevronRightIcon color='#A16207' />
@@ -96,6 +137,7 @@ const CartScreen = ({ navigation }: any) => {
             });
           }
           setProductCart(productList);
+          setShowBtnConfirmOrder(true);
         } catch (error) {
           console.log(error);
         }
@@ -105,53 +147,27 @@ const CartScreen = ({ navigation }: any) => {
     }
   }, [cart]);
 
+  const handleOrder = () => {
+    navigation.navigate('ProcessingOrderSceen', { productCart });
+  };
+
   return (
-    <SafeAreaView style={{ backgroundColor: '#ffff', height: '100%' }}>
-      <View style={styles.header}>
-        <SearchProduct navigation={navigation} />
+    <SafeAreaView style={viewStyles.container}>
+      <View style={viewStyles.titlePageBar}>
+        <Text style={textStyles.title}>Giỏ hàng</Text>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={viewStyles.scrollContainer}
       >
-        <View style={{ borderBottomWidth: 1 }}>
-          <Text
-            style={{
-              alignSelf: 'center',
-              color: '#000',
-              fontWeight: 'bold',
-              margin: 10,
-            }}
-          >
-            Giỏ hàng của bạn
-          </Text>
-        </View>
-        <View className='m-1 flex items-center flex-col'>
-          {productCart.length > 0 &&
-            productCart.map((product: any, index: number) => (
-              <View key={index}>
-                <ProductCart navigation={navigation} product={product} />
-              </View>
-            ))}
-        </View>
-        {showBtnConfirmOrder ? (
+        {productCart.length > 0 ? (
           <View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setOpenCustomerInfoForm(true)}
-            >
-              <Text
-                style={{
-                  alignSelf: 'center',
-                  color: '#fff',
-                  fontWeight: 'bold',
-                  marginTop: 9,
-                  fontSize: 16,
-                }}
-              >
-                Tiến hành đặt hàng
-              </Text>
-            </TouchableOpacity>
+            {productCart.length > 0 &&
+              productCart.map((product: any, index: number) => (
+                <View key={index}>
+                  <ProductCart navigation={navigation} product={product} />
+                </View>
+              ))}
           </View>
         ) : (
           <View>
@@ -159,53 +175,75 @@ const CartScreen = ({ navigation }: any) => {
               source={require('../../assets/cart.png')}
               style={{ alignSelf: 'center', marginTop: 30 }}
             />
+            <View style={buttonStyles.buttonWrapper}>
+              <TouchableOpacity
+                style={buttonStyles.button}
+                onPress={() => navigation.navigate('Sản phẩm')}
+              >
+                <Text style={buttonStyles.buttonText}>Tiếp tục mua sắm</Text>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <Text style={{ alignSelf: 'center' }}>
+                Vẫn còn hơn 1000 sản phẩm đang chờ
+              </Text>
+              <Image
+                source={require('../../assets/Frame1000002068.png')}
+                style={{ alignSelf: 'center', marginTop: 10 }}
+              />
+              <Image
+                source={require('../../assets/Frame1000002086.png')}
+                style={{ alignSelf: 'center', marginTop: 10 }}
+              />
+            </View>
           </View>
         )}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Sản phẩm')}
-        >
-          <Text
-            style={{
-              alignSelf: 'center',
-              color: '#fff',
-              fontWeight: 'bold',
-              marginTop: 9,
-              fontSize: 16,
-            }}
-          >
-            Tiếp tục mua sắm
-          </Text>
-        </TouchableOpacity>
-        <View>
-          <Text style={{ alignSelf: 'center' }}>
-            Vẫn còn hơn 1000 sản phẩm đang chờ
-          </Text>
-          <Image
-            source={require('../../assets/Frame1000002068.png')}
-            style={{ alignSelf: 'center', marginTop: 10 }}
-          />
-          <Image
-            source={require('../../assets/Frame1000002086.png')}
-            style={{ alignSelf: 'center', marginTop: 10 }}
-          />
-        </View>
       </ScrollView>
+      {showBtnConfirmOrder && (
+        <View style={styles.totalBar}>
+          <View
+            style={[
+              viewStyles.flexRow,
+              {
+                justifyContent: 'space-between',
+              },
+            ]}
+          >
+            <Text style={textStyles.label}>Tổng cộng:</Text>
+            <Text style={textStyles.normal}>
+              {formatCurrency(
+                productCart.reduce(
+                  (total, product) => total + product.totalPrice,
+                  0,
+                ),
+              )}
+            </Text>
+          </View>
+          <View style={buttonStyles.buttonWrapper}>
+            <TouchableOpacity
+              style={[buttonStyles.button, { width: '100%' }]}
+              onPress={() => handleOrder()}
+            >
+              <Text style={buttonStyles.buttonText}>Tiến hành đặt hàng</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
-  header: {
-    backgroundColor: '#FDE047',
-    height: 70,
+  totalBar: {
+    padding: 10,
   },
-  button: {
-    backgroundColor: '#CA8A04',
-    width: '50%',
-    height: 40,
-    borderRadius: 10,
-    alignSelf: 'center',
-    marginBottom: 20,
+  changeQuantity: {
+    height: 25,
+    width: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 7,
   },
 });
 

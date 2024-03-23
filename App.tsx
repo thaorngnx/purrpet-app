@@ -30,6 +30,7 @@ import BookingHomeScreen from './screens/service/BookingHomeScreen';
 import BookingSpaScreen from './screens/service/BookingSpaScreen';
 import WellcomeSrceen from './screens/components/Wellcome/WellcomeScreen';
 import { useCartStore } from './zustand/cartStore';
+import ProcessingOrderSceen from './screens/cart/ProcessingOrderSceen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -178,6 +179,11 @@ export default function App() {
           <Stack.Screen
             name='BookingSpaScreen'
             component={BookingSpaScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='ProcessingOrderSceen'
+            component={ProcessingOrderSceen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

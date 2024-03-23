@@ -25,7 +25,16 @@ const AccountScreen = ({ navigation }: any) => {
       <View style={viewStyles.card}>
         <View style={viewStyles.flexRow}>
           <Text style={textStyles.label}>Khách hàng: </Text>
-          <Text style={textStyles.normal}>{customer.name}</Text>
+          <Text
+            style={[
+              textStyles.normal,
+              {
+                flex: 1,
+              },
+            ]}
+          >
+            {customer.name}
+          </Text>
         </View>
         <View style={viewStyles.flexRow}>
           <Text style={textStyles.label}>Email: </Text>

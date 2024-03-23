@@ -194,21 +194,27 @@ const AccountInfoScreen = ({ navigation, route }: any) => {
           <>
             <View style={viewStyles.flexRow} className='mb-1'>
               <Text style={textStyles.label}>Tên khách hàng:</Text>
-              <Text style={textStyles.normal}>{customerInfo.name}</Text>
+              <Text style={[textStyles.normal, { flex: 1 }]}>
+                {customerInfo.name}
+              </Text>
             </View>
             <View style={viewStyles.flexRow} className='mb-1'>
               <Text style={textStyles.label}>Email:</Text>
-              <Text style={textStyles.normal}>{customerInfo.email}</Text>
+              <Text style={[textStyles.normal, { flex: 1 }]}>
+                {customerInfo.email}
+              </Text>
             </View>
             <View style={viewStyles.flexRow} className='mb-1'>
               <Text style={textStyles.label}>Số điện thoại:</Text>
-              <Text style={textStyles.normal}>{customerInfo.phoneNumber}</Text>
+              <Text style={[textStyles.normal, { flex: 1 }]}>
+                {customerInfo.phoneNumber}
+              </Text>
             </View>
 
-            <View style={viewStyles.flexColumn}>
+            <View style={viewStyles.flexRow}>
               <Text style={textStyles.label}>Địa chỉ:</Text>
               {customer.address?.province && (
-                <Text style={textStyles.normal}>
+                <Text style={[textStyles.normal, { flex: 1 }]}>
                   {customerInfo.address.street}, {customerInfo.address.ward},{' '}
                   {customerInfo.address.district},{' '}
                   {customerInfo.address.province}

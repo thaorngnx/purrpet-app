@@ -56,36 +56,20 @@ const OrderHistoryScreen = ({ navigation }: any) => {
     }
   }, [listOrderState]);
 
-  // const orders = orders.data;
-  // let totalPage = orders.totalPage;
-
-  // let orders = [];
-
-  // if (tabOrder === 0) {
-  //   orders = orders;
-  // } else {
-  //   const status = Object.values(CONST.STATUS_ORDER)[tabOrder - 1];
-  //   orders = orders?.filter((order) => order.status === status) || [];
-  // }
-
-  // const handleChangePage = (event, value) => {
-  //   setPage(value);
-  // };
-
   return (
-    <>
-      <SafeAreaView style={viewStyles.container}>
-        <View style={viewStyles.titlePageBar}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <ArrowLeftIcon />
-          </TouchableOpacity>
-          <Text style={textStyles.title}>Lịch sử mua hàng</Text>
-        </View>
+    <SafeAreaView style={viewStyles.container}>
+      <View style={[viewStyles.titlePageBar]}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <ArrowLeftIcon />
+        </TouchableOpacity>
+        <Text style={textStyles.title}>Lịch sử mua hàng</Text>
+      </View>
 
+      <View>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={viewStyles.tabContainer}
+          contentContainerStyle={[viewStyles.tabContainer]}
           key={tabOrder}
         >
           <TouchableOpacity
@@ -108,72 +92,72 @@ const OrderHistoryScreen = ({ navigation }: any) => {
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={viewStyles.scrollContainer}
-        >
-          {!listOrderState.loading &&
-            orders?.length > 0 &&
-            orders.map((order: Order) => (
-              <View style={viewStyles.orderCard} key={order.purrPetCode}>
-                <View style={viewStyles.flexRow} className='justify-between'>
-                  <View style={viewStyles.flexRow}>
-                    <Text style={textStyles.label} className='mr-1'>
-                      Ngày đặt:
-                    </Text>
-                    <Text style={textStyles.normal}>
-                      {formatDateTime(order.createdAt)}
-                    </Text>
-                  </View>
-                  <View style={viewStyles.flexRow}>
-                    <Text style={textStyles.label} className='mr-1'>
-                      Trạng thái:
-                    </Text>
-                    <Text style={textStyles.normal}>{order.status}</Text>
-                  </View>
-                </View>
-                <View style={viewStyles.flexRow} className='justify-between'>
-                  <Text style={textStyles.hint}>
-                    Mã đơn hàng: {order.purrPetCode}
+      </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[viewStyles.scrollContainer]}
+      >
+        {!listOrderState.loading &&
+          orders?.length > 0 &&
+          orders.map((order: Order) => (
+            <View style={viewStyles.orderCard} key={order.purrPetCode}>
+              <View style={viewStyles.flexRow} className='justify-between'>
+                <View style={viewStyles.flexRow}>
+                  <Text style={textStyles.label} className='mr-1'>
+                    Ngày đặt:
                   </Text>
-                  <Text style={textStyles.hint}>
-                    Tổng tiền: {formatCurrency(order.orderPrice)}
+                  <Text style={textStyles.normal}>
+                    {formatDateTime(order.createdAt)}
                   </Text>
                 </View>
-                <View style={viewStyles.historyImagesWrapper}>
-                  {order.orderItems.map((item) => (
-                    <Image
-                      source={{ uri: item.image }}
-                      style={viewStyles.historyImage}
-                      key={item.productCode}
-                    />
-                  ))}
-                </View>
-                <View style={viewStyles.flexRow} className='justify-end'>
-                  <TouchableOpacity
-                    style={viewStyles.flexRow}
-                    onPress={() =>
-                      navigation.navigate('OrderDetailScreen', {
-                        order: order,
-                      })
-                    }
-                  >
-                    <Text className='mr-1 text-[#A16207]'>Xem chi tiết</Text>
-                    <ChevronRightIcon color='#A16207' />
-                  </TouchableOpacity>
+                <View style={viewStyles.flexRow}>
+                  <Text style={textStyles.label} className='mr-1'>
+                    Trạng thái:
+                  </Text>
+                  <Text style={textStyles.normal}>{order.status}</Text>
                 </View>
               </View>
-            ))}
-          {orders?.length === 0 && (
-            <View style={viewStyles.orderCard}>
-              <Text style={textStyles.normal}>
-                Không có đơn hàng nào ở trạng thái này
-              </Text>
+              <View style={viewStyles.flexRow} className='justify-between'>
+                <Text style={textStyles.hint}>
+                  Mã đơn hàng: {order.purrPetCode}
+                </Text>
+                <Text style={textStyles.hint}>
+                  Tổng tiền: {formatCurrency(order.orderPrice)}
+                </Text>
+              </View>
+              <View style={viewStyles.historyImagesWrapper}>
+                {order.orderItems.map((item) => (
+                  <Image
+                    source={{ uri: item.image }}
+                    style={viewStyles.historyImage}
+                    key={item.productCode}
+                  />
+                ))}
+              </View>
+              <View style={viewStyles.flexRow} className='justify-end'>
+                <TouchableOpacity
+                  style={viewStyles.flexRow}
+                  onPress={() =>
+                    navigation.navigate('OrderDetailScreen', {
+                      order: order,
+                    })
+                  }
+                >
+                  <Text className='mr-1 text-[#A16207]'>Xem chi tiết</Text>
+                  <ChevronRightIcon color='#A16207' />
+                </TouchableOpacity>
+              </View>
             </View>
-          )}
-        </ScrollView>
-      </SafeAreaView>
-    </>
+          ))}
+        {orders?.length === 0 && (
+          <View style={viewStyles.orderCard}>
+            <Text style={textStyles.normal}>
+              Không có đơn hàng nào ở trạng thái này
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

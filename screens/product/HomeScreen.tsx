@@ -21,19 +21,12 @@ import viewStyles from '../styles/ViewStyles';
 import { ChevronsRightIcon } from 'lucide-react-native';
 
 const HomeScreen = ({ navigation, route }: any) => {
-  const [products, setProducts] = useState<Product[]>([]);
   const [bestSeller, setBestSeller] = useState<Product[]>([]);
 
-  const [showFlatlist, setShowFlatlist] = useState(false);
-
   useEffect(() => {
-    getActiveProducts({}).then((res) => {
-      setProducts(res.data);
-    });
     getProductBestSeller({}).then((res) => {
       if (res.data.length > 0) {
         setBestSeller(res.data);
-        setShowFlatlist(true);
       } else {
         err('Không có sản phẩm bán chạy');
       }
@@ -65,32 +58,6 @@ const HomeScreen = ({ navigation, route }: any) => {
       image: require('../../assets/cho8.jpg'),
     },
   ];
-  const sectionSpa = [
-    {
-      key: 'spa',
-      title: 'Trước và sau khi sử dung dịch vụ spa tại PurrPet',
-      data: imageSpa,
-      renderHeader: (section: any) => (
-        <View>
-          <FlatList
-            data={section.data}
-            renderItem={({ item }) => (
-              <Image
-                source={item.image}
-                style={{ width: 100, height: 100, margin: 5 }}
-              />
-            )}
-            horizontal
-            keyExtractor={() => uuidv4()}
-            contentContainerStyle={styles.flatContainer}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-      ),
-      show: true,
-      screen: 'SpaScreen',
-    },
-  ];
   const imageHomestay = [
     {
       image: require('../../assets/phong1.jpg'),
@@ -117,72 +84,6 @@ const HomeScreen = ({ navigation, route }: any) => {
       image: require('../../assets/phong8.jpg'),
     },
   ];
-  const sectionHomestay = [
-    {
-      key: 'homestay',
-      title: 'Phòng ở tại PurrPet',
-      data: imageHomestay,
-      renderHeader: (section: any) => (
-        <View>
-          <FlatList
-            data={section.data}
-            renderItem={({ item }) => (
-              <Image
-                source={item.image}
-                style={{ width: 100, height: 100, margin: 5 }}
-              />
-            )}
-            horizontal
-            keyExtractor={() => uuidv4()}
-            contentContainerStyle={styles.flatContainer}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-      ),
-      show: true,
-      screen: 'HomestayScreen',
-    },
-  ];
-  const sections = [
-    {
-      key: 'bestSeller',
-      title: 'Sản phẩm bán chạy',
-      data: bestSeller,
-      renderHeader: (section: any) => (
-        <View className='border rounded-md border-cyan-600'>
-          <View style={viewStyles.flexRow} className='items-center'>
-            <Text style={textStyles.title}>{section.title}</Text>
-          </View>
-          <FlatList
-            data={section.data}
-            renderItem={({ item }) => (
-              <ProductCard
-                product={item}
-                navigation={navigation}
-                productKey={uuidv4()}
-              />
-            )}
-            horizontal
-            keyExtractor={() => uuidv4()}
-            contentContainerStyle={styles.flatContainer}
-            showsHorizontalScrollIndicator={false}
-          />
-          <TouchableOpacity
-            style={viewStyles.flexRow}
-            className='self-center mt-2 mb-2'
-            onPress={() => navigation.navigate(section.screen)}
-          >
-            <Text className='mr-1 text-[#000000] text-sx'>Xem thêm</Text>
-            <ChevronsRightIcon color='#000000' />
-          </TouchableOpacity>
-        </View>
-      ),
-      show: showFlatlist,
-      screen: 'Sản phẩm',
-    },
-  ] as any;
-
-  const visibleSection = sections.filter((section: any) => section.show) as any;
 
   return (
     <SafeAreaView className=' bg-white'>
@@ -269,22 +170,34 @@ const HomeScreen = ({ navigation, route }: any) => {
                 }}
               />
             </View>
-
-            {bestSeller.length > 0 && products.length > 0 && (
-              <SectionList
-                sections={visibleSection}
-                renderSectionHeader={({ section }) =>
-                  section.renderHeader(section)
-                }
-                renderItem={({ item }) => <></>}
-                // horizontal
-                keyExtractor={() => uuidv4()}
-                contentContainerStyle={{
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                }}
-                stickySectionHeadersEnabled={false} // Add this line to disable sticky section headers
-              />
+            {bestSeller.length > 0 && (
+              <View className='border-t border-b border-cyan-600'>
+                <View style={viewStyles.flexRow} className='items-center'>
+                  <Text style={textStyles.title}>Sản phẩm bán chạy</Text>
+                </View>
+                <FlatList
+                  data={bestSeller}
+                  renderItem={({ item }) => (
+                    <ProductCard
+                      product={item}
+                      navigation={navigation}
+                      productKey={uuidv4()}
+                    />
+                  )}
+                  horizontal
+                  keyExtractor={() => uuidv4()}
+                  contentContainerStyle={styles.flatContainer}
+                  showsHorizontalScrollIndicator={false}
+                />
+                <TouchableOpacity
+                  style={viewStyles.flexRow}
+                  className='self-center mt-2 mb-2'
+                  onPress={() => navigation.navigate('Sản phẩm')}
+                >
+                  <Text className='mr-1 text-[#000000] text-sx'>Xem thêm</Text>
+                  <ChevronsRightIcon color='#000000' />
+                </TouchableOpacity>
+              </View>
             )}
             <View>
               <Image
@@ -322,20 +235,21 @@ const HomeScreen = ({ navigation, route }: any) => {
                   </Text>
                 </View>
               </View>
-              <SectionList
-                sections={sectionSpa}
-                renderSectionHeader={({ section }) =>
-                  section.renderHeader(section)
-                }
-                renderItem={({ item }) => <></>}
-                // horizontal
-                keyExtractor={() => uuidv4()}
-                contentContainerStyle={{
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                }}
-                stickySectionHeadersEnabled={false} // Add this line to disable sticky section headers
-              />
+              <View>
+                <FlatList
+                  data={imageSpa}
+                  renderItem={({ item }) => (
+                    <Image
+                      source={item.image}
+                      style={{ width: 100, height: 100, margin: 5 }}
+                    />
+                  )}
+                  horizontal
+                  keyExtractor={() => uuidv4()}
+                  contentContainerStyle={styles.flatContainer}
+                  showsHorizontalScrollIndicator={false}
+                />
+              </View>
             </View>
             <View style={{ backgroundColor: '#BAE6FD', paddingBottom: 20 }}>
               <Text
@@ -369,20 +283,21 @@ const HomeScreen = ({ navigation, route }: any) => {
                   }}
                 />
               </View>
-              <SectionList
-                sections={sectionHomestay}
-                renderSectionHeader={({ section }) =>
-                  section.renderHeader(section)
-                }
-                renderItem={({ item }) => <></>}
-                // horizontal
-                keyExtractor={() => uuidv4()}
-                contentContainerStyle={{
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                }}
-                stickySectionHeadersEnabled={false} // Add this line to disable sticky section headers
-              />
+              <View>
+                <FlatList
+                  data={imageHomestay}
+                  renderItem={({ item }) => (
+                    <Image
+                      source={item.image}
+                      style={{ width: 100, height: 100, margin: 5 }}
+                    />
+                  )}
+                  horizontal
+                  keyExtractor={() => uuidv4()}
+                  contentContainerStyle={styles.flatContainer}
+                  showsHorizontalScrollIndicator={false}
+                />
+              </View>
             </View>
           </View>
         </View>

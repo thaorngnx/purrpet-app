@@ -141,7 +141,6 @@ const ProductScreen = ({ navigation, route }: any) => {
           <SearchProduct navigation={navigation} />
         </View>
       </View>
-      {/* <View className=' bg-pink-200 h-10 z-0'></View> */}
       <View style={styles.filter}>
         <Select
           onValueChange={handleSelectCategory}
@@ -229,7 +228,7 @@ const styles = StyleSheet.create({
   },
   filter: {
     width: '40%',
-    marginTop: 40,
+    marginTop: 50,
     margin: 10,
   },
   row: {

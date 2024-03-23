@@ -2,18 +2,20 @@ import { StyleSheet } from 'react-native';
 
 const viewStyles = StyleSheet.create({
   container: {
-    paddingHorizontal: 15,
+    // paddingHorizontal: 15,
     flex: 1,
     backgroundColor: 'white',
     width: '100%',
+    // alignContent: 'center',
   },
   card: {
     padding: 15,
+    margin: 15,
     backgroundColor: 'white',
     borderRadius: 12,
     marginBottom: 10,
     elevation: 5,
-    width: '100%',
+    width: 'auto',
   },
   form: {
     padding: 15,
@@ -53,7 +55,8 @@ const viewStyles = StyleSheet.create({
     // backgroundColor: '#f2f2f2',
     marginBottom: 10,
     height: 50,
-    // flex: 1,
+    maxHeight: 50,
+    minHeight: 50,
     // flexGrow: 0,
   },
   tab: {
@@ -93,9 +96,8 @@ const viewStyles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 12,
     elevation: 5,
-    minWidth: '98%',
-    maxWidth: '98%',
-    margin: 8,
+    margin: 10,
+    width: 'auto',
   },
   colorCard: {
     backgroundColor: 'white',
@@ -107,10 +109,6 @@ const viewStyles = StyleSheet.create({
   },
   scrollContainer: {
     backgroundColor: 'white',
-    alignItems: 'center',
-    // height: '86%',
-    // minHeight: '90%',
-    // minHeight: 'auto',
     paddingBottom: 10,
   },
   line: {

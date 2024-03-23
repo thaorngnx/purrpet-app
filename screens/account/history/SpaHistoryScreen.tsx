@@ -67,33 +67,34 @@ const SpaHistoryScreen = ({ navigation }: any) => {
           </TouchableOpacity>
           <Text style={textStyles.title}>Lịch sử đặt lịch spa</Text>
         </View>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={viewStyles.tabContainer}
-          key={tabSpa}
-        >
-          <TouchableOpacity
-            key={0}
-            style={[viewStyles.tab, tabSpa === 0 && viewStyles.activeTab]}
-            onPress={() => setTabSpa(0)}
+        <View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={viewStyles.tabContainer}
+            key={tabSpa}
           >
-            <Text style={viewStyles.tabText}>Tất cả</Text>
-          </TouchableOpacity>
-          {Object.values(CONST.STATUS_BOOKING).map((status, index) => (
             <TouchableOpacity
-              key={index + 1}
-              style={[
-                viewStyles.tab,
-                tabSpa === index + 1 && viewStyles.activeTab,
-              ]}
-              onPress={() => setTabSpa(index + 1)}
+              key={0}
+              style={[viewStyles.tab, tabSpa === 0 && viewStyles.activeTab]}
+              onPress={() => setTabSpa(0)}
             >
-              <Text style={viewStyles.tabText}>{status}</Text>
+              <Text style={viewStyles.tabText}>Tất cả</Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
+            {Object.values(CONST.STATUS_BOOKING).map((status, index) => (
+              <TouchableOpacity
+                key={index + 1}
+                style={[
+                  viewStyles.tab,
+                  tabSpa === index + 1 && viewStyles.activeTab,
+                ]}
+                onPress={() => setTabSpa(index + 1)}
+              >
+                <Text style={viewStyles.tabText}>{status}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={viewStyles.scrollContainer}

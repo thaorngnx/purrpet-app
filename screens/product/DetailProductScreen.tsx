@@ -1,7 +1,6 @@
 import { AddIcon, ArrowLeftIcon, RemoveIcon, View } from '@gluestack-ui/themed';
 import React from 'react';
 import {
-  Button,
   Image,
   SafeAreaView,
   ScrollView,
@@ -11,6 +10,8 @@ import {
 import SearchProduct from '../components/Search/SearchProduct';
 import { StyleSheet } from 'react-native';
 import buttonStyles from '../styles/ButtonStyles';
+import { formatCurrency } from '../../utils/formatData';
+import textStyles from '../styles/TextStyles';
 
 const DetailProductScreen = ({ navigation, route }: any) => {
   const [quantity, setQuantity] = React.useState(1);
@@ -33,12 +34,15 @@ const DetailProductScreen = ({ navigation, route }: any) => {
         <View>
           <Image
             source={{ uri: product.images[0]?.path }}
-            style={[styles.image, { width: '100%', height: 300 }]}
+            style={[
+              styles.image,
+              { width: '90%', height: 350, objectFit: 'contain' },
+            ]}
           />
           <View style={styles.content}>
             <Text style={styles.name}>{product.productName}</Text>
             <View style={styles.count}>
-              <Text style={styles.price}>đ {product.price}</Text>
+              <Text style={styles.price}>{formatCurrency(product.price)}</Text>
               <View style={styles.button}>
                 <View>
                   <TouchableOpacity
@@ -79,16 +83,19 @@ const DetailProductScreen = ({ navigation, route }: any) => {
               </View>
             </View>
 
-            <Text
-              style={{
-                fontSize: 18,
-                color: '#A16207',
-                fontWeight: 'bold',
-                marginTop: 10,
-              }}
-            >
-              Mô tả
-            </Text>
+            <View>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: '#A16207',
+                  fontWeight: 'bold',
+                  marginTop: 10,
+                }}
+              >
+                Mô tả
+              </Text>
+              <Text style={textStyles.normal}>{product.description}</Text>
+            </View>
 
             <Text style={{ marginTop: 10, marginBottom: 20 }}>
               {product.description}
@@ -122,13 +129,14 @@ const styles = StyleSheet.create({
   },
   search: {
     width: '100%',
+    height: 70,
     paddingRight: 15,
   },
   image: {
     alignSelf: 'center',
   },
   content: {
-    marginTop: 50,
+    marginTop: 20,
     padding: 20,
     backgroundColor: '#fff',
     borderTopLeftRadius: 32,

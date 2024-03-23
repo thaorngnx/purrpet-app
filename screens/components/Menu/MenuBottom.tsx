@@ -17,6 +17,9 @@ import {
   Home,
 } from 'lucide-react-native';
 import HomeScreen from '../../product/HomeScreen';
+import { Badge, VStack } from '@gluestack-ui/themed';
+import { BadgeText } from '@gluestack-ui/themed';
+import { BadgeIcon } from '@gluestack-ui/themed';
 
 const MenuBottom = () => {
   const Tab = createBottomTabNavigator();
@@ -40,8 +43,9 @@ const MenuBottom = () => {
         component={HomeScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => <Home color='#ca8a04' />,
-          // headerRight: () => <SearchProduct navigation={'SearchScreen'} />,
+          tabBarIcon: ({ focused }) => (
+            <Home color={focused ? '#000000' : '#ca8a04'} />
+          ),
           tabBarLabelStyle: styles.tabBarLabel,
         }}
       />
@@ -50,7 +54,9 @@ const MenuBottom = () => {
         component={ProductScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => <Menu color='#ca8a04' />,
+          tabBarIcon: ({ focused }) => (
+            <Menu color={focused ? '#000000' : '#ca8a04'} />
+          ),
           // headerRight: () => <SearchProduct navigation={'SearchScreen'} />,
           tabBarLabelStyle: styles.tabBarLabel,
         }}
@@ -60,7 +66,9 @@ const MenuBottom = () => {
         component={CartScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => <ShoppingBasket color='#ca8a04' />,
+          tabBarIcon: ({ focused }) => (
+            <ShoppingBasket color={focused ? '#000000' : '#ca8a04'} />
+          ),
           tabBarLabelStyle: styles.tabBarLabel,
         }}
       />
@@ -69,7 +77,9 @@ const MenuBottom = () => {
         component={ServiceScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => <PawPrint color='#ca8a04' />,
+          tabBarIcon: ({ focused }) => (
+            <PawPrint color={focused ? '#000000' : '#ca8a04'} />
+          ),
           tabBarLabelStyle: styles.tabBarLabel,
         }}
       />
@@ -78,7 +88,9 @@ const MenuBottom = () => {
         component={NotificationScreen}
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => <Bell color='#ca8a04' />,
+          tabBarIcon: ({ focused }) => (
+            <Bell color={focused ? '#000000' : '#ca8a04'} />
+          ),
           tabBarLabelStyle: styles.tabBarLabel,
         }}
       />
@@ -91,7 +103,9 @@ const MenuBottom = () => {
         }
         options={{
           headerShown: false,
-          tabBarIcon: ({ color, size }) => <UserRound color='#ca8a04' />,
+          tabBarIcon: ({ focused }) => (
+            <UserRound color={focused ? '#000000' : '#ca8a04'} />
+          ),
           tabBarLabelStyle: styles.tabBarLabel,
         }}
       />
