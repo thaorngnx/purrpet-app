@@ -46,6 +46,7 @@ const ProductScreen = ({ navigation, route }: any) => {
   const [stopLoadMore, setStopLoadMore] = useState(true);
 
   useEffect(() => {
+    setPagination({ page: 1, limit: 6, total: 1 });
     if (route.params?.category) {
       const { category } = route.params;
       setSearch(category.purrPetCode);
@@ -72,6 +73,7 @@ const ProductScreen = ({ navigation, route }: any) => {
       limit: 6,
       page: pagination.page,
       key: search,
+      // categoryCode: selectedCategory.purrPetCode,
     };
     console.log(params);
     getActiveProducts(params).then((res) => {
@@ -89,7 +91,7 @@ const ProductScreen = ({ navigation, route }: any) => {
         page: pagination.page + 1,
         key: search,
       };
-      console.log(params);
+      // console.log('params', params);
 
       try {
         const res = await getActiveProducts(params);
@@ -184,7 +186,11 @@ const ProductScreen = ({ navigation, route }: any) => {
           />
         )}
         keyExtractor={(item) => item.purrPetCode}
-        onEndReached={() => handleLoadMore()}
+        onEndReached={() => {
+          if (pagination.page < pagination.total) {
+            handleLoadMore();
+          }
+        }}
         onEndReachedThreshold={0.5}
         onScrollBeginDrag={() => {
           setStopLoadMore(false);

@@ -97,7 +97,7 @@ const DetailProductScreen = ({ navigation, route }: any) => {
               <Text style={textStyles.normal}>{product.description}</Text>
             </View>
 
-            <Text style={{ marginTop: 10, marginBottom: 20 }}>
+            <Text style={{ marginTop: 10, marginBottom: 20, color: '#000000' }}>
               {product.description}
             </Text>
 
