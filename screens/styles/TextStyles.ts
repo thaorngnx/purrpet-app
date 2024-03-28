@@ -13,7 +13,7 @@ const textStyles = StyleSheet.create({
   label: {
     color: 'black',
     fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: 16,
     marginRight: 3,
   },
   miniLabel: {

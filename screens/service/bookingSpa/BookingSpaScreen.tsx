@@ -9,7 +9,6 @@ import {
   TextInput,
 } from 'react-native';
 import { useState } from 'react';
-import CustomerInfoForm from './CustomerInfoForm';
 
 import {
   ChevronLeftIcon,
@@ -21,17 +20,16 @@ import {
   RadioIndicator,
   RadioLabel,
 } from '@gluestack-ui/themed';
-import textStyles from '../styles/TextStyles';
-import textInputStyles from '../styles/TextInputStyles';
-import * as CONST from '../constants';
-import { Category } from '../../interface/Category';
+import textStyles from '../../styles/TextStyles';
+import textInputStyles from '../../styles/TextInputStyles';
+import * as CONST from '../../constants';
+import { Category } from '../../../interface/Category';
 import { useEffect } from 'react';
-import { getActiveCategories } from '../../api/category';
-import { getActiveSpas } from '../../api/spa';
-import buttonStyles from '../styles/ButtonStyles';
+import { getActiveCategories } from '../../../api/category';
+import { getActiveSpas } from '../../../api/spa';
+import buttonStyles from '../../styles/ButtonStyles';
 import TimeSpaForm from './TimeSpaForm';
-import { createBookingSpa } from '../../api/bookingSpa';
-import { validateObject } from '../../utils/validationData';
+import { createBookingSpa } from '../../../api/bookingSpa';
 
 const BookingSpaScreen = ({ route, navigation }: any) => {
   const [error, setError] = useState({
@@ -42,7 +40,6 @@ const BookingSpaScreen = ({ route, navigation }: any) => {
     bookingDate: '',
     bookingTime: '',
   });
-  const [message, setMessage] = useState('');
   const [categories, setCategories] = useState([{} as Category]);
   const [allSpas, setAllSpas] = useState([
     {
@@ -64,8 +61,7 @@ const BookingSpaScreen = ({ route, navigation }: any) => {
   ]);
   const [validSize, setValidSize] = useState<string[]>([]);
   const [openTimeForm, setOpenTimeForm] = useState(false);
-  const [openCustomerInfoForm, setOpenCustomerInfoForm] = useState(false);
-  const [showBtnConfirmBook, setShowBtnConfirmBook] = useState(false);
+  // const [showBtnConfirmBook, setShowBtnConfirmBook] = useState(false);
   const [bookingInfo, setBookingInfo] = useState({
     petName: '',
     petType: '',
@@ -73,7 +69,6 @@ const BookingSpaScreen = ({ route, navigation }: any) => {
     spaName: '',
     spaCode: '',
     bookingSpaPrice: 0,
-    customerCode: '',
     customerNote: '',
     bookingDate: '',
     bookingTime: '',
@@ -83,11 +78,9 @@ const BookingSpaScreen = ({ route, navigation }: any) => {
     getActiveCategories({
       categoryType: CONST.CATEGORY_TYPE.SPA,
     }).then((res) => {
-      // console.log(res.data);
       setCategories(res.data);
     });
     getActiveSpas().then((res) => {
-      // console.log(res.data);
       setAllSpas(res.data);
     });
   }, []);
@@ -177,106 +170,132 @@ const BookingSpaScreen = ({ route, navigation }: any) => {
     setBookingInfo(bookingInfo);
     console.log(bookingInfo);
   };
-  const handleCustomerInfo = (customerInfo: any) => {
-    setBookingInfo({
-      ...bookingInfo,
-      customerCode: customerInfo.customerCode,
-      customerNote: customerInfo.customerNote,
-    });
-  };
 
-  const handleConfirmInfo = (confirm: any) => {
-    setShowBtnConfirmBook(confirm);
-  };
-
-  const handleConfirmBooking = () => {
-    setShowBtnConfirmBook(false);
-    console.log('book', bookingInfo);
+  const handleConfirmBooking = (customerCode: any, customerNote: any) => {
     createBookingSpa({
       petName: bookingInfo.petName,
       spaCode: bookingInfo.spaCode,
       bookingSpaPrice: bookingInfo.bookingSpaPrice,
-      customerCode: bookingInfo.customerCode,
-      customerNote: bookingInfo.customerNote,
+      customerCode: customerCode,
+      customerNote: customerNote,
       bookingDate: bookingInfo.bookingDate,
       bookingTime: bookingInfo.bookingTime,
     }).then((res) => {
       console.log(res);
       if (res.err === 0) {
-        // navigate(`/bookingSpa/${res.data.purrPetCode}`);
-        // navigate("/");
         console.log('booking success');
         setTimeout(() => {
-          navigation.goBack();
+          navigation.navigate('Dịch vụ');
         }, 1000);
       }
-      setMessage(res.message);
+      console.log(res.message);
     });
   };
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View
         style={{
-          backgroundColor: '#FDE047',
+          backgroundColor: '#BAE6FD',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: 50,
-          paddingRight: 100,
+          height: 70,
         }}
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon as={ChevronLeftIcon} size='xl' color='#B91C1C' />
         </TouchableOpacity>
-        <Text style={textStyles.title}>Thông tin đặt lịch spa</Text>
+        <Text style={textStyles.title} className='self-center'>
+          Thông tin đặt lịch spa
+        </Text>
       </View>
       <ScrollView>
         <View style={styles.infoPet}>
-          <Text style={textStyles.labelCenter}>Thông tin thú cưng</Text>
-          <TextInput
-            placeholder='Tên thú cưng'
-            style={textInputStyles.textInputBorder}
-            value={bookingInfo.petName}
-            onChangeText={(text) => handleChangeBookingInfo(text, 'petName')}
-          />
-          <Text style={textStyles.error}>
-            {error.petName ? error.petName : ''}
-          </Text>
-          <View style={{ marginTop: 5 }}>
-            <Text style={textStyles.label}>Thú cưng là:</Text>
-            <RadioGroup
-              value={bookingInfo.petType}
-              style={{ flexDirection: 'row' }}
-              onChange={(value) => handleChangeBookingInfo(value, 'petType')}
-            >
-              {Object.values(CONST.PET_TYPE).map((value, index) => (
-                <Radio
-                  value={value}
-                  size='sm'
-                  style={{ marginRight: 30 }}
-                  key={index}
-                >
-                  <RadioIndicator mr='$2'>
-                    <RadioIcon as={CircleIcon} />
-                  </RadioIndicator>
-                  <RadioLabel>{value}</RadioLabel>
-                </Radio>
-              ))}
-            </RadioGroup>
-          </View>
-          <View>
-            {bookingInfo.petType && (
+          <View
+            style={{
+              backgroundColor: '#fff',
+              padding: 10,
+            }}
+          >
+            <Text style={textStyles.labelCenter}>Thông tin thú cưng</Text>
+            <TextInput
+              placeholder='Tên thú cưng'
+              style={textInputStyles.textInputBorder}
+              value={bookingInfo.petName}
+              onChangeText={(text) => handleChangeBookingInfo(text, 'petName')}
+            />
+            <Text style={textStyles.error}>
+              {error.petName ? error.petName : ''}
+            </Text>
+            <View>
+              <Text style={textStyles.label} className='mb-3 '>
+                Thú cưng là:
+              </Text>
+              <RadioGroup
+                value={bookingInfo.petType}
+                style={{ flexDirection: 'row' }}
+                onChange={(value) => handleChangeBookingInfo(value, 'petType')}
+              >
+                {Object.values(CONST.PET_TYPE).map((value, index) => (
+                  <Radio
+                    value={value}
+                    size='sm'
+                    style={{ marginRight: 30 }}
+                    key={index}
+                  >
+                    <RadioIndicator mr='$2'>
+                      <RadioIcon as={CircleIcon} />
+                    </RadioIndicator>
+                    <RadioLabel>{value}</RadioLabel>
+                  </Radio>
+                ))}
+              </RadioGroup>
+            </View>
+            <View>
+              {bookingInfo.petType && (
+                <View style={{ marginTop: 5 }}>
+                  <Text style={textStyles.label} className='mb-3 mt-3'>
+                    Cân nặng của thú cưng:
+                  </Text>
+                  <RadioGroup
+                    value={bookingInfo.size}
+                    style={{ flexDirection: 'row', flexWrap: 'wrap' }}
+                    onChange={(value) => handleChangeBookingInfo(value, 'size')}
+                  >
+                    {validSize &&
+                      validSize.map((value, index) => (
+                        <Radio
+                          value={value}
+                          size='sm'
+                          style={{ marginRight: 8, marginTop: 7 }}
+                          key={index}
+                        >
+                          <RadioIndicator mr='$2'>
+                            <RadioIcon as={CircleIcon} />
+                          </RadioIndicator>
+                          <RadioLabel>{value}</RadioLabel>
+                        </Radio>
+                      ))}
+                  </RadioGroup>
+                </View>
+              )}
+            </View>
+            {bookingInfo.size && (
               <View style={{ marginTop: 5 }}>
-                <Text style={textStyles.label}>Cân nặng của thú cưng:</Text>
+                <Text style={textStyles.label} className='mb-3 mt-3'>
+                  Chọn gói dịch vụ:
+                </Text>
                 <RadioGroup
-                  value={bookingInfo.size}
+                  value={bookingInfo.spaName}
                   style={{ flexDirection: 'row' }}
-                  onChange={(value) => handleChangeBookingInfo(value, 'size')}
+                  onChange={(value) =>
+                    handleChangeBookingInfo(value, 'spaName')
+                  }
                 >
-                  {validSize &&
-                    validSize.map((value, index) => (
+                  {validSpas &&
+                    validSpas.map((value, index) => (
                       <Radio
-                        value={value}
+                        value={value.spaName}
                         size='sm'
                         style={{ marginRight: 5 }}
                         key={index}
@@ -284,95 +303,68 @@ const BookingSpaScreen = ({ route, navigation }: any) => {
                         <RadioIndicator mr='$2'>
                           <RadioIcon as={CircleIcon} />
                         </RadioIndicator>
-                        <RadioLabel>{value}</RadioLabel>
+                        <RadioLabel>{value.spaName}</RadioLabel>
                       </Radio>
                     ))}
                 </RadioGroup>
               </View>
             )}
-          </View>
-          {bookingInfo.size && (
-            <View style={{ marginTop: 5 }}>
-              <Text style={textStyles.label}>Chọn gói dịch vụ:</Text>
-              <RadioGroup
-                value={bookingInfo.spaName}
-                style={{ flexDirection: 'row' }}
-                onChange={(value) => handleChangeBookingInfo(value, 'spaName')}
-              >
-                {validSpas &&
-                  validSpas.map((value, index) => (
-                    <Radio
-                      value={value.spaName}
-                      size='sm'
-                      style={{ marginRight: 5 }}
-                      key={index}
-                    >
-                      <RadioIndicator mr='$2'>
-                        <RadioIcon as={CircleIcon} />
-                      </RadioIndicator>
-                      <RadioLabel>{value.spaName}</RadioLabel>
-                    </Radio>
-                  ))}
-              </RadioGroup>
-            </View>
-          )}
-          {bookingInfo.spaName && (
-            <View>
-              <Text
-                style={{
-                  alignSelf: 'flex-end',
-                  margin: 5,
-                  fontSize: 14,
-                  fontWeight: 'bold',
-                  color: '#000',
-                }}
-              >
-                Tổng tiền: {bookingInfo.bookingSpaPrice}
-              </Text>
-              {!openTimeForm && (
-                <TouchableOpacity
-                  style={buttonStyles.buttonConfirm}
-                  onPress={() => handleOpenTimeForm()}
+            {bookingInfo.spaName && (
+              <View>
+                <Text
+                  style={{
+                    alignSelf: 'flex-end',
+                    margin: 5,
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: '#000',
+                  }}
                 >
-                  <Text
-                    style={{
-                      color: '#fff',
-                      fontWeight: 'bold',
-                      alignSelf: 'center',
-                    }}
+                  Tổng tiền: {bookingInfo.bookingSpaPrice}
+                </Text>
+                {!openTimeForm && (
+                  <TouchableOpacity
+                    style={buttonStyles.buttonConfirm}
+                    onPress={() => handleOpenTimeForm()}
                   >
-                    Tiếp tục
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
+                    <Text
+                      style={{
+                        color: '#fff',
+                        fontWeight: 'bold',
+                        alignSelf: 'center',
+                      }}
+                    >
+                      Tiếp tục
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+          </View>
           {openTimeForm && (
             <TimeSpaForm
               bookingInfo={bookingInfo}
-              setOpenCustomerInfoForm={setOpenCustomerInfoForm}
               updateBookingInfo={handleUpdateBookingInfo}
             />
           )}
-          {openCustomerInfoForm && (
-            <CustomerInfoForm
-              customer={handleCustomerInfo}
-              confirmInfo={handleConfirmInfo}
-            />
-          )}
-          {showBtnConfirmBook && (
+          {bookingInfo.bookingTime && (
             <TouchableOpacity
               style={buttonStyles.buttonConfirm}
-              onPress={handleConfirmBooking}
+              onPress={() => {
+                navigation.navigate('ProcessingBookingSpa', {
+                  bookingInfo: bookingInfo,
+                });
+              }}
             >
               <Text
                 style={{
-                  color: '#FFF',
+                  color: '#fff',
                   fontWeight: 'bold',
                   alignSelf: 'center',
+                  marginTop: 5,
                 }}
               >
-                Xác nhận đặt lịch
+                Tiếp tục
               </Text>
             </TouchableOpacity>
           )}
@@ -383,7 +375,7 @@ const BookingSpaScreen = ({ route, navigation }: any) => {
 };
 const styles = StyleSheet.create({
   infoPet: {
-    margin: 20,
+    padding: 10,
   },
   datePickerStyle: {
     flexDirection: 'row',
@@ -394,4 +386,5 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
 });
+
 export default BookingSpaScreen;

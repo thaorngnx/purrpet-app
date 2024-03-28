@@ -48,7 +48,7 @@ const buttonStyles = StyleSheet.create({
     width: 40,
   },
   buttonConfirm: {
-    backgroundColor: '#A16207',
+    backgroundColor: '#ed77ac',
     padding: 8,
     borderRadius: 5,
     marginTop: 10,

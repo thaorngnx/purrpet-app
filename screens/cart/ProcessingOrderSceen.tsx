@@ -10,76 +10,101 @@ import viewStyles from '../styles/ViewStyles';
 import { useCartStore } from '../../zustand/cartStore';
 import textStyles from '../styles/TextStyles';
 import { useCustomerStore } from '../../zustand/customerStore';
-import { ArrowLeftIcon } from '@gluestack-ui/themed';
+import {
+  ArrowLeftIcon,
+  ChevronLeftIcon,
+  Icon,
+  Textarea,
+  TextareaInput,
+} from '@gluestack-ui/themed';
 import { ProductCartInfo } from '../../interface/Cart';
 import { Image } from 'react-native';
 import { formatCurrency } from '../../utils/formatData';
-import textInputStyles from '../styles/TextInputStyles';
 import { useEffect, useState } from 'react';
-import { Customer } from '../../api/customer';
+import CustomerInfoOrder from './CustomerInfoOrder';
+import { createOrder } from '../../api/order';
 
 const ProcessingOrderSceen = ({ navigation, route }: any) => {
   const { productCart } = route.params;
-  // const cart = useCartStore((state) => state.cartState.data);
+  //const cart = useCartStore((state) => state.cartState.data);
+  const { deleteCart } = useCartStore();
   const customer = useCustomerStore((state) => state.customerState.data);
-  const [customerInfo, setCustomerInfo] = useState<Customer>({} as Customer);
+  const hasCustomerInfo = Object.keys(customer).length > 0;
+  const [customerInfo, setCustomerInfo] = useState(customer);
+  const [customerNote, setCustomerNote] = useState('');
 
+  const handleOrder = () => {
+    createOrder({
+      customerCode: customerInfo.purrPetCode,
+      orderItems: productCart.map((product: ProductCartInfo) => ({
+        productCode: product.purrPetCode,
+        quantity: product.quantity,
+      })),
+      customerAddress: {
+        street: customerInfo.address.street,
+        ward: customerInfo.address.ward,
+        district: customerInfo.address.district,
+        province: customerInfo.address.province,
+      },
+      customerNote: customerNote,
+    }).then((res) => {
+      if (res.err == 0) {
+        console.log('Đặt hàng thành công');
+        navigation.navigate('Sản phẩm');
+        deleteCart();
+      } else {
+        console.log(res);
+      }
+    });
+  };
   useEffect(() => {
-    setCustomerInfo(customer);
+    if (hasCustomerInfo) {
+      setCustomerInfo(customer);
+    }
   }, [customer]);
 
+  const handleChangeNote = (event: any) => {
+    const { text } = event.nativeEvent;
+    setCustomerNote(text);
+  };
+  console.log(customerNote);
   return (
-    <SafeAreaView style={viewStyles.container} className='flex-1'>
-      <View style={viewStyles.titlePageBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowLeftIcon />
-        </TouchableOpacity>
-        <Text style={textStyles.title}>Thông tin đặt hàng</Text>
-      </View>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={viewStyles.scrollContainer}
+    <SafeAreaView style={viewStyles.container}>
+      <View
+        style={{
+          flexDirection: 'row',
+          backgroundColor: '#BAE6FD',
+          height: 50,
+          alignItems: 'center',
+        }}
       >
-        {Object.keys(customer).length != 0 ? (
-          <View>
+        <Text style={textStyles.title}>
+          {hasCustomerInfo ? 'Đặt hàng' : 'Xác thực người dùng'}
+        </Text>
+      </View>
+      <View>
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row',
+            margin: 5,
+            alignItems: 'center',
+          }}
+          onPress={() => navigation.goBack()}
+        >
+          <Icon as={ChevronLeftIcon} size='xl' marginRight={4} />
+          <Text style={textStyles.hintBoldItalic}>Xem lại giỏ hàng</Text>
+        </TouchableOpacity>
+      </View>
+      <ScrollView style={{ flex: 1 }}>
+        <CustomerInfoOrder />
+        {hasCustomerInfo && (
+          <View style={{ flex: 1, backgroundColor: '#fff', marginTop: 10 }}>
             <Text
               style={[
                 textStyles.label,
                 {
                   textAlign: 'center',
-                },
-              ]}
-            >
-              Thông tin khách hàng
-            </Text>
-            <View style={viewStyles.card}>
-              <View>
-                <View style={viewStyles.flexRow}>
-                  <Text style={textStyles.label}>Tên khách hàng:</Text>
-                  <Text style={[textStyles.normal, { flex: 1 }]}>
-                    {customer.name}
-                  </Text>
-                </View>
-                <View style={viewStyles.flexRow}>
-                  <Text style={textStyles.label}>Số điện thoại:</Text>
-                  <Text style={[textStyles.normal, { flex: 1 }]}>
-                    {customer.phoneNumber}
-                  </Text>
-                </View>
-                <View style={viewStyles.flexRow}>
-                  <Text style={textStyles.label}>Địa chỉ:</Text>
-                  <Text style={[textStyles.normal, { flex: 1 }]}>
-                    {customer.address.street}, {customer.address.district},{' '}
-                    {customer.address.province}
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <Text
-              style={[
-                textStyles.label,
-                {
-                  textAlign: 'center',
+                  marginTop: 10,
                 },
               ]}
             >
@@ -135,32 +160,28 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                 </View>
               ))}
             </View>
-          </View>
-        ) : (
-          <View>
-            <Text
-              style={[
-                textStyles.label,
-                {
-                  textAlign: 'center',
-                },
-              ]}
-            >
-              Thông tin khách hàng
-            </Text>
-            <View style={viewStyles.card}>
-              <View>
-                <Text style={textStyles.label}>Email:</Text>
-                <TextInput
-                  style={textInputStyles.textInputBorder}
-                  value={customerInfo.email}
-                  editable={false}
+            <View style={{ margin: 10, padding: 5, backgroundColor: '#fff' }}>
+              <Textarea
+                size='md'
+                isReadOnly={false}
+                isInvalid={false}
+                isDisabled={false}
+                w='100%'
+              >
+                <TextareaInput
+                  value={customerNote}
+                  placeholder='Yêu cầu khác (nếu có)'
+                  onChange={(event) => handleChangeNote(event)}
                 />
-              </View>
+              </Textarea>
             </View>
           </View>
         )}
+        {/* <View>
+          <Text>Phương thức thanh toán</Text>
+        </View> */}
       </ScrollView>
+
       <View
         style={[
           viewStyles.flexRow,
@@ -202,7 +223,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
             flex: 1,
             justifyContent: 'center',
           }}
-          onPress={() => navigation.navigate('OrderSuccess')}
+          onPress={() => handleOrder()}
         >
           <Text style={textStyles.bold}>Đặt hàng</Text>
         </TouchableOpacity>

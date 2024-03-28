@@ -26,11 +26,13 @@ import HomestayHistoryScreen from './screens/account/history/HomestayHistoryScre
 import OrderDetailScreen from './screens/account/history/detail/OrderDetailScreen';
 import BookingSpaDetailScreen from './screens/account/history/detail/BookingSpaDetailScreen';
 import BookingHomeDetailScreen from './screens/account/history/detail/BookingHomeDetailScreen';
-import BookingHomeScreen from './screens/service/BookingHomeScreen';
-import BookingSpaScreen from './screens/service/BookingSpaScreen';
+import BookingHomeScreen from './screens/service/bookingHome/BookingHomeScreen';
+import BookingSpaScreen from './screens/service/bookingSpa/BookingSpaScreen';
 import WellcomeSrceen from './screens/components/Wellcome/WellcomeScreen';
 import { useCartStore } from './zustand/cartStore';
 import ProcessingOrderSceen from './screens/cart/ProcessingOrderSceen';
+import ProcessingBookingSpa from './screens/service/bookingSpa/ProcessingBookingSpa';
+import ProcessingBookingHome from './screens/service/bookingHome/ProcessingBookingHome';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -184,6 +186,16 @@ export default function App() {
           <Stack.Screen
             name='ProcessingOrderSceen'
             component={ProcessingOrderSceen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='ProcessingBookingSpa'
+            component={ProcessingBookingSpa}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='ProcessingBookingHome'
+            component={ProcessingBookingHome}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

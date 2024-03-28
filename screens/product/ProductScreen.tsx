@@ -136,7 +136,7 @@ const ProductScreen = ({ navigation, route }: any) => {
           <Text style={styles.text}>PurrPet Shop</Text>
           <Image
             source={require('../../assets/Purrshop1.png')}
-            className='w-15 h-55 self-center'
+            className='w-12 h-12 self-center'
           />
         </View>
         <View style={styles.search} className=' z-10'>

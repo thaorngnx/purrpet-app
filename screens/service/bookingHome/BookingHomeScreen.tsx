@@ -7,7 +7,6 @@ import {
   Radio,
   RadioIndicator,
   RadioLabel,
-  set,
 } from '@gluestack-ui/themed';
 import React from 'react';
 import { useState } from 'react';
@@ -20,25 +19,22 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
-import textStyles from '../styles/TextStyles';
-import textInputStyles from '../styles/TextInputStyles';
-import * as CONST from '../constants';
+import textStyles from '../../styles/TextStyles';
+import textInputStyles from '../../styles/TextInputStyles';
+import * as CONST from '../../constants';
 import { useEffect } from 'react';
-import { getActiveCategories } from '../../api/category';
-import { getMasterDatas } from '../../api/masterData';
-import { createBookingHome, getUnavailableDay } from '../../api/bookingHome';
-import { getActiveHomestays } from '../../api/homestay';
-import { Homestay } from '../../interface/Homestay';
-import { BookingHomeInfo } from '../../interface/BookingHome';
+import { getActiveCategories } from '../../../api/category';
+import { getMasterDatas } from '../../../api/masterData';
+import { createBookingHome, getUnavailableDay } from '../../../api/bookingHome';
+import { getActiveHomestays } from '../../../api/homestay';
+import { Homestay } from '../../../interface/Homestay';
+import { BookingHomeInfo } from '../../../interface/BookingHome';
 import dayjs, { Dayjs } from 'dayjs';
 import { CalendarDays } from 'lucide-react-native';
 import CalendarPicker from 'react-native-calendar-picker';
-import CustomerInfoForm from './CustomerInfoForm';
-import ButtonStyles from '../styles/ButtonStyles';
-import { getActiveProducts } from '../../api/product';
+import ButtonStyles from '../../styles/ButtonStyles';
 import { flags } from 'realm';
-import { createPaymentUrl } from '../../api/pay';
-import openInChrome from '../../utils/openInChrome';
+import { createPaymentUrl } from '../../../api/pay';
 
 const BookingHomeScreen = ({ navigation }: any) => {
   const [error, setError] = useState({
@@ -48,7 +44,6 @@ const BookingHomeScreen = ({ navigation }: any) => {
     homeSize: '',
     message: '',
   });
-  const [message, setMessage] = useState('');
   const [categories, setCategories] = useState([
     {
       categoryName: '',
@@ -57,8 +52,6 @@ const BookingHomeScreen = ({ navigation }: any) => {
   ]);
   const [allHomes, setAllHomes] = useState([{} as Homestay]);
   const [validHomes, setValidHomes] = useState<Homestay[]>([]);
-  const [openCustomerInfoForm, setOpenCustomerInfoForm] = useState(false);
-  const [showBtnConfirmBook, setShowBtnConfirmBook] = useState(false);
   const [homeSizes, setHomeSizes] = useState([
     {
       name: '',
@@ -127,7 +120,6 @@ const BookingHomeScreen = ({ navigation }: any) => {
             ...bookingInfo,
             categoryName: value,
             categoryCode: selectedCategory?.purrPetCode,
-            homeSize: '',
           });
         }
       } else {
@@ -144,12 +136,14 @@ const BookingHomeScreen = ({ navigation }: any) => {
         setError({ ...error, homeSize: 'Không có phòng phù hợp' });
         return;
       }
+
       const home = validHomes.find(
         (home) =>
           home.masterDataCode === masterData.purrPetCode &&
           home.homeType === bookingInfo.petType &&
           home.categoryCode === bookingInfo.categoryCode,
       );
+
       if (!home) {
         setError({ ...error, homeSize: 'Không có phòng phù hợp' });
         return;
@@ -163,6 +157,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
           setUnavailableDays([]);
         }
       });
+
       setBookingInfo({
         ...bookingInfo,
         homeCode: home.purrPetCode,
@@ -190,7 +185,6 @@ const BookingHomeScreen = ({ navigation }: any) => {
         maxDateCheckOut = dayjs(day);
       }
     });
-
     setDateCheckin(dayjs(date).format('DD/MM/YYYY'));
     setMaxDateCheckOut(maxDateCheckOut);
     countDateAndPrice(newDate, checkOut);
@@ -222,34 +216,20 @@ const BookingHomeScreen = ({ navigation }: any) => {
       return;
     }
     setError({ ...error, petName: '' });
-    setOpenCustomerInfoForm(true);
+    navigation.navigate('ProcessingBookingHome', { bookingInfo: bookingInfo });
   };
 
-  const handleCustomerInfo = (customerInfo: any) => {
-    setBookingInfo({
-      ...bookingInfo,
-      customerCode: customerInfo.customerCode,
-      customerNote: customerInfo.customerNote,
-      // payMethod: customerInfo.payMethod,
-    });
-  };
-
-  const handleConfirmInfo = (confirm: any) => {
-    setShowBtnConfirmBook(confirm);
-  };
-
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = (customerCode: any, customerNote: any) => {
     if (bookingInfo.petName === undefined) {
       setError({ ...error, petName: 'Tên thú cưng không được để trống!' });
       return;
     }
-    //setShowBtnConfirmBook(false);
     createBookingHome({
       petName: bookingInfo.petName,
       homeCode: bookingInfo.homeCode,
       bookingHomePrice: bookingInfo.bookingHomePrice,
-      customerCode: bookingInfo.customerCode,
-      customerNote: bookingInfo.customerNote,
+      customerCode: customerCode,
+      customerNote: customerNote,
       dateCheckIn: bookingInfo.dateCheckIn,
       dateCheckOut: bookingInfo.dateCheckOut,
       // payMethod: bookingInfo.payMethod,
@@ -262,7 +242,9 @@ const BookingHomeScreen = ({ navigation }: any) => {
           orderCode: res.data.purrPetCode,
         }).then((res) => {
           if (res.err === 0) {
-            openInChrome(res.data.paymentUrl);
+            // openInChrome(res.data.paymentUrl);
+            console.log('Đặt phòng thành công!');
+            navigation.navigate('Dịch vụ');
           }
         });
         // } else if (
@@ -279,12 +261,11 @@ const BookingHomeScreen = ({ navigation }: any) => {
     <SafeAreaView style={{ flex: 1 }}>
       <View
         style={{
-          backgroundColor: '#FDE047',
+          backgroundColor: '#BAE6FD',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: 50,
-          paddingRight: 100,
+          height: 70,
         }}
       >
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -305,7 +286,9 @@ const BookingHomeScreen = ({ navigation }: any) => {
             {error.petName ? error.petName : ''}
           </Text>
           <View style={{ marginTop: 5 }}>
-            <Text style={textStyles.label}>Thú cưng là:</Text>
+            <Text style={textStyles.label} className='mb-3'>
+              Thú cưng là:
+            </Text>
             <RadioGroup
               value={bookingInfo.petType}
               style={{ flexDirection: 'row' }}
@@ -328,9 +311,11 @@ const BookingHomeScreen = ({ navigation }: any) => {
           </View>
           {bookingInfo.petType && (
             <View style={{ marginTop: 5 }}>
-              <Text style={textStyles.label}>Bạn muốn đặt phòng:</Text>
+              <Text style={textStyles.label} className='mb-3'>
+                Bạn muốn đặt phòng:
+              </Text>
               <RadioGroup
-                value={bookingInfo.categoryName}
+                value={bookingInfo.categoryName || categories[0].purrPetCode}
                 style={{ flexDirection: 'row' }}
                 onChange={(value) => handleChangeBookingInfo(value, 'category')}
               >
@@ -353,9 +338,11 @@ const BookingHomeScreen = ({ navigation }: any) => {
           )}
           {bookingInfo.categoryCode && (
             <View style={{ marginTop: 5 }}>
-              <Text style={textStyles.label}>Chọn loại phòng:</Text>
+              <Text style={textStyles.label} className='mb-3'>
+                Chọn loại phòng:
+              </Text>
               <RadioGroup
-                value={bookingInfo.homeSize}
+                value={bookingInfo.homeSize || validSizes[0]}
                 style={{ flexDirection: 'row' }}
                 onChange={(value) => handleChangeBookingInfo(value, 'homeSize')}
               >
@@ -379,7 +366,9 @@ const BookingHomeScreen = ({ navigation }: any) => {
           {bookingInfo.homeSize && (
             <View>
               <View style={{ marginTop: 5 }}>
-                <Text style={textStyles.label}>Chọn ngày đến:</Text>
+                <Text style={textStyles.label} className='mb-3'>
+                  Chọn ngày đến:
+                </Text>
 
                 <TouchableOpacity
                   style={styles.datePickerStyle}
@@ -410,7 +399,9 @@ const BookingHomeScreen = ({ navigation }: any) => {
               </View>
               {bookingInfo.dateCheckIn && (
                 <View style={{ marginTop: 5 }}>
-                  <Text style={textStyles.label}>Chọn ngày ra:</Text>
+                  <Text style={textStyles.label} className='mb-3'>
+                    Chọn ngày ra:
+                  </Text>
 
                   <TouchableOpacity
                     style={styles.datePickerStyle}
@@ -460,41 +451,24 @@ const BookingHomeScreen = ({ navigation }: any) => {
             )}
           </View>
           <View>
-            {bookingInfo.dateCheckIn &&
-              bookingInfo.dateCheckOut &&
-              !openCustomerInfoForm && (
-                <TouchableOpacity
-                  style={ButtonStyles.button}
-                  onPress={() => handleClickContinue()}
+            {bookingInfo.dateCheckIn !== bookingInfo.dateCheckOut && (
+              <TouchableOpacity
+                style={ButtonStyles.button}
+                onPress={() => handleClickContinue()}
+              >
+                <Text
+                  style={{
+                    color: '#000000',
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    fontSize: 18,
+                  }}
                 >
-                  <Text style={{ color: '#FFFFFF', textAlign: 'center' }}>
-                    Tiếp tục
-                  </Text>
-                </TouchableOpacity>
-              )}
+                  Tiếp tục
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
-          {openCustomerInfoForm && (
-            <CustomerInfoForm
-              customer={handleCustomerInfo}
-              confirmInfo={handleConfirmInfo}
-            />
-          )}
-
-          {showBtnConfirmBook && (
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#B91C1C',
-                padding: 10,
-                borderRadius: 5,
-                marginTop: 10,
-              }}
-              onPress={() => handleConfirmBooking()}
-            >
-              <Text style={{ color: '#FFFFFF', textAlign: 'center' }}>
-                Đặt phòng
-              </Text>
-            </TouchableOpacity>
-          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -502,7 +476,9 @@ const BookingHomeScreen = ({ navigation }: any) => {
 };
 const styles = StyleSheet.create({
   infoPet: {
-    margin: 20,
+    margin: 10,
+    backgroundColor: '#FFFFFF',
+    padding: 10,
   },
   datePickerStyle: {
     flexDirection: 'row',

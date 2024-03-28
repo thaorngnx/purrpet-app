@@ -4,7 +4,7 @@ const viewStyles = StyleSheet.create({
   container: {
     // paddingHorizontal: 15,
     flex: 1,
-    backgroundColor: 'white',
+    //backgroundColor: 'white',
     width: '100%',
     // alignContent: 'center',
   },

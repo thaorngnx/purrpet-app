@@ -6,12 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import textStyles from '../styles/TextStyles';
-import buttonStyles from '../styles/ButtonStyles';
+import textStyles from '../../styles/TextStyles';
+import buttonStyles from '../../styles/ButtonStyles';
 import { CalendarDays, ChevronDownIcon } from 'lucide-react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import dayjs from 'dayjs';
-import { getAvailableTime } from '../../api/bookingSpa';
+import { getAvailableTime } from '../../../api/bookingSpa';
 import {
   Icon,
   Select,
@@ -28,11 +28,9 @@ import {
 const TimeSpaForm = ({
   bookingInfo,
   updateBookingInfo,
-  setOpenCustomerInfoForm,
 }: {
   bookingInfo: any;
   updateBookingInfo: any;
-  setOpenCustomerInfoForm: any;
 }) => {
   const [validTime, setValidTime] = useState([]);
   const [openTimePicker, setOpenTimePicker] = useState(false);
@@ -66,15 +64,13 @@ const TimeSpaForm = ({
     });
   };
 
-  const handleOpenCustomerInfoForm = () => {
-    setOpenCustomerInfoForm(true);
-    OpenCustomerInfoForm(true);
-  };
   return (
-    <View>
+    <View style={{ marginTop: 10, backgroundColor: '#fff', padding: 10 }}>
       <Text style={textStyles.labelCenter}>Thời gian đặt lịch</Text>
       <View>
-        <Text style={textStyles.label}>Chọn giờ đặt lịch:</Text>
+        <Text style={textStyles.label} className='mb-3'>
+          Chọn giờ đặt lịch:
+        </Text>
 
         <TouchableOpacity
           style={styles.datePickerStyle}
@@ -113,7 +109,7 @@ const TimeSpaForm = ({
           <Select
             onValueChange={handleChangeBookingTime}
             selectedValue={bookingInfo.bookingTime}
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 15 }}
           >
             <SelectTrigger>
               <SelectInput
@@ -137,20 +133,6 @@ const TimeSpaForm = ({
           </Select>
         )}
       </View>
-      {!openCustomerInfoForm &&
-        bookingInfo.bookingDate &&
-        bookingInfo.bookingTime !== '' && (
-          <TouchableOpacity
-            style={buttonStyles.buttonConfirm}
-            onPress={handleOpenCustomerInfoForm}
-          >
-            <Text
-              style={{ color: '#FFF', fontWeight: 'bold', alignSelf: 'center' }}
-            >
-              Tiếp tục
-            </Text>
-          </TouchableOpacity>
-        )}
     </View>
   );
 };

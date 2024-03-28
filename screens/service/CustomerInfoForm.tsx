@@ -15,27 +15,16 @@ import {
   validateOtp,
   validatePhone,
 } from '../../utils/validationData';
-import { useStore } from 'zustand';
 import { sendOTP, verifyOTP } from '../../api/otp';
-import {
-  CircleIcon,
-  Radio,
-  RadioGroup,
-  RadioIcon,
-  RadioIndicator,
-  RadioLabel,
-  Textarea,
-  TextareaInput,
-} from '@gluestack-ui/themed';
+import { Textarea, TextareaInput } from '@gluestack-ui/themed';
 import textStyles from '../styles/TextStyles';
 import buttonStyles from '../styles/ButtonStyles';
-import * as CONST from '../constants';
-import { Wallet } from 'lucide-react-native';
 
-const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
+const CustomerInfoForm = () => {
   const customerState = useCustomerStore((state) => state.customerState.data);
   const { setCustomer } = useCustomerStore();
 
+  const [confirmInfo, setConfirmInfo] = useState(false);
   const hasCustomerInfo = Object.keys(customerState).length > 0;
   const [otpClick, setOtpClick] = useState(false);
   const [otpValid, setOtpValid] = useState(false);
@@ -69,11 +58,6 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
 
   useEffect(() => {
     if (hasCustomerInfo) {
-      console.log('customerState', customerState);
-      customer({
-        ...customerInfo,
-        customerCode: customerState.purrPetCode,
-      });
       setCustomerInfo({
         ...customerInfo,
         customerName: customerState.name,
@@ -82,7 +66,7 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
       });
       setExistCustomer(true);
       setEditInfo(false);
-      confirmInfo(true);
+      setConfirmInfo(true);
       setOtpValid(true);
     }
   }, [customerState, hasCustomerInfo]);
@@ -100,7 +84,7 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
     } else {
       setError({ ...error, name: false });
     }
-    customer({ ...customerInfo, name: text });
+
     setCustomerInfo({
       ...customerInfo,
       [name]: text,
@@ -162,13 +146,13 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
 
   const handleCancelEdit = () => {
     setCustomerInfo({ ...backupCustomerInfo });
-    customer({ ...backupCustomerInfo });
+
     setEditInfo(false);
   };
   const handleEditInfo = () => {
     if (existCustomer && !editInfo) {
       setEditInfo(true);
-      confirmInfo(false);
+      setConfirmInfo(false);
     } else if (existCustomer && editInfo) {
       console.log('edit customer');
       let err = {};
@@ -192,12 +176,13 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
         phoneNumber: customerInfo.customerPhone,
       }).then((res) => {
         if (res.err === 0) {
+          setCustomer(res.data);
           console.log('after update customer oke');
         }
       });
       //oke
       setEditInfo(false);
-      confirmInfo(true);
+      setConfirmInfo(true);
     } else if (!existCustomer && editInfo) {
       if (!customerInfo.customerName) {
         setError({ ...error, customerName: true });
@@ -228,20 +213,21 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
       //oke
       setExistCustomer(true);
       setEditInfo(false);
-      confirmInfo(true);
+      setConfirmInfo(true);
     }
   };
-  // const handleClickPayMenthod = (value: string, name: string) => {
-  //   setCustomerInfo({ ...customerInfo, [name]: value });
-  // };
   return (
-    <SafeAreaView style={{ margin: 5 }}>
+    <SafeAreaView
+      style={{ margin: 5, backgroundColor: '#fff', paddingBottom: 20 }}
+    >
       <View>
         <Text style={textStyles.labelCenter}>Thông tin khách hàng</Text>
         {!hasCustomerInfo && (
-          <View>
+          <View style={{ margin: 10 }}>
             <View>
-              <Text style={textStyles.label}>Email:</Text>
+              <Text style={textStyles.label} className='mb-3'>
+                Email:
+              </Text>
               <TextInput
                 placeholder='Email'
                 style={textInputStyles.textInputBorder}
@@ -314,8 +300,10 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
           </View>
         )}
         {otpValid && (
-          <View>
-            <Text style={textStyles.label}>Tên khách hàng</Text>
+          <View style={{ margin: 10 }}>
+            <Text style={textStyles.label} className='mb-3'>
+              Tên khách hàng
+            </Text>
             <TextInput
               placeholder='Tên khách hàng'
               style={textInputStyles.textInputBorder}
@@ -328,7 +316,9 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
             {error.customerName && (
               <Text style={textStyles.error}>Tên không được để trống!</Text>
             )}
-            <Text style={textStyles.label}>Số điện thoại</Text>
+            <Text style={textStyles.label} className='mt-3 mb-3'>
+              Số điện thoại
+            </Text>
             <TextInput
               placeholder='Số điện thoại'
               style={textInputStyles.textInputBorder}
@@ -378,48 +368,8 @@ const CustomerInfoForm = ({ customer, confirmInfo }: any) => {
                 </Text>
               </TouchableOpacity>
             </View>
-            <Text style={textStyles.label}>Ghi chú</Text>
-            <Textarea
-              size='md'
-              isReadOnly={false}
-              isInvalid={false}
-              isDisabled={false}
-              w='100%'
-            >
-              <TextareaInput
-                value={customerInfo.customerNote}
-                placeholder='Your text goes here...'
-                onChange={(event) =>
-                  handleChangeCustomerInfo(event, 'customerNote')
-                }
-              />
-            </Textarea>
           </View>
         )}
-        {/* {customerInfo.customerCode && (
-          <View>
-            <Text style={textStyles.label}>Phương thức thanh toán</Text>
-            <RadioGroup
-              value={customerInfo.payMethod}
-              style={{ flexDirection: 'row' }}
-              onChange={(value) => handleClickPayMenthod(value, 'payMethod')}
-            >
-              {Object.values(CONST.PAY_METHOD).map((value, index) => (
-                <Radio
-                  value={value}
-                  size='sm'
-                  style={{ marginRight: 30 }}
-                  key={index}
-                >
-                  <RadioIndicator mr='$2'>
-                    <RadioIcon as={CircleIcon} />
-                  </RadioIndicator>
-                  <RadioLabel>{value}</RadioLabel>
-                </Radio>
-              ))}
-            </RadioGroup>
-          </View>
-        )} */}
       </View>
     </SafeAreaView>
   );
