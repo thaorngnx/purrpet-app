@@ -22,6 +22,7 @@ export interface ICustomer {
   name: string;
   email: string;
   phoneNumber: string;
+  point: number;
   address: {
     province: string;
     district: string;

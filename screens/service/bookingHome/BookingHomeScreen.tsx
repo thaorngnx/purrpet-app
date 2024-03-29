@@ -219,44 +219,6 @@ const BookingHomeScreen = ({ navigation }: any) => {
     navigation.navigate('ProcessingBookingHome', { bookingInfo: bookingInfo });
   };
 
-  const handleConfirmBooking = (customerCode: any, customerNote: any) => {
-    if (bookingInfo.petName === undefined) {
-      setError({ ...error, petName: 'Tên thú cưng không được để trống!' });
-      return;
-    }
-    createBookingHome({
-      petName: bookingInfo.petName,
-      homeCode: bookingInfo.homeCode,
-      bookingHomePrice: bookingInfo.bookingHomePrice,
-      customerCode: customerCode,
-      customerNote: customerNote,
-      dateCheckIn: bookingInfo.dateCheckIn,
-      dateCheckOut: bookingInfo.dateCheckOut,
-      // payMethod: bookingInfo.payMethod,
-    }).then((res) => {
-      if (
-        res.err === 0
-        // && res.data.payMethod === CONST.PAY_METHOD.VNPAY
-      ) {
-        createPaymentUrl({
-          orderCode: res.data.purrPetCode,
-        }).then((res) => {
-          if (res.err === 0) {
-            // openInChrome(res.data.paymentUrl);
-            console.log('Đặt phòng thành công!');
-            navigation.navigate('Dịch vụ');
-          }
-        });
-        // } else if (
-        //   res.err === 0 &&
-        //   res.data.payMethod === CONST.PAY_METHOD.CASH
-        // ) {
-        //   navigation.navigate('HomestayHistoryScreen', { HomestayHistoryScreen });
-      } else {
-        setError({ ...error, message: res.msg });
-      }
-    });
-  };
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View

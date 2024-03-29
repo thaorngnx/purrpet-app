@@ -16,6 +16,7 @@ export interface Customer {
     district: string;
     province: string;
   };
+  point: number;
   role: string;
   accessToken: string;
   refreshToken: string;

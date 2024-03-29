@@ -171,26 +171,6 @@ const BookingSpaScreen = ({ route, navigation }: any) => {
     console.log(bookingInfo);
   };
 
-  const handleConfirmBooking = (customerCode: any, customerNote: any) => {
-    createBookingSpa({
-      petName: bookingInfo.petName,
-      spaCode: bookingInfo.spaCode,
-      bookingSpaPrice: bookingInfo.bookingSpaPrice,
-      customerCode: customerCode,
-      customerNote: customerNote,
-      bookingDate: bookingInfo.bookingDate,
-      bookingTime: bookingInfo.bookingTime,
-    }).then((res) => {
-      console.log(res);
-      if (res.err === 0) {
-        console.log('booking success');
-        setTimeout(() => {
-          navigation.navigate('Dịch vụ');
-        }, 1000);
-      }
-      console.log(res.message);
-    });
-  };
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View

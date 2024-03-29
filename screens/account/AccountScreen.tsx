@@ -40,6 +40,10 @@ const AccountScreen = ({ navigation }: any) => {
           <Text style={textStyles.label}>Email: </Text>
           <Text style={textStyles.normal}>{customer.email}</Text>
         </View>
+        <View style={viewStyles.flexRow}>
+          <Text style={textStyles.label}>Điểm tích luỹ: </Text>
+          <Text style={textStyles.normal}>{customer.point}</Text>
+        </View>
       </View>
       <View style={viewStyles.card}>
         <TouchableOpacity

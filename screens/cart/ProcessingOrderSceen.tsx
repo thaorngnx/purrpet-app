@@ -23,6 +23,9 @@ import { formatCurrency } from '../../utils/formatData';
 import { useEffect, useState } from 'react';
 import CustomerInfoOrder from './CustomerInfoOrder';
 import { createOrder } from '../../api/order';
+import textInputStyles from '../styles/TextInputStyles';
+import { createPaymentUrl } from '../../api/pay';
+import openInChrome from '../../utils/openInChrome';
 
 const ProcessingOrderSceen = ({ navigation, route }: any) => {
   const { productCart } = route.params;
@@ -32,6 +35,10 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
   const hasCustomerInfo = Object.keys(customer).length > 0;
   const [customerInfo, setCustomerInfo] = useState(customer);
   const [customerNote, setCustomerNote] = useState('');
+  const [userPoint, setUserPoint] = useState(0);
+  const [error, setError] = useState({
+    point: '',
+  });
 
   const handleOrder = () => {
     createOrder({
@@ -46,12 +53,19 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
         district: customerInfo.address.district,
         province: customerInfo.address.province,
       },
+      userPoint: userPoint,
       customerNote: customerNote,
     }).then((res) => {
       if (res.err == 0) {
-        console.log('Đặt hàng thành công');
-        navigation.navigate('Sản phẩm');
-        deleteCart();
+        createPaymentUrl({
+          orderCode: res.data.purrPetCode,
+        }).then((res) => {
+          if (res.err === 0) {
+            console.log('Đặt hàng thành công!');
+            openInChrome(res.data.paymentUrl);
+            deleteCart();
+          }
+        });
       } else {
         console.log(res);
       }
@@ -67,7 +81,36 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
     const { text } = event.nativeEvent;
     setCustomerNote(text);
   };
-  console.log(customerNote);
+  const handleChangePoint = (event: any) => {
+    if (
+      event <=
+      productCart.reduce(
+        (total: number, product: ProductCartInfo) =>
+          total + product.price * product.quantity,
+        0,
+      ) /
+        10
+    ) {
+      if (event > customer.point) {
+        console.log('Số điểm không đủ');
+        setError({
+          ...error,
+          point: 'Số điểm không đủ',
+        });
+      } else {
+        setError({
+          ...error,
+          point: '',
+        });
+        setUserPoint(event);
+      }
+    } else {
+      setError({
+        ...error,
+        point: 'Điểm tối đa có thể sử dụng là 10% giá trị đơn hàng',
+      });
+    }
+  };
   return (
     <SafeAreaView style={viewStyles.container}>
       <View
@@ -98,69 +141,94 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
       <ScrollView style={{ flex: 1 }}>
         <CustomerInfoOrder />
         {hasCustomerInfo && (
-          <View style={{ flex: 1, backgroundColor: '#fff', marginTop: 10 }}>
-            <Text
-              style={[
-                textStyles.label,
-                {
-                  textAlign: 'center',
-                  marginTop: 10,
-                },
-              ]}
-            >
-              Chi tiết đơn hàng
-            </Text>
-            <View style={viewStyles.card}>
-              {productCart.map((product: ProductCartInfo, index: number) => (
-                <View
-                  key={index}
-                  style={{
-                    flexDirection: 'row',
-                    paddingVertical: 15,
-                    alignItems: 'center',
-                    borderBottomWidth: 1,
-                    borderBottomColor: '#f0f0f0',
-                  }}
-                >
-                  <Image
-                    source={{ uri: product?.images[0]?.path }}
-                    style={[
-                      viewStyles.historyImage,
-                      { flex: 1, aspectRatio: 1 },
-                    ]}
-                  />
-                  <View style={{ flex: 3 }}>
-                    <View
-                      style={[viewStyles.flexRow]}
-                      className='justify-between'
-                    >
-                      <Text
-                        style={{
-                          ...textStyles.normal,
-                          marginBottom: 5,
-                          flex: 3,
-                        }}
-                        numberOfLines={2}
-                        ellipsizeMode='tail'
+          <View>
+            <View style={{ flex: 1, backgroundColor: '#fff', marginTop: 10 }}>
+              <Text
+                style={[
+                  textStyles.label,
+                  {
+                    textAlign: 'center',
+                    marginTop: 10,
+                  },
+                ]}
+              >
+                Chi tiết đơn hàng
+              </Text>
+              <View style={viewStyles.card}>
+                {productCart.map((product: ProductCartInfo, index: number) => (
+                  <View
+                    key={index}
+                    style={{
+                      flexDirection: 'row',
+                      paddingVertical: 15,
+                      alignItems: 'center',
+                      borderBottomWidth: 1,
+                      borderBottomColor: '#f0f0f0',
+                    }}
+                  >
+                    <Image
+                      source={{ uri: product?.images[0]?.path }}
+                      style={[
+                        viewStyles.historyImage,
+                        { flex: 1, aspectRatio: 1 },
+                      ]}
+                    />
+                    <View style={{ flex: 3 }}>
+                      <View
+                        style={[viewStyles.flexRow]}
+                        className='justify-between'
                       >
-                        {product.productName}
-                      </Text>
-                    </View>
+                        <Text
+                          style={{
+                            ...textStyles.normal,
+                            marginBottom: 5,
+                            flex: 3,
+                          }}
+                          numberOfLines={2}
+                          ellipsizeMode='tail'
+                        >
+                          {product.productName}
+                        </Text>
+                      </View>
 
-                    <View
-                      style={viewStyles.flexRow}
-                      className='justify-between'
-                    >
-                      <Text style={textStyles.normal}>
-                        {formatCurrency(product.price)}
-                      </Text>
-                      <Text style={textStyles.normal}>x{product.quantity}</Text>
+                      <View
+                        style={viewStyles.flexRow}
+                        className='justify-between'
+                      >
+                        <Text style={textStyles.normal}>
+                          {formatCurrency(product.price)}
+                        </Text>
+                        <Text style={textStyles.normal}>
+                          x{product.quantity}
+                        </Text>
+                      </View>
                     </View>
                   </View>
-                </View>
-              ))}
+                ))}
+              </View>
             </View>
             <View style={{ margin: 10, padding: 5, backgroundColor: '#fff' }}>
+              <View
+                style={[
+                  viewStyles.flexRow,
+                  { justifyContent: 'space-around', marginBottom: 10 },
+                ]}
+              >
+                <Text style={textStyles.label}>Dùng điểm tích luỹ</Text>
+                <Text style={textStyles.normal}>
+                  Số điểm hiện có: {formatCurrency(customer.point)}
+                </Text>
+              </View>
+
+              <TextInput
+                style={textInputStyles.textInputBorder}
+                keyboardType='numeric'
+                value={userPoint.toString()}
+                onChangeText={(event) => handleChangePoint(event)}
+              />
+              <Text style={textStyles.error}>{error.point}</Text>
+            </View>
+            <View style={{ padding: 10, backgroundColor: '#fff' }}>
               <Textarea
                 size='md'
                 isReadOnly={false}
@@ -180,6 +248,34 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
         {/* <View>
           <Text>Phương thức thanh toán</Text>
         </View> */}
+        <View style={{ padding: 15, backgroundColor: '#fff' }}>
+          <View
+            style={[viewStyles.flexRow, { justifyContent: 'space-between' }]}
+          >
+            <Text style={[textStyles.normal]}>Tổng tiền hàng:</Text>
+            <Text style={[textStyles.normal]}>
+              {' '}
+              {formatCurrency(
+                productCart.reduce(
+                  (total: number, product: ProductCartInfo) =>
+                    total + product.price * product.quantity,
+                  0,
+                ),
+              )}
+            </Text>
+          </View>
+          <View
+            style={[
+              viewStyles.flexRow,
+              { marginTop: 5, justifyContent: 'space-between' },
+            ]}
+          >
+            <Text style={[textStyles.normal]}>Sử dụng điểm:</Text>
+            <Text style={[textStyles.normal]}>
+              -{formatCurrency(userPoint) || 0}
+            </Text>
+          </View>
+        </View>
       </ScrollView>
 
       <View
@@ -209,7 +305,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
             {formatCurrency(
               productCart.reduce(
                 (total: number, product: ProductCartInfo) =>
-                  total + product.price * product.quantity,
+                  total + product.price * product.quantity - userPoint,
                 0,
               ),
             )}
