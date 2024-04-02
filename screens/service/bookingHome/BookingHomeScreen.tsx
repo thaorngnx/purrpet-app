@@ -72,7 +72,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
   const [showDatePickerCheckout, setShowDatePickerCheckout] = useState(false);
   const [dateCheckin, setDateCheckin] = useState('');
   const [dateCheckout, setDateCheckout] = useState('');
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState(false);
   useEffect(() => {
     getActiveCategories({
       categoryType: CONST.CATEGORY_TYPE.HOMESTAY,
@@ -170,8 +170,6 @@ const BookingHomeScreen = ({ navigation }: any) => {
     }
   };
   const handleChangeDateCheckin = (date: Date) => {
-    console.log(date);
-    setSelectedDate(date);
     const newDate = dayjs(date);
 
     let checkOut = dayjs(bookingInfo.dateCheckOut);
@@ -195,6 +193,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
     setDateCheckout(dayjs(date).format('DD/MM/YYYY'));
     countDateAndPrice(bookingInfo.dateCheckIn, dayjs(date));
     setShowDatePickerCheckout(false);
+    setSelectedDate(true);
   };
   const countDateAndPrice = (dateCheckIn: Dayjs, dateCheckOut: Dayjs) => {
     let price = bookingInfo.homePrice;
@@ -413,7 +412,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
             )}
           </View>
           <View>
-            {bookingInfo.dateCheckIn !== bookingInfo.dateCheckOut && (
+            {selectedDate && (
               <TouchableOpacity
                 style={ButtonStyles.button}
                 onPress={() => handleClickContinue()}

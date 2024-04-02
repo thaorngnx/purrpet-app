@@ -11,9 +11,14 @@ import { useCartStore } from '../../zustand/cartStore';
 import textStyles from '../styles/TextStyles';
 import { useCustomerStore } from '../../zustand/customerStore';
 import {
-  ArrowLeftIcon,
   ChevronLeftIcon,
+  CircleIcon,
   Icon,
+  Radio,
+  RadioGroup,
+  RadioIcon,
+  RadioIndicator,
+  RadioLabel,
   Textarea,
   TextareaInput,
 } from '@gluestack-ui/themed';
@@ -26,6 +31,8 @@ import { createOrder } from '../../api/order';
 import textInputStyles from '../styles/TextInputStyles';
 import { createPaymentUrl } from '../../api/pay';
 import openInChrome from '../../utils/openInChrome';
+import * as CONST from '../constants';
+import { Banknote } from 'lucide-react-native';
 
 const ProcessingOrderSceen = ({ navigation, route }: any) => {
   const { productCart } = route.params;
@@ -39,6 +46,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
   const [error, setError] = useState({
     point: '',
   });
+  const [paymentMethod, setPaymentMethod] = useState(CONST.PAYMENT_METHOD.COD);
 
   const handleOrder = () => {
     createOrder({
@@ -55,17 +63,27 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
       },
       userPoint: userPoint,
       customerNote: customerNote,
+      payMethod: paymentMethod,
     }).then((res) => {
       if (res.err == 0) {
-        createPaymentUrl({
-          orderCode: res.data.purrPetCode,
-        }).then((res) => {
-          if (res.err === 0) {
-            console.log('Đặt hàng thành công!');
-            openInChrome(res.data.paymentUrl);
-            deleteCart();
-          }
-        });
+        if (paymentMethod === CONST.PAYMENT_METHOD.COD) {
+          console.log('Đặt hàng thành công!');
+
+          deleteCart();
+          navigation.navigate('OrderDetailScreen', {
+            order: res.data,
+          });
+        } else {
+          createPaymentUrl({
+            orderCode: res.data.purrPetCode,
+          }).then((res) => {
+            if (res.err === 0) {
+              console.log('Đặt hàng thành công!');
+              openInChrome(res.data.paymentUrl);
+              deleteCart();
+            }
+          });
+        }
       } else {
         console.log(res);
       }
@@ -80,6 +98,9 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
   const handleChangeNote = (event: any) => {
     const { text } = event.nativeEvent;
     setCustomerNote(text);
+  };
+  const handlePayment = (event: any) => {
+    setPaymentMethod(event);
   };
   const handleChangePoint = (event: any) => {
     if (
@@ -243,87 +264,135 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                 />
               </Textarea>
             </View>
+            <View>
+              <View
+                style={{ marginTop: 10, padding: 10, backgroundColor: '#fff' }}
+              >
+                <Text style={textStyles.label}>Phương thức thanh toán</Text>
+                <RadioGroup
+                  value={paymentMethod}
+                  onChange={(value) => handlePayment(value)}
+                >
+                  <Radio
+                    value={CONST.PAYMENT_METHOD.COD}
+                    size='sm'
+                    style={{ marginTop: 20 }}
+                  >
+                    <RadioIndicator mr='$2'>
+                      <RadioIcon as={CircleIcon} />
+                    </RadioIndicator>
+                    <Banknote color='#000000' style={{ margin: 5 }} />
+                    <Text style={textStyles.normal}>
+                      {CONST.PAYMENT_METHOD.COD}
+                    </Text>
+                  </Radio>
+                  <Radio
+                    value={CONST.PAYMENT_METHOD.VNPAY}
+                    size='sm'
+                    style={{ marginTop: 20 }}
+                  >
+                    <RadioIndicator mr='$2'>
+                      <RadioIcon as={CircleIcon} />
+                    </RadioIndicator>
+
+                    <Image
+                      source={require('../../assets/vnpay.png')}
+                      style={{ width: 45, height: 30 }}
+                    />
+                    <Text style={textStyles.normal}>
+                      {CONST.PAYMENT_METHOD.VNPAY}
+                    </Text>
+                  </Radio>
+                </RadioGroup>
+              </View>
+              <View
+                style={{ marginTop: 10, padding: 15, backgroundColor: '#fff' }}
+              >
+                <View
+                  style={[
+                    viewStyles.flexRow,
+                    { justifyContent: 'space-between' },
+                  ]}
+                >
+                  <Text style={[textStyles.normal]}>Tổng tiền hàng:</Text>
+                  <Text style={[textStyles.normal]}>
+                    {' '}
+                    {formatCurrency(
+                      productCart.reduce(
+                        (total: number, product: ProductCartInfo) =>
+                          total + product.price * product.quantity,
+                        0,
+                      ),
+                    )}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    viewStyles.flexRow,
+                    { marginTop: 5, justifyContent: 'space-between' },
+                  ]}
+                >
+                  <Text style={[textStyles.normal]}>Sử dụng điểm:</Text>
+                  <Text style={[textStyles.normal]}>
+                    -{formatCurrency(userPoint) || 0}
+                  </Text>
+                </View>
+              </View>
+
+              <View
+                style={[
+                  viewStyles.flexRow,
+                  {
+                    justifyContent: 'space-between',
+                    borderTopWidth: 1,
+                    borderTopColor: '#f0f0f0',
+                    alignItems: 'center',
+                    height: 60,
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    viewStyles.flexColumn,
+                    {
+                      alignItems: 'flex-end',
+                      flex: 3,
+                      paddingHorizontal: 15,
+                    },
+                  ]}
+                >
+                  <Text style={textStyles.label}>Tổng thanh toán</Text>
+                  <Text style={textStyles.normal}>
+                    {formatCurrency(
+                      productCart.reduce(
+                        (total: number, product: ProductCartInfo) =>
+                          total + product.price * product.quantity - userPoint,
+                        0,
+                      ),
+                    )}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: 'pink',
+                    paddingLeft: 15,
+                    height: '100%',
+                    flex: 1,
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => handleOrder()}
+                >
+                  <Text style={textStyles.bold}>
+                    {paymentMethod === 'VNPAY'
+                      ? 'Tiến hành thanh toán '
+                      : 'Đặt hàng'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         )}
-        {/* <View>
-          <Text>Phương thức thanh toán</Text>
-        </View> */}
-        <View style={{ padding: 15, backgroundColor: '#fff' }}>
-          <View
-            style={[viewStyles.flexRow, { justifyContent: 'space-between' }]}
-          >
-            <Text style={[textStyles.normal]}>Tổng tiền hàng:</Text>
-            <Text style={[textStyles.normal]}>
-              {' '}
-              {formatCurrency(
-                productCart.reduce(
-                  (total: number, product: ProductCartInfo) =>
-                    total + product.price * product.quantity,
-                  0,
-                ),
-              )}
-            </Text>
-          </View>
-          <View
-            style={[
-              viewStyles.flexRow,
-              { marginTop: 5, justifyContent: 'space-between' },
-            ]}
-          >
-            <Text style={[textStyles.normal]}>Sử dụng điểm:</Text>
-            <Text style={[textStyles.normal]}>
-              -{formatCurrency(userPoint) || 0}
-            </Text>
-          </View>
-        </View>
       </ScrollView>
-
-      <View
-        style={[
-          viewStyles.flexRow,
-          {
-            justifyContent: 'space-between',
-            borderTopWidth: 1,
-            borderTopColor: '#f0f0f0',
-            alignItems: 'center',
-            height: 60,
-          },
-        ]}
-      >
-        <View
-          style={[
-            viewStyles.flexColumn,
-            {
-              alignItems: 'flex-end',
-              flex: 3,
-              paddingHorizontal: 15,
-            },
-          ]}
-        >
-          <Text style={textStyles.label}>Tổng thanh toán</Text>
-          <Text style={textStyles.normal}>
-            {formatCurrency(
-              productCart.reduce(
-                (total: number, product: ProductCartInfo) =>
-                  total + product.price * product.quantity - userPoint,
-                0,
-              ),
-            )}
-          </Text>
-        </View>
-        <TouchableOpacity
-          style={{
-            backgroundColor: 'pink',
-            paddingLeft: 15,
-            height: '100%',
-            flex: 1,
-            justifyContent: 'center',
-          }}
-          onPress={() => handleOrder()}
-        >
-          <Text style={textStyles.bold}>Đặt hàng</Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 };

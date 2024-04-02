@@ -21,6 +21,7 @@ export interface Order {
     ward: string;
   };
   customerNote: string;
+  payMethod: string;
   status: string;
   createdAt: Date;
   updatedAt: Date;

@@ -37,7 +37,7 @@ import { IDistrict, IProvince, IWard } from '../../interface/Customer';
 import axios from 'axios';
 import viewStyles from '../styles/ViewStyles';
 
-const CustomerInfoOrder = ({ navigation, route }: any) => {
+const CustomerInfoOrder = () => {
   const customerState = useCustomerStore((state) => state.customerState.data);
   const { setCustomer } = useCustomerStore();
 

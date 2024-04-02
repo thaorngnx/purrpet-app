@@ -31,10 +31,11 @@ export const STATUS_SPA = {
 
 export const STATUS_ORDER = {
   WAITING_FOR_PAY: 'Chờ thanh toán',
-  PAID: 'Đã thanh toán',
+  NEW: 'Đơn hàng mới',
+  PREPARE: 'Đang chuẩn bị',
   DELIVERING: 'Đang giao hàng',
-  DONE: 'Đã hoàn thành',
   CANCEL: 'Đã hủy',
+  DONE: 'Đã hoàn thành',
 };
 
 export const STATUS_BOOKING = {
@@ -94,7 +95,7 @@ export const PREFIX = {
   CUSTOMER: 'CUS',
   ACCOUNT: 'ACC',
 };
-// export const PAY_METHOD = {
-//   CASH: 'Tiền mặt',
-//   VNPAY: 'VNPAY',
-// };
+export const PAYMENT_METHOD = {
+  COD: 'Tiền mặt',
+  VNPAY: 'VNPAY',
+};

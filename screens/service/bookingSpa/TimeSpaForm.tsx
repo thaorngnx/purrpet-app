@@ -34,8 +34,7 @@ const TimeSpaForm = ({
 }) => {
   const [validTime, setValidTime] = useState([]);
   const [openTimePicker, setOpenTimePicker] = useState(false);
-  const [openCustomerInfoForm, OpenCustomerInfoForm] = useState(false);
-  const [showDatePickerCheckin, setShowDatePickerCheckin] = useState(false);
+  const [showDatePickerCheckin, setShowDatePickerCheckin] = useState(true);
   const handleBookingDateChange = (date: Date) => {
     setShowDatePickerCheckin(false);
     setOpenTimePicker(true);
