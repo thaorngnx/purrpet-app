@@ -27,6 +27,15 @@ export async function getProductByCode(code: string) {
   }
 }
 
+export async function getProductDetailByCode(code: string) {
+  try {
+    const response = await api.get(`product/detail/${code}`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export async function createProduct(product: any) {
   try {
     console.log('req', product);

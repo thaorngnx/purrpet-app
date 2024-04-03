@@ -11,5 +11,29 @@ export interface Product {
     },
   ];
   inventory: string;
-  star: string;
+  averageRating?: number;
+  orderQuantity?: number;
+}
+
+export interface ProductDetail {
+  product: Product;
+  rating: Rating;
+}
+
+export interface Rating {
+  starRate: {
+    oneStar: number;
+    twoStar: number;
+    threeStar: number;
+    fourStar: number;
+    fiveStar: number;
+  };
+  reviews: Review[];
+}
+
+export interface Review {
+  productCode?: string;
+  orderCode?: string;
+  rating?: number;
+  comment?: string;
 }

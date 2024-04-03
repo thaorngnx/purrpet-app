@@ -28,9 +28,12 @@ import { Category } from '../../interface/Category';
 import { v4 as uuidv4 } from 'uuid';
 import ProductCard from '../components/Product/ProductCard';
 import { Pagination } from '../../interface/Pagination';
+import { useCategoryStore } from '../../zustand/categoryStore';
 
 const ProductScreen = ({ navigation, route }: any) => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const categories: Category[] = useCategoryStore(
+    (state) => state.categoryState.data,
+  );
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState({
     categoryName: '',
@@ -64,14 +67,9 @@ const ProductScreen = ({ navigation, route }: any) => {
   }, [route.params?.category, route.params?.search]);
 
   useEffect(() => {
-    getActiveCategories({ categoryType: CONST.CATEGORY_TYPE.PRODUCT }).then(
-      (res) => {
-        setCategories(res.data);
-      },
-    );
     const params = {
       limit: 6,
-      page: pagination.page,
+      page: 1,
       key: search,
       // categoryCode: selectedCategory.purrPetCode,
     };
@@ -94,18 +92,18 @@ const ProductScreen = ({ navigation, route }: any) => {
       // console.log('params', params);
 
       try {
-        const res = await getActiveProducts(params);
-        if (res.data.length === 0) {
-          return setLoading(false);
-        }
-        setProducts([...products, ...res.data]);
-        setPagination(res.pagination);
-        setStopLoadMore(true);
+        await getActiveProducts(params).then((res) => {
+          if (res.data.length > 0) {
+            setProducts(products.concat(res.data));
+            setPagination(res.pagination);
+            setStopLoadMore(true);
+          }
+          setLoading(false);
+        });
       } catch (error) {
         console.error(error);
       }
     }
-    setLoading(false);
   };
 
   const handleSelectCategory = (value: string) => {

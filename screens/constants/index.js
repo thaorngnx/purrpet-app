@@ -30,7 +30,6 @@ export const STATUS_SPA = {
 };
 
 export const STATUS_ORDER = {
-  WAITING_FOR_PAY: 'Chờ thanh toán',
   NEW: 'Đơn hàng mới',
   PREPARE: 'Đang chuẩn bị',
   DELIVERING: 'Đang giao hàng',
@@ -44,6 +43,11 @@ export const STATUS_BOOKING = {
   CHECKIN: 'Đã check-in',
   EXPIRED: 'Đã hết hạn',
   CANCEL: 'Đã hủy',
+};
+
+export const STATUS_PAYMENT = {
+  WAITING_FOR_PAY: 'Chờ thanh toán',
+  PAID: 'Đã thanh toán',
 };
 
 export const STATUS_CATEGORY = {
@@ -98,4 +102,11 @@ export const PREFIX = {
 export const PAYMENT_METHOD = {
   COD: 'Tiền mặt',
   VNPAY: 'VNPAY',
+};
+
+export const ACTION_TYPE = {
+  WARNING: 'WARNING',
+  SUCCESS: 'SUCCESS',
+  ERROR: 'ERROR',
+  INFO: 'INFO',
 };

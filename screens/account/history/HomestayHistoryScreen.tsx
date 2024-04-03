@@ -12,6 +12,7 @@ import {
   View,
   TouchableOpacity,
   Image,
+  FlatList,
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import { getBookingHomes } from '../../../api/bookingHome';
@@ -70,7 +71,7 @@ const HomestayHistoryScreen = ({ navigation }: any) => {
           <Text style={textStyles.title}>Lịch sử đặt phòng</Text>
         </View>
         <View>
-          <ScrollView
+          {/* <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={viewStyles.tabContainer}
@@ -95,37 +96,54 @@ const HomestayHistoryScreen = ({ navigation }: any) => {
                 <Text style={viewStyles.tabText}>{status}</Text>
               </TouchableOpacity>
             ))}
-          </ScrollView>
+          </ScrollView> */}
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={['Tất cả', ...Object.values(CONST.STATUS_BOOKING)]}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  viewStyles.tab,
+                  tabHome === index && viewStyles.activeTab,
+                ]}
+                onPress={() => setTabHome(index)}
+              >
+                <Text style={viewStyles.tabText}>{item}</Text>
+              </TouchableOpacity>
+            )}
+          />
         </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={viewStyles.scrollContainer}
-        >
-          {bHomeByStatus?.length > 0 &&
-            bHomeByStatus.map((booking: BookingHome) => (
-              <View style={viewStyles.orderCard} key={booking.purrPetCode}>
+        {bHomeByStatus?.length > 0 ? (
+          <FlatList
+            data={bHomeByStatus}
+            keyExtractor={(item) => item.purrPetCode}
+            renderItem={({ item }) => (
+              <View style={viewStyles.orderCard} key={item.purrPetCode}>
                 <View style={viewStyles.flexRow} className='justify-between'>
                   <View style={viewStyles.flexRow}>
                     <Text style={textStyles.label} className='mr-1'>
                       Ngày đặt:
                     </Text>
                     <Text style={textStyles.normal}>
-                      {formatDateTime(booking.createdAt)}
+                      {formatDateTime(item.createdAt)}
                     </Text>
                   </View>
                   <View style={viewStyles.flexRow}>
                     <Text style={textStyles.label} className='mr-1'>
                       Trạng thái:
                     </Text>
-                    <Text style={textStyles.normal}>{booking.status}</Text>
+                    <Text style={textStyles.normal}>{item.status}</Text>
                   </View>
                 </View>
                 <View style={viewStyles.flexRow} className='justify-between'>
                   <Text style={textStyles.hint}>
-                    Mã đơn hàng: {booking.purrPetCode}
+                    Mã đơn hàng: {item.purrPetCode}
                   </Text>
                   <Text style={textStyles.hint}>
-                    Tổng tiền: {formatCurrency(booking.bookingHomePrice)}
+                    Tổng tiền: {formatCurrency(item.bookingHomePrice)}
                   </Text>
                 </View>
                 <View style={viewStyles.colorCard}>
@@ -133,14 +151,14 @@ const HomestayHistoryScreen = ({ navigation }: any) => {
                     <Text style={textStyles.label} className='m-1'>
                       Tên thú cưng:
                     </Text>
-                    <Text style={textStyles.normal}>{booking.petName}</Text>
+                    <Text style={textStyles.normal}>{item.petName}</Text>
                   </View>
                   <View style={viewStyles.flexRow} className='items-center'>
                     <Text style={textStyles.label} className='m-1'>
                       Ngày vào:
                     </Text>
                     <Text style={textStyles.normal}>
-                      {formatDateTime(booking.dateCheckIn)}
+                      {formatDateTime(item.dateCheckIn)}
                     </Text>
                   </View>
                   <View style={viewStyles.flexRow} className='items-center'>
@@ -148,14 +166,14 @@ const HomestayHistoryScreen = ({ navigation }: any) => {
                       Ngày ra:
                     </Text>
                     <Text style={textStyles.normal}>
-                      {formatDateTime(booking.dateCheckOut)}
+                      {formatDateTime(item.dateCheckOut)}
                     </Text>
                   </View>
                   <View style={viewStyles.flexRow} className='items-center'>
                     <Text style={textStyles.label} className='m-1'>
                       Mã phòng:
                     </Text>
-                    <Text style={textStyles.normal}>{booking.homeCode}</Text>
+                    <Text style={textStyles.normal}>{item.homeCode}</Text>
                   </View>
                 </View>
                 <View style={viewStyles.flexRow} className='justify-end'>
@@ -170,15 +188,15 @@ const HomestayHistoryScreen = ({ navigation }: any) => {
                   </TouchableOpacity>
                 </View>
               </View>
-            ))}
-          {bHomeByStatus?.length === 0 && (
-            <View style={viewStyles.orderCard}>
-              <Text style={textStyles.normal}>
-                Không có đơn đặt lịch nào ở trạng thái này
-              </Text>
-            </View>
-          )}
-        </ScrollView>
+            )}
+          />
+        ) : (
+          <View style={viewStyles.orderCard}>
+            <Text style={textStyles.normal}>
+              Không có đơn đặt lịch nào ở trạng thái này
+            </Text>
+          </View>
+        )}
       </SafeAreaView>
     </>
   );

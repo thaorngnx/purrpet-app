@@ -7,19 +7,29 @@ import {
   View,
   TouchableOpacity,
   Image,
+  FlatList,
 } from 'react-native';
-import { useEffect, useState } from 'react';
-import { getOrders } from '../../../api/order';
-import {
-  Order,
-  OrderRequestParams,
-  OrderResponse,
-} from '../../../interface/Order';
+import { useEffect, useRef, useState } from 'react';
+import { Order, OrderRequestParams } from '../../../interface/Order';
 import * as CONST from '../../constants';
-import { ScrollView } from 'react-native';
 import { formatCurrency, formatDateTime } from '../../../utils/formatData';
 import { useOrderStore } from '../../../zustand/orderStore';
 import { Pagination } from '../../../interface/Pagination';
+
+interface ProductOrder {
+  productCode: string;
+  images: { path: string }[];
+  name: string;
+  quantity: number;
+  price: number;
+  totalPrice: number;
+  star: number;
+}
+
+interface OrderDetail {
+  order: Order;
+  productOrders: ProductOrder[];
+}
 
 const OrderHistoryScreen = ({ navigation }: any) => {
   const listOrderState = useOrderStore((state) => state.listOrderState);
@@ -33,7 +43,6 @@ const OrderHistoryScreen = ({ navigation }: any) => {
     page: 1,
     total: 1,
   } as Pagination);
-
   useEffect(() => {
     const params = {
       // limit: 10,
@@ -64,69 +73,59 @@ const OrderHistoryScreen = ({ navigation }: any) => {
         </TouchableOpacity>
         <Text style={textStyles.title}>Lịch sử mua hàng</Text>
       </View>
-
       <View>
-        <ScrollView
+        <FlatList
           horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={[viewStyles.tabContainer]}
-          key={tabOrder}
-        >
-          <TouchableOpacity
-            key={0}
-            style={[viewStyles.tab, tabOrder === 0 && viewStyles.activeTab]}
-            onPress={() => setTabOrder(0)}
-          >
-            <Text style={viewStyles.tabText}>Tất cả</Text>
-          </TouchableOpacity>
-          {Object.values(CONST.STATUS_ORDER).map((status, index) => (
+          data={['Tất cả', ...Object.values(CONST.STATUS_ORDER)]}
+          keyExtractor={(item) => item.toString()}
+          renderItem={({ item, index }) => (
             <TouchableOpacity
-              key={index + 1}
+              key={index}
               style={[
                 viewStyles.tab,
-                tabOrder === index + 1 && viewStyles.activeTab,
+                tabOrder === index && viewStyles.activeTab,
               ]}
-              onPress={() => setTabOrder(index + 1)}
+              onPress={() => setTabOrder(index)}
             >
-              <Text style={viewStyles.tabText}>{status}</Text>
+              <Text style={viewStyles.tabText}>{item.toString()}</Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
+          )}
+          showsHorizontalScrollIndicator={false}
+          key={tabOrder}
+        />
       </View>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={[viewStyles.scrollContainer]}
-      >
-        {!listOrderState.loading &&
-          orders?.length > 0 &&
-          orders.map((order: Order) => (
-            <View style={viewStyles.orderCard} key={order.purrPetCode}>
+      {orders?.length > 0 ? (
+        <FlatList
+          data={orders}
+          keyExtractor={(item) => item.purrPetCode}
+          renderItem={({ item }) => (
+            <View style={viewStyles.orderCard} key={item.purrPetCode}>
               <View style={viewStyles.flexRow} className='justify-between'>
                 <View style={viewStyles.flexRow}>
                   <Text style={textStyles.label} className='mr-1'>
                     Ngày đặt:
                   </Text>
                   <Text style={textStyles.normal}>
-                    {formatDateTime(order.createdAt)}
+                    {formatDateTime(item.createdAt)}
                   </Text>
                 </View>
                 <View style={viewStyles.flexRow}>
                   <Text style={textStyles.label} className='mr-1'>
                     Trạng thái:
                   </Text>
-                  <Text style={textStyles.normal}>{order.status}</Text>
+                  <Text style={textStyles.normal}>{item.status}</Text>
                 </View>
               </View>
               <View style={viewStyles.flexRow} className='justify-between'>
                 <Text style={textStyles.hint}>
-                  Mã đơn hàng: {order.purrPetCode}
+                  Mã đơn hàng: {item.purrPetCode}
                 </Text>
                 <Text style={textStyles.hint}>
-                  Tổng tiền: {formatCurrency(order.orderPrice)}
+                  Tổng tiền: {formatCurrency(item.orderPrice)}
                 </Text>
               </View>
               <View style={viewStyles.historyImagesWrapper}>
-                {order.orderItems.map((item) => (
+                {item.orderItems.map((item) => (
                   <Image
                     source={{ uri: item.image }}
                     style={viewStyles.historyImage}
@@ -139,24 +138,25 @@ const OrderHistoryScreen = ({ navigation }: any) => {
                   style={viewStyles.flexRow}
                   onPress={() =>
                     navigation.navigate('OrderDetailScreen', {
-                      order: order,
+                      order: item,
                     })
                   }
                 >
-                  <Text className='mr-1 text-[#A16207]'>Xem chi tiết</Text>
-                  <ChevronRightIcon color='#A16207' />
+                  <Text className='mr-1 text-[#60A5FA]'>Xem chi tiết</Text>
+                  <ChevronRightIcon color='#60A5FA' />
                 </TouchableOpacity>
               </View>
             </View>
-          ))}
-        {orders?.length === 0 && (
-          <View style={viewStyles.orderCard}>
-            <Text style={textStyles.normal}>
-              Không có đơn hàng nào ở trạng thái này
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+          )}
+          onEndReachedThreshold={0.5}
+        />
+      ) : (
+        <View style={viewStyles.orderCard}>
+          <Text style={textStyles.normal}>
+            Không có đơn hàng nào ở trạng thái này
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

@@ -12,6 +12,7 @@ import {
   View,
   TouchableOpacity,
   Image,
+  FlatList,
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import { getBookingSpas } from '../../../api/bookingSpa';
@@ -68,7 +69,7 @@ const SpaHistoryScreen = ({ navigation }: any) => {
           <Text style={textStyles.title}>Lịch sử đặt lịch spa</Text>
         </View>
         <View>
-          <ScrollView
+          {/* <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={viewStyles.tabContainer}
@@ -93,37 +94,53 @@ const SpaHistoryScreen = ({ navigation }: any) => {
                 <Text style={viewStyles.tabText}>{status}</Text>
               </TouchableOpacity>
             ))}
-          </ScrollView>
+          </ScrollView> */}
+          <FlatList
+            horizontal
+            data={['Tất cả', ...Object.values(CONST.STATUS_BOOKING)]}
+            keyExtractor={(item) => item}
+            renderItem={({ item, index }) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  viewStyles.tab,
+                  tabSpa === index && viewStyles.activeTab,
+                ]}
+                onPress={() => setTabSpa(index)}
+              >
+                <Text style={viewStyles.tabText}>{item}</Text>
+              </TouchableOpacity>
+            )}
+          />
         </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={viewStyles.scrollContainer}
-        >
-          {bSpaByStatus?.length > 0 &&
-            bSpaByStatus.map((booking: BookingSpa) => (
-              <View style={viewStyles.orderCard} key={booking.purrPetCode}>
+        {bSpaByStatus?.length > 0 ? (
+          <FlatList
+            data={bSpaByStatus}
+            keyExtractor={(item) => item.purrPetCode}
+            renderItem={({ item }) => (
+              <View style={viewStyles.orderCard}>
                 <View style={viewStyles.flexRow} className='justify-between'>
                   <View style={viewStyles.flexRow}>
                     <Text style={textStyles.label} className='mr-1'>
                       Ngày đặt:
                     </Text>
                     <Text style={textStyles.normal}>
-                      {formatDateTime(booking.createdAt)}
+                      {formatDateTime(item.createdAt)}
                     </Text>
                   </View>
                   <View style={viewStyles.flexRow}>
                     <Text style={textStyles.label} className='mr-1'>
                       Trạng thái:
                     </Text>
-                    <Text style={textStyles.normal}>{booking.status}</Text>
+                    <Text style={textStyles.normal}>{item.status}</Text>
                   </View>
                 </View>
                 <View style={viewStyles.flexRow} className='justify-between'>
                   <Text style={textStyles.hint}>
-                    Mã đơn hàng: {booking.purrPetCode}
+                    Mã đơn hàng: {item.purrPetCode}
                   </Text>
                   <Text style={textStyles.hint}>
-                    Tổng tiền: {formatCurrency(booking.bookingSpaPrice)}
+                    Tổng tiền: {formatCurrency(item.bookingSpaPrice)}
                   </Text>
                 </View>
                 <View style={viewStyles.colorCard}>
@@ -131,23 +148,23 @@ const SpaHistoryScreen = ({ navigation }: any) => {
                     <Text style={textStyles.label} className='m-1'>
                       Tên thú cưng:
                     </Text>
-                    <Text style={textStyles.normal}>{booking.petName}</Text>
+                    <Text style={textStyles.normal}>{item.petName}</Text>
                   </View>
                   <View style={viewStyles.flexRow} className='items-center'>
                     <Text style={textStyles.label} className='m-1'>
                       Ngày hẹn:
                     </Text>
                     <Text style={textStyles.normal}>
-                      {formatDateTime(booking.bookingDate)}
+                      {formatDateTime(item.bookingDate)}
                       {' - '}
-                      {booking.bookingTime}
+                      {item.bookingTime}
                     </Text>
                   </View>
                   <View style={viewStyles.flexRow} className='items-center'>
                     <Text style={textStyles.label} className='m-1'>
                       Mã dịch vụ:
                     </Text>
-                    <Text style={textStyles.normal}>{booking.spaCode}</Text>
+                    <Text style={textStyles.normal}>{item.spaCode}</Text>
                   </View>
                 </View>
                 <View style={viewStyles.flexRow} className='justify-end'>
@@ -162,15 +179,15 @@ const SpaHistoryScreen = ({ navigation }: any) => {
                   </TouchableOpacity>
                 </View>
               </View>
-            ))}
-          {bSpaByStatus?.length === 0 && (
-            <View style={viewStyles.orderCard}>
-              <Text style={textStyles.normal}>
-                Không có đơn đặt lịch nào ở trạng thái này
-              </Text>
-            </View>
-          )}
-        </ScrollView>
+            )}
+          />
+        ) : (
+          <View style={viewStyles.orderCard}>
+            <Text style={textStyles.normal}>
+              Không có đơn đặt lịch nào ở trạng thái này
+            </Text>
+          </View>
+        )}
       </SafeAreaView>
     </>
   );

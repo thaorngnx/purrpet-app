@@ -4,7 +4,7 @@ const viewStyles = StyleSheet.create({
   container: {
     // paddingHorizontal: 15,
     flex: 1,
-    //backgroundColor: 'white',
+    backgroundColor: 'white',
     width: '100%',
     // alignContent: 'center',
   },
@@ -40,6 +40,7 @@ const viewStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     marginVertical: 10,
+    flex: 1,
   },
   historyImage: {
     width: 70,
@@ -115,6 +116,16 @@ const viewStyles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'black',
     marginVertical: 12,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  boxUnderline: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    padding: 10,
   },
 });
 

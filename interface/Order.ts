@@ -22,6 +22,9 @@ export interface Order {
   };
   customerNote: string;
   payMethod: string;
+  paymentStatus: string;
+  pointUsed: number;
+  totalPayment: number;
   status: string;
   createdAt: Date;
   updatedAt: Date;

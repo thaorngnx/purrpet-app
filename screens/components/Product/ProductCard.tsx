@@ -4,6 +4,8 @@ import { ShoppingCart, StarIcon } from 'lucide-react-native';
 import { formatCurrency } from '../../../utils/formatData';
 import viewStyles from '../../styles/ViewStyles';
 import { useCartStore } from '../../../zustand/cartStore';
+// import { favoriteProduct } from '../../../api/favorite';
+import { useState } from 'react';
 
 const ProductCard = ({
   navigation,
@@ -14,8 +16,8 @@ const ProductCard = ({
   product: Product;
   productKey: string;
 }) => {
-  const cart = useCartStore((state) => state.cartState.data);
   const { addToCart } = useCartStore();
+  const [favorite, setFavorite] = useState(false);
 
   const handleAddToCart = () => {
     addToCart({
@@ -23,6 +25,15 @@ const ProductCard = ({
       quantity: 1,
     });
   };
+  // const handleFavorite = () => {
+  //   console.log('Favorite');
+  //   favoriteProduct(product.purrPetCode).then((res) => {
+  //     if (res.err === 0) {
+  //       console.log('Favorite success');
+  //     }
+  //   });
+  // };
+
   if (!product || !product.images) {
     return <></>;
   }
@@ -44,8 +55,14 @@ const ProductCard = ({
         className='flex justify-between items-end'
       >
         <Text style={styles.start} className='flex-row items-end'>
-          {product.star} <StarIcon color='#C54600' />
+          5 <StarIcon color='#C54600' />
         </Text>
+        {/* <TouchableOpacity
+          onPress={() => handleAddToCart()}
+          style={viewStyles.flexRow}
+        >
+          <Heart color={'red'} fill={'red'} />
+        </TouchableOpacity> */}
         <TouchableOpacity
           onPress={() => handleAddToCart()}
           style={viewStyles.flexRow}

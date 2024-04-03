@@ -33,6 +33,7 @@ import { useCartStore } from './zustand/cartStore';
 import ProcessingOrderSceen from './screens/cart/ProcessingOrderSceen';
 import ProcessingBookingSpa from './screens/service/bookingSpa/ProcessingBookingSpa';
 import ProcessingBookingHome from './screens/service/bookingHome/ProcessingBookingHome';
+import OrderReviewScreen from './screens/account/history/review/OrderReviewScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -196,6 +197,11 @@ export default function App() {
           <Stack.Screen
             name='ProcessingBookingHome'
             component={ProcessingBookingHome}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='OrderReviewScreen'
+            component={OrderReviewScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

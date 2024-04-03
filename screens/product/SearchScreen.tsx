@@ -15,18 +15,14 @@ import textStyles from '../styles/TextStyles';
 import { useState } from 'react';
 import { Category } from '../../interface/Category';
 import { ShoppingCart } from 'lucide-react-native';
+import { useCategoryStore } from '../../zustand/categoryStore';
 
 const SearchScreen = ({ navigation }: any) => {
-  const [categories, setCategories] = useState([{} as Category]);
   const [search, setSearch] = useState('');
+  const categories: Category[] = useCategoryStore(
+    (state) => state.categoryState.data,
+  );
 
-  useEffect(() => {
-    getActiveCategories({ categoryType: CONST.CATEGORY_TYPE.PRODUCT }).then(
-      (res) => {
-        setCategories(res.data);
-      },
-    );
-  }, []);
   const handleKeyPress = () => {
     navigation.navigate('Sản phẩm', { search });
   };

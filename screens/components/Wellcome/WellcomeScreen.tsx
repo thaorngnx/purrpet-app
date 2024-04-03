@@ -6,10 +6,12 @@ import { useCartStore } from '../../../zustand/cartStore';
 import TokenSchema from '../../../realmModel/TokenSchema';
 import Realm from 'realm';
 import { jwtDecode } from 'jwt-decode';
+import { useCategoryStore } from '../../../zustand/categoryStore';
 
 const WelcomeScreen = ({ navigation }: any) => {
   const { getCustomerById } = useCustomerStore();
   const { getCart } = useCartStore();
+  const { getActiveCategories } = useCategoryStore();
   //get customer from realm
   const realm = new Realm({ schema: [TokenSchema] });
   const token = realm.objects('Token') as any;
@@ -36,6 +38,7 @@ const WelcomeScreen = ({ navigation }: any) => {
 
   useEffect(() => {
     getCart();
+    getActiveCategories();
     const animation = Animated.timing(progressValue, {
       toValue: 100,
       duration: 5000, // Thời gian hoàn thành của Progress (tính theo milliseconds)

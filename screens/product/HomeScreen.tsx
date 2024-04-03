@@ -6,7 +6,6 @@ import {
   StyleSheet,
   View,
   Text,
-  SectionList,
   ScrollView,
 } from 'react-native';
 import SearchProduct from '../components/Search/SearchProduct';
