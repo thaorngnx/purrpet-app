@@ -18,6 +18,27 @@ export interface BookingHomeResponse {
   data: BookingHome[];
   totalPage: number;
 }
+export interface BookingHomeDetail {
+  purrPetCode: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  customerNote: string;
+  petName: string;
+  dateCheckIn: string;
+  dateCheckOut: string;
+  numberOfDay: number;
+  bookingHomePrice: number;
+  status: string;
+  createdAt: string;
+  homestay: {
+    purrPetCode: string;
+    homeType: string;
+    categoryName: string;
+    masterDataName: string;
+    price: number;
+  };
+}
 
 export interface BookingHomeInfo {
   petName: string;

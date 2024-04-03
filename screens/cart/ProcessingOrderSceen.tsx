@@ -71,7 +71,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
 
           deleteCart();
           navigation.navigate('OrderDetailScreen', {
-            order: res.data,
+            orderCode: res.data.purrPetCode,
           });
         } else {
           createPaymentUrl({

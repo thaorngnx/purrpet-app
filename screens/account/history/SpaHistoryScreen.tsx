@@ -171,7 +171,9 @@ const SpaHistoryScreen = ({ navigation }: any) => {
                   <TouchableOpacity
                     style={viewStyles.flexRow}
                     onPress={() =>
-                      navigation.navigate('BookingSpaDetailScreen')
+                      navigation.navigate('BookingSpaDetailScreen', {
+                        bookingSpaCode: item.purrPetCode,
+                      })
                     }
                   >
                     <Text className='mr-1 text-[#A16207]'>Xem chi tiết</Text>

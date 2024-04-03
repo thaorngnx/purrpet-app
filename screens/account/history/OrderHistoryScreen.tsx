@@ -138,7 +138,7 @@ const OrderHistoryScreen = ({ navigation }: any) => {
                   style={viewStyles.flexRow}
                   onPress={() =>
                     navigation.navigate('OrderDetailScreen', {
-                      order: item,
+                      orderCode: item.purrPetCode,
                     })
                   }
                 >

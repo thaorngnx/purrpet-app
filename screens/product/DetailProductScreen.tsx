@@ -1,5 +1,5 @@
 import { AddIcon, ArrowLeftIcon, RemoveIcon, View } from '@gluestack-ui/themed';
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import {
   Image,
   SafeAreaView,
@@ -12,7 +12,7 @@ import { StyleSheet } from 'react-native';
 import buttonStyles from '../styles/ButtonStyles';
 import { formatCurrency } from '../../utils/formatData';
 import textStyles from '../styles/TextStyles';
-import { Star } from 'lucide-react-native';
+import { Star, StarHalf } from 'lucide-react-native';
 import viewStyles from '../styles/ViewStyles';
 import { Product, ProductDetail } from '../../interface/Product';
 import { getProductDetailByCode } from '../../api/product';
@@ -32,9 +32,8 @@ const DetailProductScreen = ({ navigation, route }: any) => {
     React.useState<ProductDetail | null>(null);
 
   useEffect(() => {
-    getProductDetailByCode(product.purrPetCode).then((res) => {
+    getProductDetailByCode(product.productCode).then((res) => {
       if (res.err === 0) {
-        console.log(res.data);
         setProductDetail(res.data);
       }
     });
@@ -60,17 +59,104 @@ const DetailProductScreen = ({ navigation, route }: any) => {
             ]}
           />
           <View style={styles.content}>
-            <Text style={styles.name}>{product.productName}</Text>
+            <Text style={styles.name}>
+              {productDetail?.product.productName}
+            </Text>
+
             <View style={styles.count}>
-              <View style={viewStyles.flexRow}>
-                <Text style={textStyles.normal}>
-                  {productDetail?.product.averageRating}{' '}
-                </Text>
-                <Star color='#C54600' />
+              <View
+                style={[
+                  viewStyles.flexRow,
+                  {
+                    alignItems: 'center',
+                  },
+                ]}
+              >
+                {(productDetail?.product.averageRating as number) > 0 ? (
+                  <Fragment>
+                    <Text
+                      style={[
+                        textStyles.title,
+                        {
+                          marginRight: 4,
+                        },
+                      ]}
+                    >
+                      {productDetail?.product.averageRating}
+                    </Text>
+                    {[
+                      ...Array(
+                        Math.ceil(
+                          (productDetail?.product.averageRating as number) || 0,
+                        ),
+                      ),
+                    ].map((star, index) => {
+                      const isHalf =
+                        index + 1 >
+                        (productDetail?.product.averageRating as number);
+                      return (
+                        <Fragment key={index}>
+                          {!isHalf ? (
+                            <Star
+                              fill={
+                                index <
+                                (productDetail?.product.averageRating as number)
+                                  ? '#FFD700'
+                                  : '#C0C0C0'
+                              }
+                              size={30}
+                            />
+                          ) : (
+                            <StarHalf fill='#FFD700' size={30} />
+                          )}
+                        </Fragment>
+                      );
+                    })}
+                    <Text
+                      style={[
+                        textStyles.hintBoldItalic,
+                        {
+                          color: '#d0021c',
+                        },
+                      ]}
+                    >
+                      ({productDetail?.rating.reviews.length} đánh giá)
+                    </Text>
+                  </Fragment>
+                ) : (
+                  <Fragment>
+                    <Text
+                      style={[
+                        textStyles.title,
+                        {
+                          marginRight: 4,
+                        },
+                      ]}
+                    >
+                      0
+                    </Text>
+                    {[...Array(5)].map((star, index) => {
+                      return <Star key={index} fill='#C0C0C0' size={30} />;
+                    })}
+                    <Text
+                      style={[
+                        textStyles.hintBoldItalic,
+                        {
+                          color: '#d0021c',
+                        },
+                      ]}
+                    >
+                      (0 đánh giá)
+                    </Text>
+                  </Fragment>
+                )}
               </View>
+
               <Text style={styles.price}>{formatCurrency(product.price)}</Text>
             </View>
-            <Text style={{ marginTop: 10, color: '#000000' }}>Đã bán</Text>
+            <Text style={{ marginTop: 10, color: '#000000' }}>
+              Đã bán {productDetail?.product.orderQuantity}
+            </Text>
 
             <View>
               <Text
@@ -84,95 +170,171 @@ const DetailProductScreen = ({ navigation, route }: any) => {
                 Mô tả
               </Text>
               <View>
-                <Text style={textStyles.normal}>{product.description}</Text>
+                <Text style={textStyles.normal}>
+                  {productDetail?.product.description}
+                </Text>
               </View>
             </View>
-            <View className='border-2'>
+            <View>
               <Text
                 style={{
                   fontSize: 18,
                   color: '#A16207',
                   fontWeight: 'bold',
                   marginTop: 10,
-                  marginBottom: 10,
                 }}
               >
                 Đánh giá sản phẩm
               </Text>
-              <View style={viewStyles.flexRow}>
-                {[...Array(5)].map((star, index) => {
-                  return (
-                    <TouchableOpacity key={index}>
-                      <Star
-                        size={30}
-                        color={index < 2 ? '#FFD700' : '#C0C0C0'}
-                      />
-                    </TouchableOpacity>
-                  );
-                })}
+            </View>
+            {(productDetail?.product.averageRating as number) > 0 && (
+              <View style={styles.count}>
+                <View
+                  style={[
+                    viewStyles.flexRow,
+                    {
+                      alignItems: 'center',
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      textStyles.title,
+                      {
+                        marginRight: 2,
+                      },
+                    ]}
+                  >
+                    {productDetail?.product.averageRating}
+                  </Text>
+                  {[
+                    ...Array(
+                      Math.ceil(
+                        (productDetail?.product.averageRating as number) || 0,
+                      ),
+                    ),
+                  ].map((star, index) => {
+                    const isHalf =
+                      index + 1 >
+                      (productDetail?.product.averageRating as number);
+                    return (
+                      <Fragment key={index}>
+                        {!isHalf ? (
+                          <Star
+                            fill={
+                              index <
+                              (productDetail?.product.averageRating as number)
+                                ? '#FFD700'
+                                : '#C0C0C0'
+                            }
+                            size={30}
+                          />
+                        ) : (
+                          <StarHalf fill='#FFD700' size={30} />
+                        )}
+                      </Fragment>
+                    );
+                  })}
+                  <Text
+                    style={[
+                      textStyles.hintBoldItalic,
+                      {
+                        color: '#d0021c',
+                      },
+                    ]}
+                  >
+                    ({productDetail?.rating.reviews.length} đánh giá)
+                  </Text>
+                </View>
               </View>
-              <View className='my-4'>
-                {productDetail?.rating.starRate &&
-                  Object.keys(productDetail.rating.starRate)
-                    .reverse()
-                    .map((rating, index) => {
-                      const starKeys = Object.keys(
-                        productDetail.rating.starRate,
-                      );
-                      console.log('starKeys', starKeys);
-                      return (
-                        <View key={index} style={styles.listItem}>
-                          <View style={viewStyles.flexRow} className='mr-2'>
-                            <Text className='text-black'>
-                              {index + 1}
-                              <Star color='#C54600' size={15} />
-                            </Text>
-                          </View>
-                          <View style={styles.timelineStar}>
-                            <View
-                              style={[
-                                styles.timing,
-                                {
-                                  width: ((
-                                    (starKeys[index] as any) * 100
-                                  ).toString() + '%') as any,
-                                },
-                              ]}
-                            />
-                          </View>
-                          {/* <Text style={styles.numberPercent}>{rating.percent}</Text> */}
+            )}
+            <View>
+              {productDetail?.rating.starRate &&
+              (productDetail.product.averageRating as number) > 0 ? (
+                Object.keys(productDetail.rating.starRate)
+                  .reverse()
+                  .map((rating, index) => {
+                    const starKeys = Object.keys(
+                      productDetail.rating.starRate,
+                    ) as Array<keyof typeof productDetail.rating.starRate>;
+
+                    const averageRatingStar = ((
+                      productDetail.rating.starRate[starKeys[index]] * 100
+                    ).toString() + '%') as any;
+
+                    return (
+                      <View key={index} style={styles.listItem}>
+                        <View style={viewStyles.flexRow}>
+                          <Text className='text-black'>
+                            {index + 1}
+                            <Star color='#C54600' size={15} />
+                          </Text>
                         </View>
-                      );
-                    })}
-              </View>
-              <View
-                style={{
-                  margin: 4,
-                }}
-              >
-                {productDetail?.rating.reviews.map((review, index) => {
-                  return (
-                    <View key={index}>
-                      <Text className='text-black'>{review.comment}</Text>
-                      <View style={viewStyles.flexRow}>
-                        {[...Array(5)].map((star, index) => {
-                          return (
-                            <Star
-                              key={index}
-                              size={15}
-                              color={
-                                index < (review.rating as number)
-                                  ? '#FFD700'
-                                  : '#C0C0C0'
-                              }
-                            />
-                          );
-                        })}
+                        <View style={styles.timelineStar}>
+                          <View
+                            style={[
+                              styles.timing,
+                              {
+                                width: averageRatingStar,
+                              },
+                            ]}
+                          />
+                        </View>
+                        <Text style={styles.numberPercent}>
+                          {averageRatingStar}
+                        </Text>
                       </View>
+                    );
+                  })
+              ) : (
+                <Text
+                  style={[
+                    textStyles.hintBoldItalic,
+                    {
+                      fontSize: 16,
+                      fontWeight: 'normal',
+                      marginTop: 10,
+                    },
+                  ]}
+                >
+                  Chưa có đánh giá
+                </Text>
+              )}
+            </View>
+            <View
+              style={{
+                margin: 4,
+              }}
+            >
+              {productDetail?.rating.reviews.map((review, index) => {
+                return (
+                  <View
+                    key={index}
+                    style={{
+                      marginTop: 10,
+                    }}
+                  >
+                    <Text style={textStyles.bold}>{review.user?.name}</Text>
+                    <View style={viewStyles.flexRow}>
+                      {[...Array(5)].map((star, index) => {
+                        return (
+                          <Star
+                            key={index}
+                            size={15}
+                            fill={
+                              index < (review.rating as number)
+                                ? '#FFD700'
+                                : '#C0C0C0'
+                            }
+                            className='mr-1 my-2'
+                          />
+                        );
+                      })}
                     </View>
-                  );
-                })}
-              </View>
+                    <Text style={textStyles.normal}>{review.comment}</Text>
+                  </View>
+                );
+              })}
             </View>
           </View>
         </View>
@@ -308,10 +470,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
-    marginTop: 1,
+    marginTop: 2,
+    gap: 4,
   },
   timelineStar: {
-    flex: 4,
+    flex: 8,
     height: 10,
     backgroundColor: '#ccc',
   },
@@ -321,7 +484,8 @@ const styles = StyleSheet.create({
   },
   numberPercent: {
     flex: 1,
-    textAlign: 'right',
+    // textAlign: 'right',
+    color: textStyles.normal.color,
   },
 });
 

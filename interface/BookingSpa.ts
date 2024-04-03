@@ -1,3 +1,5 @@
+import { Spa } from './spa';
+
 export interface BookingSpa {
   purrPetCode: string;
   petName: string;
@@ -10,6 +12,21 @@ export interface BookingSpa {
   status: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface BookingSpaDetail {
+  purrPetCode?: string;
+  customerName?: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  customerNote?: string;
+  petName?: string;
+  bookingDate?: string;
+  bookingTime?: string;
+  bookingSpaPrice?: number;
+  status?: string;
+  createdAt?: string;
+  spa?: Spa;
 }
 
 export interface BookingSpaResponse {

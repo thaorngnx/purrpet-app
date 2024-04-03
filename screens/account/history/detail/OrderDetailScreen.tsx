@@ -29,20 +29,17 @@ interface ProductOrder {
 }
 
 interface OrderDetail {
-  order: Order;
-  productOrders: ProductOrder[];
+  order?: Order;
+  productOrders?: ProductOrder[];
 }
 
 const OrderDetailScreen = ({ navigation, route }: any) => {
-  const { order } = route.params as { order: Order };
-  const [orderDetail, setOrderDetail] = useState<OrderDetail>({
-    order: order,
-    productOrders: [],
-  } as OrderDetail);
+  const orderCode = route.params.orderCode as string;
+  const [orderDetail, setOrderDetail] = useState<OrderDetail>();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getOrderByCode(order.purrPetCode).then((res) => {
+    getOrderByCode(orderCode).then((res) => {
       if (res.err === 0) {
         const order = res.data;
         const orderItems = res.data.orderItems;
@@ -80,7 +77,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
   }, []);
   const handleCancelOrder = () => {
     updateStatusOrder(
-      orderDetail.order.purrPetCode,
+      orderDetail?.order?.purrPetCode as string,
       CONST.STATUS_ORDER.CANCEL,
     ).then((res) => {
       if (res.err === 0) {
@@ -92,14 +89,17 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
   };
 
   useEffect(() => {
-    if (orderDetail.order && orderDetail.productOrders.length > 0) {
+    if (
+      orderDetail?.order &&
+      (orderDetail?.productOrders as ProductOrder[]).length > 0
+    ) {
       setLoading(false);
     }
   }, [orderDetail]);
 
   const handleReviewOrder = () => {
     console.log('handleReviewOrder');
-    navigation.navigate('OrderReviewScreen', { order: orderDetail.order });
+    navigation.navigate('OrderReviewScreen', { order: orderDetail?.order });
   };
 
   return (
@@ -109,7 +109,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
           <ArrowLeftIcon />
         </TouchableOpacity>
         <Text style={textStyles.title}>
-          Chi tiết đơn hàng {order.purrPetCode}
+          Chi tiết đơn hàng {orderDetail?.order?.purrPetCode}
         </Text>
       </View>
       {loading ? (
@@ -134,61 +134,61 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
                 <View style={viewStyles.flexRow} className='mb-1'>
                   <Text style={textStyles.label}>Ngày đặt:</Text>
                   <Text style={textStyles.normal}>
-                    {formatDateTime(orderDetail.order?.createdAt)}
+                    {formatDateTime(orderDetail?.order?.createdAt)}
                   </Text>
                 </View>
                 <View style={viewStyles.flexRow} className='mb-1'>
                   <Text style={textStyles.label}>Trạng thái:</Text>
                   <Text style={textStyles.normal}>
-                    {orderDetail.order?.status}
+                    {orderDetail?.order?.status}
                   </Text>
                 </View>
               </View>
               <View style={viewStyles.flexRow}>
                 <Text style={textStyles.label}>Ghi chú:</Text>
                 <Text style={textStyles.normal}>
-                  {orderDetail.order?.customerNote}
+                  {orderDetail?.order?.customerNote}
                 </Text>
               </View>
               <View style={viewStyles.line} />
               <View style={viewStyles.flexRow} className='mb-1'>
                 <Text style={textStyles.label}>Người nhận:</Text>
                 <Text style={textStyles.normal}>
-                  {orderDetail.order?.customerName}
+                  {orderDetail?.order?.customerName}
                 </Text>
               </View>
               <View style={viewStyles.flexRow} className='mb-1'>
                 <Text style={textStyles.label}>Số điện thoại:</Text>
                 <Text style={textStyles.normal}>
-                  {orderDetail.order?.customerPhone}
+                  {orderDetail?.order?.customerPhone}
                 </Text>
               </View>
               <View>
                 <Text style={textStyles.label}>Địa chỉ nhận hàng:</Text>
                 <Text style={textStyles.normal}>
-                  {orderDetail.order?.customerAddress.street},{' '}
-                  {orderDetail.order?.customerAddress.ward},{' '}
-                  {orderDetail.order?.customerAddress.district},{' '}
-                  {orderDetail.order?.customerAddress.province}
+                  {orderDetail?.order?.customerAddress.street},{' '}
+                  {orderDetail?.order?.customerAddress.ward},{' '}
+                  {orderDetail?.order?.customerAddress.district},{' '}
+                  {orderDetail?.order?.customerAddress.province}
                 </Text>
               </View>
               <View style={viewStyles.line} />
               <View style={viewStyles.flexRow} className='mb-1'>
                 <Text style={textStyles.label}>Thông tin thanh toán:</Text>
                 <Text style={textStyles.normal}>
-                  {formatCurrency(orderDetail.order?.totalPayment)}
+                  {formatCurrency(orderDetail?.order?.totalPayment as number)}
                 </Text>
               </View>
               <View style={viewStyles.flexRow} className='mb-1'>
                 <Text style={textStyles.label}>Phương thức thanh toán:</Text>
                 <Text style={textStyles.normal}>
-                  {orderDetail.order?.payMethod}
+                  {orderDetail?.order?.payMethod}
                 </Text>
               </View>
               <View style={viewStyles.flexRow} className='mb-1'>
                 <Text style={textStyles.label}>Trạng thái thanh toán:</Text>
                 <Text style={textStyles.normal}>
-                  {orderDetail.order?.paymentStatus}
+                  {orderDetail?.order?.paymentStatus}
                 </Text>
               </View>
             </View>
@@ -207,81 +207,83 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
             >
               Danh sách sản phẩm
             </Text>
-            {orderDetail.productOrders.map((productOrder, index) => (
-              <View style={viewStyles.boxUnderline} key={index}>
-                <View style={viewStyles.flexRow}>
-                  <Image
-                    source={{ uri: productOrder.images[0]?.path }}
-                    style={viewStyles.historyImage}
-                  />
-                  <View style={viewStyles.flexColumn} className='w-[76%]'>
-                    <Text
-                      numberOfLines={1}
-                      style={textStyles.normal}
-                      className='truncate'
-                    >
-                      {productOrder.name}
-                    </Text>
-                    <View
-                      style={viewStyles.flexRow}
-                      className='justify-between'
-                    >
-                      <Text style={textStyles.normal}>
-                        {formatCurrency(productOrder.price)}
+            {(orderDetail?.productOrders as ProductOrder[]).map(
+              (productOrder, index) => (
+                <View style={viewStyles.boxUnderline} key={index}>
+                  <View style={viewStyles.flexRow}>
+                    <Image
+                      source={{ uri: productOrder.images[0]?.path }}
+                      style={viewStyles.historyImage}
+                    />
+                    <View style={viewStyles.flexColumn} className='w-[76%]'>
+                      <Text
+                        numberOfLines={1}
+                        style={textStyles.normal}
+                        className='truncate'
+                      >
+                        {productOrder.name}
                       </Text>
-                      <Text style={textStyles.normal}>
-                        x{productOrder.quantity}
-                      </Text>
-                    </View>
-                    <View style={viewStyles.flexRow} className='justify-end'>
-                      <Text style={textStyles.normal}>
-                        {formatCurrency(productOrder.totalPrice)}
-                      </Text>
+                      <View
+                        style={viewStyles.flexRow}
+                        className='justify-between'
+                      >
+                        <Text style={textStyles.normal}>
+                          {formatCurrency(productOrder.price)}
+                        </Text>
+                        <Text style={textStyles.normal}>
+                          x{productOrder.quantity}
+                        </Text>
+                      </View>
+                      <View style={viewStyles.flexRow} className='justify-end'>
+                        <Text style={textStyles.normal}>
+                          {formatCurrency(productOrder.totalPrice)}
+                        </Text>
+                      </View>
                     </View>
                   </View>
-                </View>
 
-                <View style={viewStyles.flexRow} className='justify-end mt-2'>
-                  <TouchableOpacity
-                    style={viewStyles.flexRow}
-                    onPress={() =>
-                      navigation.navigate('DetailProductScreen', {
-                        product: productOrder,
-                      })
-                    }
-                  >
-                    <Text className='mr-1 text-[#60A5FA]'>Xem chi tiết</Text>
-                    <ChevronRightIcon color='#60A5FA' />
-                  </TouchableOpacity>
+                  <View style={viewStyles.flexRow} className='justify-end mt-2'>
+                    <TouchableOpacity
+                      style={viewStyles.flexRow}
+                      onPress={() =>
+                        navigation.navigate('DetailProductScreen', {
+                          product: productOrder,
+                        })
+                      }
+                    >
+                      <Text className='mr-1 text-[#60A5FA]'>Xem chi tiết</Text>
+                      <ChevronRightIcon color='#60A5FA' />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            ))}
+              ),
+            )}
           </View>
           <View style={viewStyles.boxUnderline}>
             <View style={viewStyles.flexRow} className='justify-between'>
               <Text style={textStyles.label}>Tổng tiền:</Text>
               <Text style={textStyles.normal}>
-                {formatCurrency(orderDetail.order?.orderPrice)}
+                {formatCurrency(orderDetail?.order?.orderPrice as number)}
               </Text>
             </View>
             <View style={viewStyles.flexRow} className='justify-between'>
               <Text style={textStyles.label}>Điểm tích lũy sử dụng:</Text>
               <Text style={textStyles.normal}>
-                -{formatCurrency(orderDetail.order?.pointUsed || 0)}
+                -{formatCurrency(orderDetail?.order?.pointUsed || 0)}
               </Text>
             </View>
             <View style={viewStyles.flexRow} className='justify-between'>
               <Text style={textStyles.label}>Tổng thanh toán:</Text>
               <Text style={textStyles.normal}>
                 {formatCurrency(
-                  orderDetail.order?.totalPayment ||
-                    orderDetail.order?.orderPrice,
+                  (orderDetail?.order?.totalPayment as number) ||
+                    (orderDetail?.order?.orderPrice as number),
                 )}
               </Text>
             </View>
           </View>
-          {(orderDetail.order?.status === CONST.STATUS_ORDER.NEW ||
-            orderDetail.order?.status === CONST.STATUS_ORDER.PREPARE) && (
+          {(orderDetail?.order?.status === CONST.STATUS_ORDER.NEW ||
+            orderDetail?.order?.status === CONST.STATUS_ORDER.PREPARE) && (
             <View style={viewStyles.flexRow} className='justify-center'>
               <TouchableOpacity
                 style={buttonStyles.buttonOutline}
@@ -291,7 +293,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
               </TouchableOpacity>
             </View>
           )}
-          {orderDetail.order?.status === CONST.STATUS_ORDER.DONE && (
+          {orderDetail?.order?.status === CONST.STATUS_ORDER.DONE && (
             <View style={viewStyles.flexRow} className='justify-center'>
               <TouchableOpacity
                 style={buttonStyles.buttonOutline}
