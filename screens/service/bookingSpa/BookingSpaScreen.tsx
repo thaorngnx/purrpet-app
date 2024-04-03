@@ -30,6 +30,7 @@ import { getActiveSpas } from '../../../api/spa';
 import buttonStyles from '../../styles/ButtonStyles';
 import TimeSpaForm from './TimeSpaForm';
 import { createBookingSpa } from '../../../api/bookingSpa';
+import viewStyles from '../../styles/ViewStyles';
 
 const BookingSpaScreen = ({ route, navigation }: any) => {
   const [error, setError] = useState({
@@ -172,7 +173,7 @@ const BookingSpaScreen = ({ route, navigation }: any) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={viewStyles.container}>
       <View
         style={{
           backgroundColor: '#BAE6FD',

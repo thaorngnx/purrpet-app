@@ -34,28 +34,40 @@ import ProcessingOrderSceen from './screens/cart/ProcessingOrderSceen';
 import ProcessingBookingSpa from './screens/service/bookingSpa/ProcessingBookingSpa';
 import ProcessingBookingHome from './screens/service/bookingHome/ProcessingBookingHome';
 import OrderReviewScreen from './screens/account/history/review/OrderReviewScreen';
+import { useCategoryStore } from './zustand/categoryStore';
+import { useNotificationStore } from './zustand/notificationStore';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
-  // const { getCustomerById } = useCustomerStore();
-  // const { getCart } = useCartStore();
+  const customer = useCustomerStore((state) => state.customerState.data);
+  const { getCustomerById } = useCustomerStore();
+  const { getCart } = useCartStore();
+  const { getActiveCategories } = useCategoryStore();
+  const { getAllNotifications } = useNotificationStore();
   const [isDarkMode, setIsDarkMode] = useState(
     Appearance.getColorScheme() === 'dark',
   );
-  // //get customer from realm
-  // const realm = new Realm({ schema: [TokenSchema] });
-  // const token = realm.objects('Token') as any;
-  // let accessToken = '';
-  // if (token.length > 0) {
-  //   // console.log('token:', token[0].accessToken);
-  //   // console.log('token App:', token);
-  //   accessToken = token[0]?.accessToken;
-  //   // console.log('accessToken App:', accessToken);
-  // }
+  //get customer from realm
+  const realm = new Realm({ schema: [TokenSchema] });
+  const token = realm.objects('Token') as any;
+  let accessToken = '';
+  if (token.length > 0) {
+    // console.log('token:', token[0].accessToken);
+    // console.log('token App:', token);
+    accessToken = token[0]?.accessToken;
+    // console.log('accessToken App:', accessToken);
+  }
+
+  // useEffect(() => {
+  //   if (customer) {
+  //     getAllNotifications();
+  //   }
+  // }, [customer]);
 
   useEffect(() => {
-    // //get cart from server
-    // getCart();
+    //get cart from server
+    getCart();
+    getActiveCategories();
     //block dark mode
     StatusBar.setBackgroundColor('white');
     StatusBar.setBarStyle('dark-content');
@@ -66,13 +78,13 @@ export default function App() {
     return () => subscription.remove();
   }, []);
   //get customer info from server
-  // useEffect(() => {
-  //   if (accessToken) {
-  //     const decoded = jwtDecode(accessToken) as any;
-  //     //get customer info from server
-  //     getCustomerById(decoded.id);
-  //   }
-  // }, [accessToken]);
+  useEffect(() => {
+    if (accessToken) {
+      const decoded = jwtDecode(accessToken) as any;
+      //get customer info from server
+      getCustomerById(decoded.id);
+    }
+  }, [accessToken]);
 
   return (
     <GluestackUIProvider config={config}>

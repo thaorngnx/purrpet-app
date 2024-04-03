@@ -35,6 +35,7 @@ import CalendarPicker from 'react-native-calendar-picker';
 import ButtonStyles from '../../styles/ButtonStyles';
 import { flags } from 'realm';
 import { createPaymentUrl } from '../../../api/pay';
+import viewStyles from '../../styles/ViewStyles';
 
 const BookingHomeScreen = ({ navigation }: any) => {
   const [error, setError] = useState({
@@ -219,7 +220,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={viewStyles.container}>
       <View
         style={{
           backgroundColor: '#BAE6FD',

@@ -9,36 +9,36 @@ import { jwtDecode } from 'jwt-decode';
 import { useCategoryStore } from '../../../zustand/categoryStore';
 
 const WelcomeScreen = ({ navigation }: any) => {
-  const { getCustomerById } = useCustomerStore();
-  const { getCart } = useCartStore();
-  const { getActiveCategories } = useCategoryStore();
-  //get customer from realm
-  const realm = new Realm({ schema: [TokenSchema] });
-  const token = realm.objects('Token') as any;
-  let accessToken = '';
-  if (token.length > 0) {
-    accessToken = token[0]?.accessToken;
-  }
+  // const { getCustomerById } = useCustomerStore();
+  // const { getCart } = useCartStore();
+  // const { getActiveCategories } = useCategoryStore();
+  // //get customer from realm
+  // const realm = new Realm({ schema: [TokenSchema] });
+  // const token = realm.objects('Token') as any;
+  // let accessToken = '';
+  // if (token.length > 0) {
+  //   accessToken = token[0]?.accessToken;
+  // }
 
   // useEffect(() => {
   //   //get cart from server
   //   getCart();
   // }, []);
 
-  //get customer info from server
-  useEffect(() => {
-    if (accessToken) {
-      const decoded = jwtDecode(accessToken) as any;
-      //get customer info from server
-      getCustomerById(decoded.id);
-    }
-  }, [accessToken]);
+  // //get customer info from server
+  // useEffect(() => {
+  //   if (accessToken) {
+  //     const decoded = jwtDecode(accessToken) as any;
+  //     //get customer info from server
+  //     getCustomerById(decoded.id);
+  //   }
+  // }, [accessToken]);
 
   const progressValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    getCart();
-    getActiveCategories();
+    // getCart();
+    // getActiveCategories();
     const animation = Animated.timing(progressValue, {
       toValue: 100,
       duration: 5000, // Thời gian hoàn thành của Progress (tính theo milliseconds)

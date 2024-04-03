@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProductScreen from '../../product/ProductScreen';
 import CartScreen from '../../cart/CartScreen';
@@ -17,9 +17,8 @@ import {
   Home,
 } from 'lucide-react-native';
 import HomeScreen from '../../product/HomeScreen';
-import { Badge, VStack } from '@gluestack-ui/themed';
-import { BadgeText } from '@gluestack-ui/themed';
-import { BadgeIcon } from '@gluestack-ui/themed';
+import { socket } from '../../../socket';
+import { Socket } from 'socket.io-client';
 
 const MenuBottom = () => {
   const Tab = createBottomTabNavigator();
@@ -29,6 +28,31 @@ const MenuBottom = () => {
     return true;
   };
 
+  const socketRef = useRef<Socket>();
+
+  useEffect(() => {
+    if (
+      Object.keys(customerState.data).length > 0 &&
+      customerState.data.accessToken
+    ) {
+      // Socket
+      const accessToken = customerState.data.accessToken;
+      const socketClient = socket(accessToken);
+      socketRef.current = socketClient;
+
+      function onTradeEvent(value: any) {
+        const socketData = JSON.parse(value);
+        console.log('socketClient', socketData);
+      }
+
+      socketClient.on(accessToken, onTradeEvent);
+
+      return () => {
+        socketClient.off(accessToken, onTradeEvent);
+      };
+    }
+  }, [customerState?.data?.accessToken]);
+
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackButton);
 
@@ -36,6 +60,7 @@ const MenuBottom = () => {
       BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
     };
   }, []);
+
   return (
     <Tab.Navigator initialRouteName='HomeScreen'>
       <Tab.Screen

@@ -43,6 +43,7 @@ export async function getCustomerById(id: string) {
 export async function createCustomer(body: any) {
   try {
     const response = await api.post('/customer/create', body);
+    console.log('createCustomer', response.data);
     //save token to realm
     if (
       response.data.error === 0 &&

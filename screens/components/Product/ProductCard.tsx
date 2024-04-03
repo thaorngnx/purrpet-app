@@ -52,11 +52,14 @@ const ProductCard = ({
       <Text style={styles.price}>{formatCurrency(product.price)}</Text>
       <View
         style={viewStyles.flexRow}
-        className='flex justify-between items-end'
+        className='flex justify-between items-center'
       >
-        <Text style={styles.start} className='flex-row items-end'>
-          5 <StarIcon color='#C54600' />
-        </Text>
+        <View style={viewStyles.flexRow}>
+          <Text style={styles.start} className='flex-row items-center mr-1'>
+            {product.averageRating ? product.averageRating : 0}
+          </Text>
+          <StarIcon color='#C54600' />
+        </View>
         {/* <TouchableOpacity
           onPress={() => handleAddToCart()}
           style={viewStyles.flexRow}
@@ -70,6 +73,7 @@ const ProductCard = ({
           <ShoppingCart color='#C54600' />
         </TouchableOpacity>
       </View>
+      <Text style={styles.text}>Đã bán {product.orderQuantity}</Text>
     </View>
   );
 };
