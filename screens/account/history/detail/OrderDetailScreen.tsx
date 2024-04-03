@@ -247,7 +247,10 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
                       style={viewStyles.flexRow}
                       onPress={() =>
                         navigation.navigate('DetailProductScreen', {
-                          product: productOrder,
+                          product: {
+                            purrPetCode: productOrder.productCode,
+                            ...productOrder,
+                          },
                         })
                       }
                     >

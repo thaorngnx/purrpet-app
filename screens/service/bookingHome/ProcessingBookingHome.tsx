@@ -87,7 +87,7 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={viewStyles.container}>
       <View
         style={{
           flexDirection: 'row',

@@ -9,6 +9,8 @@ export interface BookingSpa {
   customerNote: string;
   bookingDate: Date;
   bookingTime: string;
+  totalPayment: number;
+  pointUsed: number;
   status: string;
   createdAt: Date;
   updatedAt: Date;
@@ -24,6 +26,8 @@ export interface BookingSpaDetail {
   bookingDate?: string;
   bookingTime?: string;
   bookingSpaPrice?: number;
+  totalPayment?: number;
+  pointUsed?: number;
   status?: string;
   createdAt?: string;
   spa?: Spa;

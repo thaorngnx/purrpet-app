@@ -32,7 +32,7 @@ const DetailProductScreen = ({ navigation, route }: any) => {
     React.useState<ProductDetail | null>(null);
 
   useEffect(() => {
-    getProductDetailByCode(product.productCode).then((res) => {
+    getProductDetailByCode(product.purrPetCode).then((res) => {
       if (res.err === 0) {
         setProductDetail(res.data);
       }

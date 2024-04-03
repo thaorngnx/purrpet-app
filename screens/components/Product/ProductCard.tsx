@@ -73,7 +73,7 @@ const ProductCard = ({
           <ShoppingCart color='#C54600' />
         </TouchableOpacity>
       </View>
-      <Text style={styles.text}>Đã bán {product.orderQuantity}</Text>
+      {/* <Text style={styles.text}>Đã bán {product.orderQuantity}</Text> */}
     </View>
   );
 };

@@ -8,6 +8,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
 import textStyles from '../../../styles/TextStyles';
 import * as CONST from '../../../constants';
@@ -43,13 +44,19 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
     });
   }, []); //bookingSpa.purrPetCode
 
+  const handleCancelBooking = () => {
+    //api cancel booking
+  };
+
   return (
     <SafeAreaView style={viewStyles.container}>
       <View style={viewStyles.titlePageBar}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ArrowLeftIcon />
         </TouchableOpacity>
-        <Text style={textStyles.title}>Chi tiết đặt lịch spa</Text>
+        <Text style={textStyles.title}>
+          Chi tiết đặt lịch spa {bookingSpaId}
+        </Text>
       </View>
       {loading ? (
         <View style={viewStyles.centerContainer}>
@@ -143,79 +150,81 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
               <View style={viewStyles.flexRow} className='mb-1'>
                 <Text style={textStyles.label}>Giờ hẹn:</Text>
                 <Text style={textStyles.normal}>
-                  {formatDateTime(bookingSpaDetail?.bookingTime)}
+                  {bookingSpaDetail?.bookingTime}
                 </Text>
               </View>
             </View>
           </View>
-          <View>
-            <Text
-              style={[
-                {
-                  marginHorizontal: 10,
-                  marginBottom: 5,
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  color: '#265F77',
-                },
-              ]}
-            >
-              Lịch spa
-            </Text>
+          <View style={viewStyles.boxUnderline}>
+            <Text style={[textStyles.title]}>Thông tin spa</Text>
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Mã spa:</Text>
+              <Text style={textStyles.normal}>
+                {bookingSpaDetail?.spa?.purrPetCode}
+              </Text>
+            </View>
             <View style={viewStyles.flexRow} className='justify-between'>
               <Text style={textStyles.label}>Tên spa:</Text>
               <Text style={textStyles.normal}>
-                {/* {bookingSpaDetail?.spa?.name} */}
+                {bookingSpaDetail?.spa?.spaName}
               </Text>
             </View>
-            {/* {bookingSpaDetail.productOrders.map((productOrder, index) => (
-              <View style={viewStyles.boxUnderline} key={index}>
-                <View style={viewStyles.flexRow}>
-                  <Image
-                    source={{ uri: productOrder.images[0]?.path }}
-                    style={viewStyles.historyImage}
-                  />
-                  <View style={viewStyles.flexColumn} className='w-[76%]'>
-                    <Text
-                      numberOfLines={1}
-                      style={textStyles.normal}
-                      className='truncate'
-                    >
-                      {productOrder.name}
-                    </Text>
-                    <View
-                      style={viewStyles.flexRow}
-                      className='justify-between'
-                    >
-                      <Text style={textStyles.normal}>
-                        {formatCurrency(productOrder.price)}
-                      </Text>
-                      <Text style={textStyles.normal}>
-                        x{productOrder.quantity}
-                      </Text>
-                    </View>
-                    <View style={viewStyles.flexRow} className='justify-end'>
-                      <Text style={textStyles.normal}>
-                        {formatCurrency(productOrder.totalPrice)}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            ))} */}
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Loại thú cưng:</Text>
+              <Text style={textStyles.normal}>
+                {bookingSpaDetail?.spa?.spaType}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Mô tả:</Text>
+              <Text style={textStyles.normal}>
+                {bookingSpaDetail?.spa?.description}
+              </Text>
+            </View>
           </View>
           <View style={viewStyles.boxUnderline}>
             <View style={viewStyles.flexRow} className='justify-between'>
               <Text style={textStyles.label}>Tổng tiền:</Text>
               <Text style={textStyles.normal}>
-                {/* {formatCurrency(bookingSpaDetail.)} */}
+                {formatCurrency(bookingSpaDetail?.bookingSpaPrice as number)}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Điểm tích lũy sử dụng:</Text>
+              <Text style={textStyles.normal}>
+                -{formatCurrency(bookingSpaDetail?.pointUsed as number)}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Tổng thanh toán:</Text>
+              <Text style={textStyles.normal}>
+                {formatCurrency(bookingSpaDetail?.totalPayment as number)}
               </Text>
             </View>
           </View>
+          {bookingSpaDetail?.status ===
+            CONST.STATUS_BOOKING.WAITING_FOR_PAY && (
+            <View style={viewStyles.flexRow} className='justify-center'>
+              <TouchableOpacity
+                style={buttonStyles.buttonOutline}
+                onPress={() => handleCancelBooking()}
+              >
+                <Text style={styles.buttonOutlineText}>Huỷ đơn</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </ScrollView>
       )}
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  buttonOutlineText: {
+    ...textStyles.bold,
+    color: '#60A5FA',
+    marginHorizontal: 10,
+  },
+});
 
 export default BookingSpaDetailScreen;
