@@ -46,7 +46,7 @@ export async function createCustomer(body: any) {
     console.log('createCustomer', response.data);
     //save token to realm
     if (
-      response.data.error === 0 &&
+      response.data.err === 0 &&
       response.data.data.accessToken &&
       response.data.data.refreshToken
     ) {

@@ -183,7 +183,7 @@ const ProductScreen = ({ navigation, route }: any) => {
             productKey={uuidv4()}
           />
         )}
-        keyExtractor={(item) => item.purrPetCode}
+        // keyExtractor={(item) => item}
         onEndReached={() => {
           if (pagination.page < pagination.total) {
             handleLoadMore();
@@ -193,7 +193,7 @@ const ProductScreen = ({ navigation, route }: any) => {
         onScrollBeginDrag={() => {
           setStopLoadMore(false);
         }}
-        key={uuidv4()}
+        // key={uuidv4()}
         ListFooterComponent={
           loading ? (
             <View>

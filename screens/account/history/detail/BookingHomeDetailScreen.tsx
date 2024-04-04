@@ -7,16 +7,19 @@ import {
   Text,
   View,
   TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import textStyles from '../../../styles/TextStyles';
-import { formatDateTime } from '../../../../utils/formatData';
+import { formatCurrency, formatDateTime } from '../../../../utils/formatData';
 import {
   BookingHome,
   BookingHomeDetail,
 } from '../../../../interface/BookingHome';
 import { getBookingHomeByCode } from '../../../../api/bookingHome';
 import { getHomestayByCode } from '../../../../api/homestay';
+import buttonStyles from '../../../styles/ButtonStyles';
+import * as CONST from '../../../constants';
 
 const BookingHomeDetailScreen = ({ navigation, route }: any) => {
   const bookingHomeCode = route.params.bookingHomeCode as string;
@@ -26,16 +29,17 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
 
   useEffect(() => {
     //api get booking spa by code
-    getBookingHomeByCode(bookingHomeCode).then((res) => {
+    getBookingHomeByCode(bookingHomeCode).then((res: any) => {
       if (res.err === 0) {
         const bookingHomeDetail = res.data;
         setBookingHomeDetail(res.data);
-        getHomestayByCode(bookingHomeDetail.spaCode).then((res) => {
+        getHomestayByCode(bookingHomeDetail.homeCode).then((res) => {
           if (res.err === 0) {
             const homeStay = res.data;
+            console.log(homeStay);
             setBookingHomeDetail({
               ...bookingHomeDetail,
-              spa: homeStay,
+              homestay: homeStay,
             });
           }
         });
@@ -45,6 +49,10 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
       setLoading(false);
     });
   }, []); //bookingSpa.purrPetCode
+
+  const handleCancelBooking = () => {
+    //api cancel booking
+  };
 
   return (
     <SafeAreaView style={viewStyles.container}>
@@ -152,19 +160,6 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
             </View>
           </View>
           <View>
-            <Text
-              style={[
-                {
-                  marginHorizontal: 10,
-                  marginBottom: 5,
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  color: '#265F77',
-                },
-              ]}
-            >
-              Danh sách sản phẩm
-            </Text>
             {/* {bookingSpaDetail.productOrders.map((productOrder, index) => (
               <View style={viewStyles.boxUnderline} key={index}>
                 <View style={viewStyles.flexRow}>
@@ -202,17 +197,87 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
             ))} */}
           </View>
           <View style={viewStyles.boxUnderline}>
+            <Text style={[textStyles.title]}>Thông tin phòng</Text>
             <View style={viewStyles.flexRow} className='justify-between'>
-              <Text style={textStyles.label}>Tổng tiền:</Text>
+              <Text style={textStyles.label}>Mã phòng:</Text>
               <Text style={textStyles.normal}>
-                {/* {formatCurrency(bookingSpaDetail.)} */}
+                {bookingHomeDetail?.homestay?.purrPetCode}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Loại phòng:</Text>
+              <Text style={textStyles.normal}>
+                {bookingHomeDetail?.homestay?.homeType}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Loại thú cưng:</Text>
+              <Text style={textStyles.normal}>
+                {bookingHomeDetail?.homestay?.categoryName}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Kích thước:</Text>
+              <Text style={textStyles.normal}>
+                {bookingHomeDetail?.homestay?.masterDataName}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Số ngày:</Text>
+              <Text style={textStyles.normal}>
+                {bookingHomeDetail?.numberOfDay}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Đơn giá:</Text>
+              <Text style={textStyles.normal}>
+                {formatCurrency(bookingHomeDetail?.homestay?.price as number)}
               </Text>
             </View>
           </View>
+          <View style={viewStyles.boxUnderline}>
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Tổng tiền:</Text>
+              <Text style={textStyles.normal}>
+                {formatCurrency(bookingHomeDetail?.bookingHomePrice as number)}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Điểm tích lũy sử dụng:</Text>
+              <Text style={textStyles.normal}>
+                -{formatCurrency(bookingHomeDetail?.pointUsed as number)}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Tổng thanh toán:</Text>
+              <Text style={textStyles.normal}>
+                {formatCurrency(bookingHomeDetail?.totalPayment as number)}
+              </Text>
+            </View>
+          </View>
+          {bookingHomeDetail?.status ===
+            CONST.STATUS_BOOKING.WAITING_FOR_PAY && (
+            <View style={viewStyles.flexRow} className='justify-center'>
+              <TouchableOpacity
+                style={buttonStyles.buttonOutline}
+                onPress={() => handleCancelBooking()}
+              >
+                <Text style={styles.buttonOutlineText}>Huỷ đơn</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </ScrollView>
       )}
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  buttonOutlineText: {
+    ...textStyles.bold,
+    color: '#60A5FA',
+    marginHorizontal: 10,
+  },
+});
 
 export default BookingHomeDetailScreen;

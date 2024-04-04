@@ -32,9 +32,9 @@ export async function verifyOTP(body: VerifyOTPBody) {
       response.data.access_token &&
       response.data.refresh_token
     ) {
-      console.log('save token to realm');
-      console.log('ac', response.data.access_token);
-      console.log('rf', response.data.refresh_token);
+      // console.log('save token to realm');
+      // console.log('ac', response.data.access_token);
+      // console.log('rf', response.data.refresh_token);
       saveToken(response.data.access_token, response.data.refresh_token);
       // realm.write(() => {
       //   realm.create('Token', {

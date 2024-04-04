@@ -32,17 +32,21 @@ import {
 import textStyles from '../../../styles/TextStyles';
 import { formatCurrency, formatDateTime } from '../../../../utils/formatData';
 import { Order } from '../../../../interface/Order';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { getOrderByCode } from '../../../../api/order';
-import { getProducts } from '../../../../api/product';
+import { getProductByCode, getProducts } from '../../../../api/product';
 // import { ChevronRightIcon } from 'lucide-react-native';
 import buttonStyles from '../../../styles/ButtonStyles';
 import { TextInput } from 'react-native';
 import { Star } from 'lucide-react-native';
 import textInputStyles from '../../../styles/TextInputStyles';
-import { createReview } from '../../../../api/review';
+import {
+  createReview,
+  getReivewByCodeAndCustomer,
+} from '../../../../api/review';
 import { useCustomerStore } from '../../../../zustand/customerStore';
 import { Review } from '../../../../interface/Product';
+import { set } from 'date-fns';
 
 interface ProductOrder {
   productCode: string;
@@ -51,6 +55,8 @@ interface ProductOrder {
   quantity: number;
   price: number;
   totalPrice: number;
+  review?: Review;
+  reviewed?: boolean;
 }
 
 interface OrderDetail {
@@ -72,10 +78,10 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
     null as any,
   );
   const [review, setReview] = useState<Review>({} as Review);
-  const customerId = useCustomerStore((state) => state.customerState.data);
+  const [isReviewed, setIsReviewed] = useState(false);
 
-  useEffect(() => {
-    getOrderByCode(order.purrPetCode).then((res) => {
+  const fetchOrderDetail = async () => {
+    getOrderByCode(order.purrPetCode).then(async (res) => {
       if (res.err === 0) {
         const order = res.data;
         const orderItems = res.data.orderItems;
@@ -83,12 +89,23 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
         res.data.orderItems.forEach((item: any) => {
           productCodes.push(item.productCode);
         });
-        getProducts({ productCodes: productCodes.toString() }).then((res) => {
-          if (res.err === 0) {
-            let productOrder: ProductOrder[] = [];
-            res.data.forEach((item: any) => {
-              orderItems.forEach((orderItem: any) => {
-                if (item.purrPetCode === orderItem.productCode) {
+        const productsRes = await getProducts({
+          productCodes: productCodes.toString(),
+        });
+        if (productsRes.err === 0) {
+          let productOrder: ProductOrder[] = [];
+          for (const item of productsRes.data) {
+            for (const orderItem of orderItems) {
+              if (item.purrPetCode === orderItem.productCode) {
+                const reviewRes = await getReivewByCodeAndCustomer(
+                  order.purrPetCode,
+                  orderItem.productCode,
+                );
+                if (reviewRes.err === 0) {
+                  let reviewed = false;
+                  if (reviewRes.data.rating > 0) {
+                    reviewed = true;
+                  }
                   let product = {
                     productCode: orderItem.productCode,
                     images: item.images,
@@ -96,21 +113,31 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
                     quantity: orderItem.quantity,
                     price: orderItem.productPrice,
                     totalPrice: orderItem.totalPrice,
-                    star: null as any,
+                    review: reviewRes.data,
+                    reviewed: reviewed,
                   };
                   productOrder.push(product);
                 }
-              });
-            });
-            setOrderDetail({
-              order: order,
-              productOrders: productOrder,
-            });
+              }
+            }
           }
-        });
+          console.log(productOrder);
+          setOrderDetail({
+            order: order,
+            productOrders: productOrder,
+          });
+        }
       }
     });
+  };
+  useEffect(() => {
+    fetchOrderDetail();
   }, []);
+
+  useEffect(() => {
+    fetchOrderDetail();
+    setIsReviewed(false);
+  }, [isReviewed]);
 
   useEffect(() => {
     if (orderDetail.order && orderDetail.productOrders.length > 0) {
@@ -119,7 +146,6 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
   }, [orderDetail]);
 
   const handleOpenModal = (product: ProductOrder) => {
-    console.log('handleRating');
     setSelectedProduct(product);
     setShowModal(true);
   };
@@ -127,6 +153,7 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
   const handleCloseModal = () => {
     selectedProduct && setSelectedProduct(null as any);
     setShowModal(false);
+    setReview({} as Review);
   };
 
   const handleRating = () => {
@@ -135,16 +162,13 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
     createReview(review).then((res: any) => {
       if (res.err === 0) {
         console.log('Review success');
+        setIsReviewed(true);
       } else {
         console.log(res.message);
       }
     });
     setShowModal(false);
   };
-
-  useEffect(() => {
-    console.log(review);
-  }, [review]);
 
   return (
     <SafeAreaView style={viewStyles.container}>
@@ -166,73 +190,76 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={viewStyles.scrollContainer}
           >
-            {orderDetail.productOrders.map((productOrder, index) => (
-              <View style={viewStyles.boxUnderline} key={index}>
-                <View style={viewStyles.flexRow}>
-                  <Image
-                    source={{ uri: productOrder.images[0]?.path }}
-                    style={viewStyles.historyImage}
-                  />
-                  <View style={viewStyles.flexColumn} className='w-[76%]'>
-                    <Text
-                      numberOfLines={1}
-                      style={textStyles.normal}
-                      className='truncate'
-                    >
-                      {productOrder.name}
-                    </Text>
-                    <View
-                      style={viewStyles.flexRow}
-                      className='justify-between'
-                    >
-                      <Text style={textStyles.normal}>
-                        {formatCurrency(productOrder.price)}
+            {orderDetail.productOrders.map((productOrder, index) => {
+              return (
+                <View style={viewStyles.boxUnderline} key={index}>
+                  <View style={viewStyles.flexRow}>
+                    <Image
+                      source={{ uri: productOrder.images[0]?.path }}
+                      style={viewStyles.historyImage}
+                    />
+                    <View style={viewStyles.flexColumn} className='w-[76%]'>
+                      <Text
+                        numberOfLines={1}
+                        style={textStyles.normal}
+                        className='truncate'
+                      >
+                        {productOrder.name}
                       </Text>
-                      <Text style={textStyles.normal}>
-                        x{productOrder.quantity}
-                      </Text>
-                    </View>
-                    <View style={viewStyles.flexRow} className='justify-end'>
-                      <Text style={textStyles.normal}>
-                        {formatCurrency(productOrder.totalPrice)}
-                      </Text>
+                      <View
+                        style={viewStyles.flexRow}
+                        className='justify-between'
+                      >
+                        <Text style={textStyles.normal}>
+                          {formatCurrency(productOrder.price)}
+                        </Text>
+                        <Text style={textStyles.normal}>
+                          x{productOrder.quantity}
+                        </Text>
+                      </View>
+                      <View style={viewStyles.flexRow} className='justify-end'>
+                        <Text style={textStyles.normal}>
+                          {formatCurrency(productOrder.totalPrice)}
+                        </Text>
+                      </View>
                     </View>
                   </View>
-                </View>
 
-                <View style={viewStyles.flexRow} className='justify-end mt-2'>
-                  <TouchableOpacity
-                    style={viewStyles.flexRow}
-                    onPress={() =>
-                      navigation.navigate('DetailProductScreen', {
-                        product: productOrder,
-                      })
-                    }
-                  >
-                    <Text className='mr-1 text-[#60A5FA]'>Xem chi tiết</Text>
-                    <ChevronRightIcon color='#60A5FA' />
-                  </TouchableOpacity>
-                </View>
-                <View style={viewStyles.flexRow} className='justify-center'>
-                  <TouchableOpacity
-                    style={buttonStyles.buttonOutline}
-                    onPress={() => handleOpenModal(productOrder)}
-                  >
-                    <Text
-                      style={[
-                        textStyles.bold,
-                        {
-                          color: '#60A5FA',
-                          marginHorizontal: 10,
-                        },
-                      ]}
+                  <View style={viewStyles.flexRow} className='justify-end mt-2'>
+                    <TouchableOpacity
+                      style={viewStyles.flexRow}
+                      onPress={() =>
+                        navigation.navigate('DetailProductScreen', {
+                          product: productOrder,
+                        })
+                      }
                     >
-                      Đánh giá
-                    </Text>
-                  </TouchableOpacity>
+                      <Text className='mr-1 text-[#60A5FA]'>Xem chi tiết</Text>
+                      <ChevronRightIcon color='#60A5FA' />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={viewStyles.flexRow} className='justify-center'>
+                    <TouchableOpacity
+                      style={buttonStyles.buttonOutline}
+                      onPress={() => handleOpenModal(productOrder)}
+                    >
+                      <Text
+                        style={[
+                          textStyles.bold,
+                          {
+                            color: '#60A5FA',
+                            marginHorizontal: 10,
+                          },
+                        ]}
+                      >
+                        {!productOrder.reviewed ? 'Đánh giá' : 'Đã đánh giá'}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            ))}
+              );
+            })}
           </ScrollView>
           {selectedProduct && (
             <Modal isOpen={showModal} onClose={() => handleCloseModal()}>
@@ -283,6 +310,7 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
                           return (
                             <TouchableOpacity
                               key={index}
+                              disabled={selectedProduct.reviewed ? true : false}
                               onPress={() =>
                                 setReview((prevReview) => ({
                                   ...prevReview,
@@ -293,7 +321,10 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
                               <Star
                                 size={40}
                                 fill={
-                                  index < ((review?.rating as number) || 0)
+                                  index <
+                                  (selectedProduct.reviewed
+                                    ? (selectedProduct.review?.rating as number)
+                                    : (review?.rating as number))
                                     ? '#FFD700'
                                     : '#C0C0C0'
                                 }
@@ -318,11 +349,17 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
                           numberOfLines={4}
                           placeholder='Nhập bình luận của bạn'
                           placeholderTextColor={'#A0A0A0'}
+                          editable={selectedProduct.reviewed ? false : true}
                           onChangeText={(text) =>
                             setReview((prevReview) => ({
                               ...prevReview,
                               comment: text,
                             }))
+                          }
+                          defaultValue={
+                            selectedProduct.reviewed
+                              ? selectedProduct.review?.comment
+                              : ''
                           }
                         />
                       </View>
@@ -330,25 +367,29 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
                   </View>
                 </ModalBody>
                 <ModalFooter>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    action='secondary'
-                    mr='$3'
-                    onPress={() => {
-                      setShowModal(false);
-                    }}
-                  >
-                    <ButtonText>Hủy</ButtonText>
-                  </Button>
-                  <Button
-                    size='sm'
-                    action='positive'
-                    borderWidth='$0'
-                    onPress={() => handleRating()}
-                  >
-                    <ButtonText>Gửi đánh giá</ButtonText>
-                  </Button>
+                  {!selectedProduct.reviewed && (
+                    <Fragment>
+                      <Button
+                        variant='outline'
+                        size='sm'
+                        action='secondary'
+                        mr='$3'
+                        onPress={() => {
+                          handleCloseModal();
+                        }}
+                      >
+                        <ButtonText>Hủy</ButtonText>
+                      </Button>
+                      <Button
+                        size='sm'
+                        action='positive'
+                        borderWidth='$0'
+                        onPress={() => handleRating()}
+                      >
+                        <ButtonText>Gửi đánh giá</ButtonText>
+                      </Button>
+                    </Fragment>
+                  )}
                 </ModalFooter>
               </ModalContent>
             </Modal>

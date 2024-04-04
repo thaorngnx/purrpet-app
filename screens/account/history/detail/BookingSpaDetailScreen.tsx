@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { formatCurrency, formatDateTime } from '../../../../utils/formatData';
 import { getBookingSpaByCode } from '../../../../api/bookingSpa';
 import { getSpaByCode } from '../../../../api/spa';
+import buttonStyles from '../../../styles/ButtonStyles';
 
 const BookingSpaDetailScreen = ({ navigation, route }: any) => {
   const bookingSpaId = route.params.bookingSpaCode as string;

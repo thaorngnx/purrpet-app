@@ -70,9 +70,10 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
           console.log('Đặt hàng thành công!');
 
           deleteCart();
-          navigation.navigate('OrderDetailScreen', {
-            orderCode: res.data.purrPetCode,
-          });
+          // navigation.navigate('OrderDetailScreen', {
+          //   orderCode: res.data.purrPetCode,
+          // });
+          navigation.navigate('Sản phẩm');
         } else {
           createPaymentUrl({
             orderCode: res.data.purrPetCode,

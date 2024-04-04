@@ -31,12 +31,14 @@ export interface BookingHomeDetail {
   bookingHomePrice: number;
   status: string;
   createdAt: string;
-  homestay: {
-    purrPetCode: string;
-    homeType: string;
-    categoryName: string;
-    masterDataName: string;
-    price: number;
+  totalPayment: number;
+  pointUsed: number;
+  homestay?: {
+    purrPetCode?: string;
+    homeType?: string;
+    categoryName?: string;
+    masterDataName?: string;
+    price?: number;
   };
 }
 

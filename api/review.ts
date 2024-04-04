@@ -8,3 +8,17 @@ export async function createReview(review: any) {
     console.error(error);
   }
 }
+
+export async function getReivewByCodeAndCustomer(
+  orderCode: string,
+  productCode: string,
+) {
+  try {
+    const response = await api.get(
+      `product/customer/${orderCode}/${productCode}`,
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
