@@ -36,6 +36,8 @@ import ProcessingBookingHome from './screens/service/bookingHome/ProcessingBooki
 import OrderReviewScreen from './screens/account/history/review/OrderReviewScreen';
 import { useCategoryStore } from './zustand/categoryStore';
 import { useNotificationStore } from './zustand/notificationStore';
+import { socket } from './socket';
+import { Socket } from 'socket.io-client';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -80,6 +82,7 @@ export default function App() {
   //get customer info from server
   useEffect(() => {
     if (accessToken) {
+      // console.log('accessToken:', accessToken);
       const decoded = jwtDecode(accessToken) as any;
       //get customer info from server
       getCustomerById(decoded.id);

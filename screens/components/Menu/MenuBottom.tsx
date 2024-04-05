@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProductScreen from '../../product/ProductScreen';
 import CartScreen from '../../cart/CartScreen';
@@ -15,20 +15,41 @@ import {
   UserRound,
   ShoppingBasket,
   Home,
+  View,
+  Circle,
 } from 'lucide-react-native';
 import HomeScreen from '../../product/HomeScreen';
 import { socket } from '../../../socket';
 import { Socket } from 'socket.io-client';
+import { getAllNotifications } from '../../../api/notification';
+import { BadgeText, VStack } from '@gluestack-ui/themed';
+import { Badge } from '@gluestack-ui/themed';
+import { Notification } from '../../../interface/Notification';
 
 const MenuBottom = () => {
   const Tab = createBottomTabNavigator();
   const customerState = useCustomerStore((state) => state.customerState);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  //number of noti not yet seen\
+  const notiNotSeen = notifications.filter(
+    (noti) => noti.seen === false,
+  ).length;
   const handleBackButton = () => {
     BackHandler.exitApp();
     return true;
   };
 
   const socketRef = useRef<Socket>();
+
+  useEffect(() => {
+    if (customerState.data.accessToken) {
+      getAllNotifications().then((res) => {
+        if (res.err === 0) {
+          setNotifications(res.data);
+        }
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (
@@ -43,7 +64,15 @@ const MenuBottom = () => {
       function onTradeEvent(value: any) {
         const socketData = JSON.parse(value);
         console.log('socketClient', socketData);
+        getAllNotifications().then((res) => {
+          if (res.err === 0) {
+            setNotifications(res.data);
+          }
+        });
       }
+      socketClient.on('connect', () => {
+        console.log('socket connected');
+      });
 
       socketClient.on(accessToken, onTradeEvent);
 
@@ -114,7 +143,23 @@ const MenuBottom = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <Bell color={focused ? '#000000' : '#ca8a04'} />
+            // <Bell color={focused ? '#000000' : '#ca8a04'} />
+            <VStack>
+              {notiNotSeen > 0 && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    zIndex: 2,
+                    alignItems: 'flex-end',
+                    left: 18,
+                    bottom: 3,
+                  }}
+                >
+                  <Circle size={10} fill={'red'} />
+                </View>
+              )}
+              <Bell color={focused ? '#000000' : '#ca8a04'} />
+            </VStack>
           ),
           tabBarLabelStyle: styles.tabBarLabel,
         }}
