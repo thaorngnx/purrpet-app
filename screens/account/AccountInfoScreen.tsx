@@ -53,6 +53,7 @@ const AccountInfoScreen = ({ navigation, route }: any) => {
     name: customer?.name,
     email: customer?.email,
     phoneNumber: customer?.phoneNumber,
+    point: customer?.point,
     address: {
       province: customer?.address?.province || '',
       district: customer?.address?.district || '',

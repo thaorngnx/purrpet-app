@@ -167,7 +167,7 @@ const MenuBottom = () => {
       <Tab.Screen
         name='Tài khoản'
         component={
-          Object.keys(customerState.data).length == 0
+          Object.keys(customerState.data).length === 0
             ? UnverifyAccountScreen
             : AccountScreen
         }

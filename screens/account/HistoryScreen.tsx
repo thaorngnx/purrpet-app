@@ -5,6 +5,7 @@ import { ArrowLeftIcon } from '@gluestack-ui/themed';
 import textStyles from '../styles/TextStyles';
 import { BedSingle, Dog, ShoppingBag } from 'lucide-react-native';
 import buttonStyles from '../styles/ButtonStyles';
+import { useCustomerStore } from '../../zustand/customerStore';
 
 const HistoryScreen = ({ navigation }: any) => {
   return (

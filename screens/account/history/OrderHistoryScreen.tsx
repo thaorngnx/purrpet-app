@@ -15,6 +15,7 @@ import * as CONST from '../../constants';
 import { formatCurrency, formatDateTime } from '../../../utils/formatData';
 import { useOrderStore } from '../../../zustand/orderStore';
 import { Pagination } from '../../../interface/Pagination';
+import { Cuboid } from 'lucide-react-native';
 
 interface ProductOrder {
   productCode: string;

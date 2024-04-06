@@ -18,7 +18,6 @@ api.interceptors.request.use(
     //get token from realm
     const token = realm.objects<TokenSchema>('Token') as any;
     const accessToken = token[0]?.accessToken;
-    // console.log('accessToken:', accessToken);
 
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;

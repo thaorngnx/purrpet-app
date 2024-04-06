@@ -16,10 +16,15 @@ import {
   BookingHome,
   BookingHomeDetail,
 } from '../../../../interface/BookingHome';
-import { getBookingHomeByCode } from '../../../../api/bookingHome';
+import {
+  getBookingHomeByCode,
+  updateStatusBookingHome,
+} from '../../../../api/bookingHome';
 import { getHomestayByCode } from '../../../../api/homestay';
 import buttonStyles from '../../../styles/ButtonStyles';
 import * as CONST from '../../../constants';
+import { createPaymentUrl } from '../../../../api/pay';
+import openInChrome from '../../../../utils/openInChrome';
 
 const BookingHomeDetailScreen = ({ navigation, route }: any) => {
   const bookingHomeCode = route.params.bookingHomeCode as string;
@@ -51,7 +56,28 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
   }, []); //bookingSpa.purrPetCode
 
   const handleCancelBooking = () => {
-    //api cancel booking
+    updateStatusBookingHome(bookingHomeCode, CONST.STATUS_BOOKING.CANCEL).then(
+      (res) => {
+        if (res.err === 0) {
+          console.log('Huỷ đơn thành công');
+          navigation.navigate('HistoryScreen');
+        } else {
+          console.log('error', res.message);
+        }
+      },
+    );
+  };
+  const handlePay = () => {
+    createPaymentUrl({
+      orderCode: bookingHomeCode,
+    }).then((res) => {
+      if (res.err === 0) {
+        console.log('Đặt hàng thành công!');
+        openInChrome(res.data.paymentUrl);
+      } else {
+        console.log('error', res.message);
+      }
+    });
   };
 
   return (
@@ -263,6 +289,12 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
                 onPress={() => handleCancelBooking()}
               >
                 <Text style={styles.buttonOutlineText}>Huỷ đơn</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={buttonStyles.buttonOutline}
+                onPress={() => handlePay()}
+              >
+                <Text style={styles.buttonOutlineText}>Thanh toán</Text>
               </TouchableOpacity>
             </View>
           )}

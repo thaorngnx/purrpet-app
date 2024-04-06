@@ -18,6 +18,8 @@ import { ChevronRightIcon } from 'lucide-react-native';
 import buttonStyles from '../../../styles/ButtonStyles';
 import * as CONST from '../../../constants';
 import { StyleSheet } from 'react-native';
+import { createPaymentUrl } from '../../../../api/pay';
+import openInChrome from '../../../../utils/openInChrome';
 
 interface ProductOrder {
   productCode: string;
@@ -81,7 +83,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
       CONST.STATUS_ORDER.CANCEL,
     ).then((res) => {
       if (res.err === 0) {
-        navigation.goBack();
+        navigation.navigate('HistoryScreen');
       } else {
         console.log(res);
       }
@@ -100,6 +102,22 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
   const handleReviewOrder = () => {
     console.log('handleReviewOrder');
     navigation.navigate('OrderReviewScreen', { order: orderDetail?.order });
+  };
+  const handlePay = () => {
+    createPaymentUrl({
+      orderCode: orderCode,
+    }).then((res) => {
+      if (res.err === 0) {
+        console.log('Đặt hàng thành công!');
+        openInChrome(res.data.paymentUrl);
+      } else {
+        console.log('error', res.message);
+      }
+    });
+  };
+
+  const handleRefund = () => {
+    //api hoàn tiền trả hàng
   };
 
   return (
@@ -287,22 +305,43 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
           </View>
           {(orderDetail?.order?.status === CONST.STATUS_ORDER.NEW ||
             orderDetail?.order?.status === CONST.STATUS_ORDER.PREPARE) && (
-            <View style={viewStyles.flexRow} className='justify-center'>
+            <View style={viewStyles.flexRow} className='justify-around'>
               <TouchableOpacity
                 style={buttonStyles.buttonOutline}
                 onPress={() => handleCancelOrder()}
               >
                 <Text style={styles.buttonOutlineText}>Huỷ đơn</Text>
               </TouchableOpacity>
+              {orderDetail?.order?.payMethod === CONST.PAYMENT_METHOD.VNPAY &&
+                orderDetail?.order?.paymentStatus ===
+                  CONST.STATUS_PAYMENT.WAITING_FOR_PAY && (
+                  <View>
+                    <TouchableOpacity
+                      style={buttonStyles.buttonOutline}
+                      onPress={() => handlePay()}
+                    >
+                      <Text style={styles.buttonOutlineText}>Thanh toán</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
             </View>
           )}
+
           {orderDetail?.order?.status === CONST.STATUS_ORDER.DONE && (
-            <View style={viewStyles.flexRow} className='justify-center'>
+            <View style={viewStyles.flexRow} className='justify-around'>
               <TouchableOpacity
                 style={buttonStyles.buttonOutline}
                 onPress={() => handleReviewOrder()}
               >
                 <Text style={styles.buttonOutlineText}>Đánh giá</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={buttonStyles.buttonOutline}
+                onPress={() => handleRefund()}
+              >
+                <Text style={styles.buttonOutlineText}>
+                  Yêu cầu trả hàng/Hoàn tiền
+                </Text>
               </TouchableOpacity>
             </View>
           )}

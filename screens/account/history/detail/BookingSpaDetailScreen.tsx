@@ -14,9 +14,14 @@ import textStyles from '../../../styles/TextStyles';
 import * as CONST from '../../../constants';
 import { useEffect, useState } from 'react';
 import { formatCurrency, formatDateTime } from '../../../../utils/formatData';
-import { getBookingSpaByCode } from '../../../../api/bookingSpa';
+import {
+  getBookingSpaByCode,
+  updateStatusBookingSpa,
+} from '../../../../api/bookingSpa';
 import { getSpaByCode } from '../../../../api/spa';
 import buttonStyles from '../../../styles/ButtonStyles';
+import { createPaymentUrl } from '../../../../api/pay';
+import openInChrome from '../../../../utils/openInChrome';
 
 const BookingSpaDetailScreen = ({ navigation, route }: any) => {
   const bookingSpaId = route.params.bookingSpaCode as string;
@@ -46,7 +51,28 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
   }, []); //bookingSpa.purrPetCode
 
   const handleCancelBooking = () => {
-    //api cancel booking
+    updateStatusBookingSpa(bookingSpaId, CONST.STATUS_BOOKING.CANCEL).then(
+      (res) => {
+        if (res.err === 0) {
+          console.log('Huỷ đơn thành công');
+          navigation.navigate('HistoryScreen');
+        } else {
+          console.log('error', res.message);
+        }
+      },
+    );
+  };
+  const handlePay = () => {
+    createPaymentUrl({
+      orderCode: bookingSpaId,
+    }).then((res) => {
+      if (res.err === 0) {
+        console.log('Đặt hàng thành công!');
+        openInChrome(res.data.paymentUrl);
+      } else {
+        console.log('error', res.message);
+      }
+    });
   };
 
   return (
@@ -211,6 +237,12 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
                 onPress={() => handleCancelBooking()}
               >
                 <Text style={styles.buttonOutlineText}>Huỷ đơn</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={buttonStyles.buttonOutline}
+                onPress={() => handlePay()}
+              >
+                <Text style={styles.buttonOutlineText}>Thanh toans</Text>
               </TouchableOpacity>
             </View>
           )}

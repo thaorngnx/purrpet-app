@@ -20,8 +20,11 @@ import { BookingSpa, BookingSpaResponse } from '../../../interface/BookingSpa';
 import * as CONST from '../../constants';
 import { ScrollView } from 'react-native';
 import { formatCurrency, formatDateTime } from '../../../utils/formatData';
+import { useCustomerStore } from '../../../zustand/customerStore';
 
 const SpaHistoryScreen = ({ navigation }: any) => {
+  const customerState = useCustomerStore((state) => state.customerState);
+  console.log(customerState);
   const [resBSpas, setResBSpas] = useState({} as BookingSpaResponse);
   const [tabSpa, setTabSpa] = useState(0);
   const [page, setPage] = useState(0);

@@ -24,7 +24,6 @@ const CustomerInfoForm = () => {
   const customerState = useCustomerStore((state) => state.customerState.data);
   const { setCustomer } = useCustomerStore();
 
-  const [confirmInfo, setConfirmInfo] = useState(false);
   const hasCustomerInfo = Object.keys(customerState).length > 0;
   const [otpClick, setOtpClick] = useState(false);
   const [otpValid, setOtpValid] = useState(false);
@@ -66,7 +65,6 @@ const CustomerInfoForm = () => {
       });
       setExistCustomer(true);
       setEditInfo(false);
-      setConfirmInfo(true);
       setOtpValid(true);
     }
   }, [customerState, hasCustomerInfo]);
@@ -152,7 +150,6 @@ const CustomerInfoForm = () => {
   const handleEditInfo = () => {
     if (existCustomer && !editInfo) {
       setEditInfo(true);
-      setConfirmInfo(false);
     } else if (existCustomer && editInfo) {
       console.log('edit customer');
       let err = {};
@@ -182,7 +179,6 @@ const CustomerInfoForm = () => {
       });
       //oke
       setEditInfo(false);
-      setConfirmInfo(true);
     } else if (!existCustomer && editInfo) {
       if (!customerInfo.customerName) {
         setError({ ...error, customerName: true });
@@ -213,7 +209,6 @@ const CustomerInfoForm = () => {
       //oke
       setExistCustomer(true);
       setEditInfo(false);
-      setConfirmInfo(true);
     }
   };
   return (
