@@ -283,7 +283,6 @@ const CustomerInfoOrder = () => {
     }
   };
   const handleChangeProvince = (value: string) => {
-    console.log('province:', value);
     const selectedProvince = provinces.find(
       (province: IProvince) => province.Name === value,
     ) as IProvince;
@@ -319,7 +318,6 @@ const CustomerInfoOrder = () => {
   };
 
   const handleChangeWard = (value: string) => {
-    console.log('ward:', value);
     setCustomerInfo({
       ...customerInfo,
       address: {

@@ -36,7 +36,6 @@ const VerifyUserEmailScreen = ({ navigation }: any) => {
       return;
     }
     sendOTP({ email }).then((res) => {
-      console.log(res);
       if (res.err === 0) {
         navigation.navigate('VerifyUserOTPScreen', { email });
       } else {

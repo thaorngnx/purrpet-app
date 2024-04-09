@@ -43,7 +43,6 @@ export async function getCustomerById(id: string) {
 export async function createCustomer(body: any) {
   try {
     const response = await api.post('/customer/create', body);
-    console.log('createCustomer', response.data);
     //save token to realm
     if (
       response.data.err === 0 &&
@@ -66,7 +65,6 @@ export async function updateCustomer(body: any) {
     const cus = { ...body };
     delete cus.email;
     const response = await api.put(`/customer/update/${cus.purrPetCode}`, cus);
-    console.log('updateCustomer', response.data);
     return response.data;
   } catch (error) {
     console.log(error);

@@ -24,13 +24,11 @@ const UnverifyAccountScreen = ({ navigation }: any) => {
   };
 
   const handleSendOTP = () => {
-    console.log('send otp:', email);
     if (!email) {
       setError({ message: 'Email không hợp lệ', status: true });
       return;
     }
     sendOTP({ email }).then((res) => {
-      console.log(res);
       if (res.err === 0) {
         navigation.navigate('VerifyUserOTPScreen', { email });
       } else {

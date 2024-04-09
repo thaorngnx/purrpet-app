@@ -47,7 +47,6 @@ const TimeSpaForm = ({
     getAvailableTime({
       bookingDate: newDate,
     }).then((res) => {
-      console.log('res', res);
       if (res.err === 0) {
         setValidTime(res.data);
       } else {

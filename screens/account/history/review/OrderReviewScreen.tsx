@@ -121,7 +121,6 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
               }
             }
           }
-          console.log(productOrder);
           setOrderDetail({
             order: order,
             productOrders: productOrder,

@@ -177,7 +177,6 @@ const AccountInfoScreen = ({ navigation, route }: any) => {
   };
 
   const handleSaveInfo = () => {
-    console.log('save info', customerInfo);
     updateCustomer(customerInfo);
     setEditInfo(false);
   };

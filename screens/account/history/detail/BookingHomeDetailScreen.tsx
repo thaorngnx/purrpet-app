@@ -41,7 +41,6 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
         getHomestayByCode(bookingHomeDetail.homeCode).then((res) => {
           if (res.err === 0) {
             const homeStay = res.data;
-            console.log(homeStay);
             setBookingHomeDetail({
               ...bookingHomeDetail,
               homestay: homeStay,

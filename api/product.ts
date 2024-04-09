@@ -38,7 +38,6 @@ export async function getProductDetailByCode(code: string) {
 
 export async function createProduct(product: any) {
   try {
-    console.log('req', product);
     const response = await api.post('product/create', product, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
@@ -50,7 +49,6 @@ export async function createProduct(product: any) {
 
 export async function updateProduct(product: any) {
   try {
-    console.log('req', product);
     const response = await api.put(
       `product/update/${product.purrPetCode}`,
       product,

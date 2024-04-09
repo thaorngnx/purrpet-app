@@ -30,7 +30,6 @@ export async function getBookingHomeByCustomer() {
 }
 
 export async function createBookingHome(bookingHome: any) {
-  console.log(bookingHome);
   try {
     const response = await api.post('bookingHome/create', bookingHome);
     return response.data;

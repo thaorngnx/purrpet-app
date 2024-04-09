@@ -2,7 +2,6 @@ import api from './token';
 
 export async function addToCart(cart: any) {
   try {
-    console.log(cart);
     const response = await api.post('cart/add', cart, {
       withCredentials: true,
     });
@@ -47,7 +46,6 @@ export async function deleteCart() {
 
 export async function deleteProductCart(product: any) {
   try {
-    console.log(product);
     const response = await api.delete('cart/delete-product', {
       data: product,
       withCredentials: true,
