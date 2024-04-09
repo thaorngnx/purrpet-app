@@ -29,8 +29,8 @@ import { getActiveCategories } from '../../../api/category';
 import { getActiveSpas } from '../../../api/spa';
 import buttonStyles from '../../styles/ButtonStyles';
 import TimeSpaForm from './TimeSpaForm';
-import { createBookingSpa } from '../../../api/bookingSpa';
 import viewStyles from '../../styles/ViewStyles';
+import { formatCurrency } from '../../../utils/formatData';
 
 const BookingSpaScreen = ({ route, navigation }: any) => {
   const [error, setError] = useState({
@@ -202,6 +202,7 @@ const BookingSpaScreen = ({ route, navigation }: any) => {
             <TextInput
               placeholder='Tên thú cưng'
               style={textInputStyles.textInputBorder}
+              placeholderTextColor={'#A0A0A0'}
               value={bookingInfo.petName}
               onChangeText={(text) => handleChangeBookingInfo(text, 'petName')}
             />
@@ -301,7 +302,7 @@ const BookingSpaScreen = ({ route, navigation }: any) => {
                     color: '#000',
                   }}
                 >
-                  Tổng tiền: {bookingInfo.bookingSpaPrice}
+                  Tổng tiền: {formatCurrency(bookingInfo.bookingSpaPrice) || 0}
                 </Text>
                 {!openTimeForm && (
                   <TouchableOpacity

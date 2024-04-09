@@ -12,13 +12,12 @@ import { ChevronLeftIcon } from 'lucide-react-native';
 import { Icon, Textarea, TextareaInput } from '@gluestack-ui/themed';
 import viewStyles from '../../styles/ViewStyles';
 import { useState } from 'react';
-import buttonStyles from '../../styles/ButtonStyles';
-import { createBookingSpa } from '../../../api/bookingSpa';
 import { useCustomerStore } from '../../../zustand/customerStore';
 import { formatCurrency } from '../../../utils/formatData';
 import textInputStyles from '../../styles/TextInputStyles';
 import openInChrome from '../../../utils/openInChrome';
 import { createPaymentUrl } from '../../../api/pay';
+import { createBookingSpa } from '../../../api/bookingSpa';
 
 const ProcessingBookingSpa = ({ navigation, route }: any) => {
   const { bookingInfo } = route.params;
@@ -103,15 +102,7 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
         <CustomerInfoForm />
         {hasCustomerInfo && (
           <View>
-            <View
-              style={{
-                backgroundColor: '#fff',
-                margin: 5,
-                padding: 5,
-                paddingBottom: 20,
-                paddingTop: 20,
-              }}
-            >
+            <View style={{ margin: 10, marginTop: 0 }}>
               <Text style={textStyles.labelCenter}>Nội dung đặt lịch</Text>
               <View
                 style={[
@@ -119,10 +110,14 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
                   { justifyContent: 'space-between' },
                 ]}
               >
-                <Text style={textStyles.label}>Tên thú cưng:</Text>
-                <Text style={textStyles.normal}>{bookingInfo.petName}</Text>
-                <Text style={textStyles.label}>Loại thú cưng:</Text>
-                <Text style={textStyles.normal}>{bookingInfo.petType}</Text>
+                <View style={viewStyles.flexRow}>
+                  <Text style={textStyles.label}>Tên thú cưng:</Text>
+                  <Text style={textStyles.normal}>{bookingInfo.petName}</Text>
+                </View>
+                <View style={viewStyles.flexRow}>
+                  <Text style={textStyles.label}>Loại thú cưng:</Text>
+                  <Text style={textStyles.normal}>{bookingInfo.petType}</Text>
+                </View>
               </View>
               <View style={[viewStyles.flexRow, { marginTop: 10 }]}>
                 <Text style={textStyles.label}>Loại dịch vụ:</Text>
@@ -138,70 +133,69 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
                 <Text style={textStyles.label}>Giờ đặt lịch:</Text>
                 <Text style={textStyles.normal}>{bookingInfo.bookingTime}</Text>
               </View>
-            </View>
-            <View style={{ margin: 10, padding: 5, backgroundColor: '#fff' }}>
-              <View
-                style={[
-                  viewStyles.flexRow,
-                  { justifyContent: 'space-around', marginBottom: 10 },
-                ]}
-              >
-                <Text style={textStyles.label}>Dùng điểm tích luỹ</Text>
-                <Text style={textStyles.normal}>
-                  Số điểm hiện có: {formatCurrency(customer.point)}
-                </Text>
-              </View>
 
-              <TextInput
-                style={textInputStyles.textInputBorder}
-                keyboardType='numeric'
-                value={userPoint.toString()}
-                onChangeText={(event) => handleChangePoint(event)}
-              />
-              <Text style={textStyles.error}>{error.point}</Text>
-            </View>
-            <View style={{ backgroundColor: '#fff', margin: 5, padding: 5 }}>
-              <Text style={textStyles.label}>Ghi chú</Text>
-              <Textarea
-                size='md'
-                isReadOnly={false}
-                isInvalid={false}
-                isDisabled={false}
-                w='100%'
-                marginTop={20}
-              >
-                <TextareaInput
-                  value={bookingInfo.customerNote}
-                  placeholder='Your text goes here...'
-                  onChange={(event) => handleChangeNote(event)}
+              <View style={{ marginTop: 10 }}>
+                <View
+                  style={[
+                    viewStyles.flexRow,
+                    { justifyContent: 'space-between', marginBottom: 10 },
+                  ]}
+                >
+                  <Text style={textStyles.label}>Dùng điểm tích luỹ</Text>
+                  <Text style={textStyles.normal}>
+                    Số điểm hiện có: {formatCurrency(customer.point)}
+                  </Text>
+                </View>
+
+                <TextInput
+                  style={textInputStyles.textInputBorder}
+                  keyboardType='numeric'
+                  value={userPoint.toString()}
+                  onChangeText={(event) => handleChangePoint(event)}
                 />
-              </Textarea>
-            </View>
-            <View
-              style={{ marginTop: 10, padding: 15, backgroundColor: '#fff' }}
-            >
-              <View
-                style={[
-                  viewStyles.flexRow,
-                  { justifyContent: 'space-between' },
-                ]}
-              >
-                <Text style={[textStyles.normal]}>Tổng tiền dịch vụ:</Text>
-                <Text style={[textStyles.normal]}>
-                  {' '}
-                  {formatCurrency(bookingInfo.bookingSpaPrice) || 0}
-                </Text>
+                <Text style={textStyles.error}>{error.point}</Text>
               </View>
-              <View
-                style={[
-                  viewStyles.flexRow,
-                  { marginTop: 5, justifyContent: 'space-between' },
-                ]}
-              >
-                <Text style={[textStyles.normal]}>Sử dụng điểm:</Text>
-                <Text style={[textStyles.normal]}>
-                  -{formatCurrency(userPoint) || 0}
-                </Text>
+              <View>
+                <Text style={textStyles.label}>Ghi chú</Text>
+                <Textarea
+                  size='md'
+                  isReadOnly={false}
+                  isInvalid={false}
+                  isDisabled={false}
+                  w='100%'
+                  marginTop={10}
+                >
+                  <TextareaInput
+                    value={bookingInfo.customerNote}
+                    placeholder='Ghi chú cho nhân viên cửa hàng'
+                    placeholderTextColor={'#A0A0A0'}
+                    onChange={(event) => handleChangeNote(event)}
+                  />
+                </Textarea>
+              </View>
+              <View style={{ marginTop: 10 }}>
+                <View
+                  style={[
+                    viewStyles.flexRow,
+                    { justifyContent: 'space-between' },
+                  ]}
+                >
+                  <Text style={[textStyles.normal]}>Tổng tiền dịch vụ:</Text>
+                  <Text style={[textStyles.normal]}>
+                    {formatCurrency(bookingInfo.bookingSpaPrice) || 0}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    viewStyles.flexRow,
+                    { marginTop: 5, justifyContent: 'space-between' },
+                  ]}
+                >
+                  <Text style={[textStyles.normal]}>Sử dụng điểm:</Text>
+                  <Text style={[textStyles.normal]}>
+                    -{formatCurrency(userPoint) || 0}
+                  </Text>
+                </View>
               </View>
             </View>
             <TouchableOpacity
@@ -221,7 +215,8 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
                   fontSize: 17,
                 }}
               >
-                Thanh toán VNPAY {bookingInfo.bookingSpaPrice - userPoint}{' '}
+                Thanh toán VNPAY{' '}
+                {formatCurrency(bookingInfo.bookingSpaPrice - userPoint)}
               </Text>
             </TouchableOpacity>
           </View>

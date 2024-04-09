@@ -19,6 +19,7 @@ import { sendOTP, verifyOTP } from '../../api/otp';
 import { Textarea, TextareaInput } from '@gluestack-ui/themed';
 import textStyles from '../styles/TextStyles';
 import buttonStyles from '../styles/ButtonStyles';
+import viewStyles from '../styles/ViewStyles';
 
 const CustomerInfoForm = () => {
   const customerState = useCustomerStore((state) => state.customerState.data);
@@ -212,9 +213,7 @@ const CustomerInfoForm = () => {
     }
   };
   return (
-    <SafeAreaView
-      style={{ margin: 5, backgroundColor: '#fff', paddingBottom: 20 }}
-    >
+    <SafeAreaView style={viewStyles.container}>
       <View>
         <Text style={textStyles.labelCenter}>Thông tin khách hàng</Text>
         {!hasCustomerInfo && (

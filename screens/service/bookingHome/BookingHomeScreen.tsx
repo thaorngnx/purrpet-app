@@ -36,6 +36,7 @@ import ButtonStyles from '../../styles/ButtonStyles';
 import { flags } from 'realm';
 import { createPaymentUrl } from '../../../api/pay';
 import viewStyles from '../../styles/ViewStyles';
+import { formatCurrency } from '../../../utils/formatData';
 
 const BookingHomeScreen = ({ navigation }: any) => {
   const [error, setError] = useState({
@@ -242,6 +243,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
             placeholder='Tên thú cưng'
             style={textInputStyles.textInputBorder}
             value={bookingInfo.petName}
+            placeholderTextColor={'#A0A0A0'}
             onChangeText={(text) => handleChangeBookingInfo(text, 'petName')}
           />
           <Text style={textStyles.error}>
@@ -408,7 +410,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
           <View style={{ alignSelf: 'flex-end', marginTop: 5 }}>
             {bookingInfo.dateCheckIn && bookingInfo.dateCheckOut !== null && (
               <Text style={textStyles.label}>
-                Giá phòng: {bookingInfo.bookingHomePrice} VND
+                Giá phòng: {formatCurrency(bookingInfo.bookingHomePrice)}
               </Text>
             )}
           </View>

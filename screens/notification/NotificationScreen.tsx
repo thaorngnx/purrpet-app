@@ -18,6 +18,8 @@ import { useCustomerStore } from '../../zustand/customerStore';
 import { Notification } from '../../interface/Notification';
 import { NOTIFICATION_TYPE } from '../constants';
 import { useFocusEffect } from '@react-navigation/native';
+import { formatTimeToNow } from '../../utils/formatData';
+import { viewNotification } from '../../api/notification';
 
 const NotificationScreen = ({ navigation }: any) => {
   const customer = useCustomerStore((state) => state.customerState.data);
@@ -27,7 +29,9 @@ const NotificationScreen = ({ navigation }: any) => {
 
   const { getAllNotifications } = useNotificationStore();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    getAllNotifications();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -40,20 +44,8 @@ const NotificationScreen = ({ navigation }: any) => {
     }, []),
   );
 
-  // useEffect(() => {
-  //   if (customer.accessToken && socket) {
-  //     getAllNotifications();
-
-  //     socket.on(customer.accessToken, getAllNotifications());
-
-  //     return () => {
-  //       socket.off(customer.accessToken, getAllNotifications());
-  //     };
-  //   }
-  // }, [customer.accessToken, socket]);
-  // getAllNotifications();
-
   const handleViewNotification = (notification: Notification) => {
+    viewNotification(notification._id);
     if (notification.type === NOTIFICATION_TYPE.ORDER) {
       navigation.navigate('OrderDetailScreen', {
         orderCode: notification.orderCode,
@@ -80,7 +72,7 @@ const NotificationScreen = ({ navigation }: any) => {
       >
         {Object.keys(customer).length > 0 && notification?.length > 0 ? (
           <View>
-            {notification.map((item: any, index: number) => (
+            {notification.map((item: Notification, index: number) => (
               <TouchableOpacity
                 onPress={() => handleViewNotification(item)}
                 key={index}
@@ -93,6 +85,16 @@ const NotificationScreen = ({ navigation }: any) => {
                   <Text style={textStyles.label}>{item.title}</Text>
                 </View>
                 <Text style={textStyles.normal}>{item.message}</Text>
+                <Text
+                  style={[
+                    textStyles.hint,
+                    {
+                      textAlign: 'right',
+                    },
+                  ]}
+                >
+                  {formatTimeToNow(item.createdAt)}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>

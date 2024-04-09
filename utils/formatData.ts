@@ -1,3 +1,6 @@
+import { formatDistanceToNow, Locale } from 'date-fns';
+import { vi } from 'date-fns/locale';
+
 export const formatCurrency = (value: number) => {
   const formatter = value?.toLocaleString('vi-VN') + 'đ';
   return formatter;
@@ -15,4 +18,8 @@ export const formatDateTime = (value: any) => {
   const second = date.getSeconds();
   //return format
   return `${day}/${month}/${year}`;
+};
+export const formatTimeToNow = (value: any) => {
+  const date = new Date(value);
+  return formatDistanceToNow(date, { addSuffix: true, locale: vi });
 };

@@ -17,3 +17,12 @@ export const markAllAsRead = async () => {
     console.error(error);
   }
 };
+
+export const viewNotification = async (notificationId: string) => {
+  try {
+    const response = await api.get(`notification/view/${notificationId}`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
