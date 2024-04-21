@@ -13,7 +13,7 @@ export interface BookingHome {
 }
 
 export interface BookingHomeResponse {
-  error: number;
+  err: number;
   message: string;
   data: BookingHome[];
   totalPage: number;
@@ -56,4 +56,14 @@ export interface BookingHomeInfo {
   dateCheckOut: any;
   homePrice: number;
   // payMethod: string;
+}
+
+export interface BookingHomeRequestParams {
+  page: number;
+  limit: number;
+  order: string;
+  key: string;
+  fromDate: Date;
+  toDate: Date;
+  status: string;
 }

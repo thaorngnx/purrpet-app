@@ -31,7 +31,7 @@ export interface Order {
 }
 
 export interface OrderResponse {
-  error: number;
+  err: number;
   message: string;
   data: Order[];
   totalPage: number;

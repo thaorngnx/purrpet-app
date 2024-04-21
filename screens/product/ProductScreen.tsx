@@ -20,8 +20,6 @@ import {
   SelectPortal,
   SelectTrigger,
 } from '@gluestack-ui/themed';
-import { getActiveCategories } from '../../api/category';
-import * as CONST from '../constants';
 import { getActiveProducts } from '../../api/product';
 import { Product } from '../../interface/Product';
 import { Category } from '../../interface/Category';

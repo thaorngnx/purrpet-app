@@ -1,9 +1,4 @@
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ChevronRightIcon,
-  Tabs,
-} from '@gluestack-ui/themed';
+import { ArrowLeftIcon, ChevronRightIcon } from '@gluestack-ui/themed';
 import textStyles from '../../styles/TextStyles';
 import viewStyles from '../../styles/ViewStyles';
 import {
@@ -11,55 +6,80 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Image,
   FlatList,
 } from 'react-native';
-import { useEffect, useState } from 'react';
-import { getBookingHomes } from '../../../api/bookingHome';
+import { useEffect, useRef, useState } from 'react';
 import {
   BookingHome,
-  BookingHomeResponse,
+  BookingHomeRequestParams,
 } from '../../../interface/BookingHome';
 import * as CONST from '../../constants';
-import { ScrollView } from 'react-native';
 import { formatCurrency, formatDateTime } from '../../../utils/formatData';
+import { useBookingHomeStore } from '../../../zustand/bookingHomeStore';
+import { Pagination } from '../../../interface/Pagination';
 
 const HomestayHistoryScreen = ({ navigation }: any) => {
-  const [resBHomes, setResBHomes] = useState({} as BookingHomeResponse);
+  const listBookingHomeState = useBookingHomeStore(
+    (state) => state.listBookingHomeState,
+  );
+
+  const { getBookingHomes } = useBookingHomeStore();
+
+  const [bHomes, setbHomes] = useState<BookingHome[]>([]);
   const [tabHome, setTabHome] = useState(0);
-  const [page, setPage] = useState(0);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 1,
+  } as Pagination);
+  const [loading, setLoading] = useState(false);
+  const [stopLoadMore, setStopLoadMore] = useState(true);
+  const flatListRef = useRef<FlatList<BookingHome> | null>(null);
 
   useEffect(() => {
     const params = {
-      // limit: 10,
-      // page: page,
-      // spa: sort,
-    };
-    //api get spa
-    getBookingHomes(params).then((res) => {
-      if (res.err === 0) {
-        setResBHomes(res);
+      limit: pagination.limit,
+      page: pagination.page,
+    } as BookingHomeRequestParams;
+
+    if (tabHome !== 0) {
+      params.status = Object.values(CONST.STATUS_BOOKING)[tabHome - 1];
+    }
+    //api get home
+    getBookingHomes(params);
+    flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+  }, [tabHome]);
+
+  useEffect(() => {
+    if (listBookingHomeState.pagination.page > 1) {
+      setbHomes(bHomes.concat(listBookingHomeState.data));
+      setPagination(listBookingHomeState.pagination);
+      setLoading(false);
+    } else {
+      setbHomes(listBookingHomeState.data);
+      setPagination(listBookingHomeState.pagination);
+    }
+  }, [listBookingHomeState]);
+
+  const handleLoadMore = async () => {
+    console.log('handleLoadMore');
+
+    if (!stopLoadMore) {
+      setLoading(true);
+      setStopLoadMore(true);
+      const params = {
+        limit: pagination.limit,
+        page: pagination.page + 1,
+      } as BookingHomeRequestParams;
+
+      console.log('params hlm:', params);
+
+      if (tabHome !== 0) {
+        params['status'] = Object.values(CONST.STATUS_ORDER)[tabHome - 1];
       }
-
-      //
-    });
-  }, [tabHome]); //page
-
-  const bHomes = resBHomes.data;
-  let totalPage = resBHomes.totalPage;
-
-  let bHomeByStatus = [];
-
-  if (tabHome === 0) {
-    bHomeByStatus = bHomes;
-  } else {
-    const status = Object.values(CONST.STATUS_BOOKING)[tabHome - 1];
-    bHomeByStatus = bHomes?.filter((bHome) => bHome.status === status) || [];
-  }
-
-  // const handleChangePage = (event, value) => {
-  //   setPage(value);
-  // };
+      getBookingHomes(params);
+    }
+  };
 
   return (
     <>
@@ -71,32 +91,6 @@ const HomestayHistoryScreen = ({ navigation }: any) => {
           <Text style={textStyles.title}>Lịch sử đặt phòng</Text>
         </View>
         <View>
-          {/* <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={viewStyles.tabContainer}
-            key={tabHome}
-          >
-            <TouchableOpacity
-              key={0}
-              style={[viewStyles.tab, tabHome === 0 && viewStyles.activeTab]}
-              onPress={() => setTabHome(0)}
-            >
-              <Text style={viewStyles.tabText}>Tất cả</Text>
-            </TouchableOpacity>
-            {Object.values(CONST.STATUS_BOOKING).map((status, index) => (
-              <TouchableOpacity
-                key={index + 1}
-                style={[
-                  viewStyles.tab,
-                  tabHome === index + 1 && viewStyles.activeTab,
-                ]}
-                onPress={() => setTabHome(index + 1)}
-              >
-                <Text style={viewStyles.tabText}>{status}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView> */}
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -114,12 +108,23 @@ const HomestayHistoryScreen = ({ navigation }: any) => {
                 <Text style={viewStyles.tabText}>{item}</Text>
               </TouchableOpacity>
             )}
+            onEndReachedThreshold={0.5}
+            onEndReached={() => {
+              console.log('onEndReached');
+              if (pagination.page < pagination.total) {
+                handleLoadMore();
+              }
+            }}
+            onScrollBeginDrag={() => {
+              setStopLoadMore(false);
+            }}
           />
         </View>
-        {bHomeByStatus?.length > 0 ? (
+        {bHomes?.length > 0 ? (
           <FlatList
-            data={bHomeByStatus}
-            keyExtractor={(item) => item.purrPetCode}
+            data={bHomes}
+            // keyExtractor={(item) => item.purrPetCode}
+            ref={flatListRef}
             renderItem={({ item }) => (
               <View style={viewStyles.orderCard} key={item.purrPetCode}>
                 <View style={viewStyles.flexRow} className='justify-between'>

@@ -34,7 +34,7 @@ export interface BookingSpaDetail {
 }
 
 export interface BookingSpaResponse {
-  error: number;
+  err: number;
   message: string;
   data: BookingSpa[];
   totalPage: number;
@@ -51,4 +51,14 @@ export interface BookingSpaInfo {
   spaName: string;
   size: string;
   petType: string;
+}
+
+export interface BookingSpaRequestParams {
+  page: number;
+  limit: number;
+  order: string;
+  key: string;
+  fromDate: Date;
+  toDate: Date;
+  status: string;
 }
