@@ -33,19 +33,26 @@ import dayjs, { Dayjs } from 'dayjs';
 import { CalendarDays } from 'lucide-react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import ButtonStyles from '../../styles/ButtonStyles';
-import { flags } from 'realm';
-import { createPaymentUrl } from '../../../api/pay';
 import viewStyles from '../../styles/ViewStyles';
 import { formatCurrency } from '../../../utils/formatData';
 
+interface Error {
+  petName?: string;
+  petType?: string;
+  category?: string;
+  homeSize?: string;
+  message?: string;
+}
+
+interface HomeSize {
+  name: string;
+  purrPetCode: string;
+  groupCode: string;
+  status: string;
+}
+
 const BookingHomeScreen = ({ navigation }: any) => {
-  const [error, setError] = useState({
-    petName: '',
-    petType: '',
-    category: '',
-    homeSize: '',
-    message: '',
-  });
+  const [error, setError] = useState<Error>({});
   const [categories, setCategories] = useState([
     {
       categoryName: '',
@@ -54,22 +61,26 @@ const BookingHomeScreen = ({ navigation }: any) => {
   ]);
   const [allHomes, setAllHomes] = useState([{} as Homestay]);
   const [validHomes, setValidHomes] = useState<Homestay[]>([]);
-  const [homeSizes, setHomeSizes] = useState([
-    {
-      name: '',
-      purrPetCode: '',
-      groupCode: '',
-      status: '',
-    },
-  ]);
+  const [homeSizes, setHomeSizes] = useState<HomeSize[]>([]);
   const [validSizes, setValidSizes] = useState<string[]>([]);
   const [unavailableDays, setUnavailableDays] = useState<string[]>([]);
   const [maxDateCheckOut, setMaxDateCheckOut] = useState(
     dayjs().add(2, 'year'),
   );
-  const [bookingInfo, setBookingInfo] = useState({
-    petType: Object.values(CONST.PET_TYPE)[0],
-  } as BookingHomeInfo);
+  const [bookingInfo, setBookingInfo] = useState<BookingHomeInfo>({
+    petName: '',
+    homeCode: '',
+    bookingHomePrice: 0,
+    customerCode: '',
+    customerNote: '',
+    homeSize: '',
+    petType: '',
+    categoryName: '',
+    categoryCode: '',
+    dateCheckIn: null,
+    dateCheckOut: null,
+    homePrice: 0,
+  });
   const [showDatePickerCheckin, setShowDatePickerCheckin] = useState(false);
   const [showDatePickerCheckout, setShowDatePickerCheckout] = useState(false);
   const [dateCheckin, setDateCheckin] = useState('');
@@ -242,7 +253,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
           <TextInput
             placeholder='Tên thú cưng'
             style={textInputStyles.textInputBorder}
-            value={bookingInfo.petName}
+            value={bookingInfo?.petName}
             placeholderTextColor={'#A0A0A0'}
             onChangeText={(text) => handleChangeBookingInfo(text, 'petName')}
           />
@@ -254,7 +265,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
               Thú cưng là:
             </Text>
             <RadioGroup
-              value={bookingInfo.petType}
+              value={bookingInfo?.petType}
               style={{ flexDirection: 'row' }}
               onChange={(value) => handleChangeBookingInfo(value, 'petType')}
             >
@@ -273,13 +284,13 @@ const BookingHomeScreen = ({ navigation }: any) => {
               ))}
             </RadioGroup>
           </View>
-          {bookingInfo.petType && (
+          {bookingInfo?.petType && (
             <View style={{ marginTop: 5 }}>
               <Text style={textStyles.label} className='mb-3'>
                 Bạn muốn đặt phòng:
               </Text>
               <RadioGroup
-                value={bookingInfo.categoryName || categories[0].purrPetCode}
+                value={bookingInfo?.categoryName || categories[0].purrPetCode}
                 style={{ flexDirection: 'row' }}
                 onChange={(value) => handleChangeBookingInfo(value, 'category')}
               >
@@ -300,13 +311,13 @@ const BookingHomeScreen = ({ navigation }: any) => {
               </RadioGroup>
             </View>
           )}
-          {bookingInfo.categoryCode && (
+          {bookingInfo?.categoryCode && (
             <View style={{ marginTop: 5 }}>
               <Text style={textStyles.label} className='mb-3'>
                 Chọn loại phòng:
               </Text>
               <RadioGroup
-                value={bookingInfo.homeSize || validSizes[0]}
+                value={bookingInfo?.homeSize}
                 style={{ flexDirection: 'row' }}
                 onChange={(value) => handleChangeBookingInfo(value, 'homeSize')}
               >
@@ -327,7 +338,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
               </RadioGroup>
             </View>
           )}
-          {bookingInfo.homeSize && (
+          {bookingInfo?.homeSize && (
             <View>
               <View style={{ marginTop: 5 }}>
                 <Text style={textStyles.label} className='mb-3'>
@@ -361,7 +372,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
                   />
                 )}
               </View>
-              {bookingInfo.dateCheckIn && (
+              {bookingInfo?.dateCheckIn && (
                 <View style={{ marginTop: 5 }}>
                   <Text style={textStyles.label} className='mb-3'>
                     Chọn ngày ra:
@@ -389,14 +400,14 @@ const BookingHomeScreen = ({ navigation }: any) => {
                   {showDatePickerCheckout && (
                     <CalendarPicker
                       onDateChange={handleChangeDateCheckout}
-                      minDate={dayjs(bookingInfo.dateCheckIn)
+                      minDate={dayjs(bookingInfo?.dateCheckIn)
                         .add(1, 'day')
                         .toDate()}
                       disabledDates={(date) => {
                         return unavailableDays.some(
                           (day) =>
                             dayjs(date).isSame(
-                              dayjs(bookingInfo.dateCheckIn),
+                              dayjs(bookingInfo?.dateCheckIn),
                             ) && dayjs(date).isSame(dayjs(day).add(1, 'day')),
                         );
                       }}
@@ -408,9 +419,9 @@ const BookingHomeScreen = ({ navigation }: any) => {
             </View>
           )}
           <View style={{ alignSelf: 'flex-end', marginTop: 5 }}>
-            {bookingInfo.dateCheckIn && bookingInfo.dateCheckOut !== null && (
+            {bookingInfo?.dateCheckIn && bookingInfo?.dateCheckOut !== null && (
               <Text style={textStyles.label}>
-                Giá phòng: {formatCurrency(bookingInfo.bookingHomePrice)}
+                Giá phòng: {formatCurrency(bookingInfo?.bookingHomePrice)}
               </Text>
             )}
           </View>

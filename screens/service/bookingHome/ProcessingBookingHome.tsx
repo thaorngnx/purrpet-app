@@ -16,7 +16,6 @@ import {
 } from '@gluestack-ui/themed';
 import textStyles from '../../styles/TextStyles';
 import viewStyles from '../../styles/ViewStyles';
-import buttonStyles from '../../styles/ButtonStyles';
 import { createBookingHome } from '../../../api/bookingHome';
 import CustomerInfoForm from '../CustomerInfoForm';
 import { formatCurrency, formatDateTime } from '../../../utils/formatData';
