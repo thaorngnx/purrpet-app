@@ -1,8 +1,13 @@
+import { NotificationRequestParams } from '../interface/Notification';
 import api from './token';
 
-export const getAllNotifications = async () => {
+export const getAllNotifications = async (
+  params: NotificationRequestParams,
+) => {
   try {
-    const response = await api.get('notification/get-all');
+    const response = await api.get('notification/get-all', {
+      params,
+    });
     return response.data;
   } catch (error) {
     console.error(error);

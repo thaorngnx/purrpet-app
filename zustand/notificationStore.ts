@@ -1,45 +1,64 @@
 import { create } from 'zustand';
 import { getAllNotifications } from '../api/notification';
+import {
+  Notification,
+  NotificationRequestParams,
+} from '../interface/Notification';
+import { Pagination } from '../interface/Pagination';
 
 type NotificationState = {
   loading: boolean;
   error: string;
-  data: any;
+  data: Notification;
+};
+
+type ListNotificationState = {
+  loading: boolean;
+  error: string;
+  data: Notification[];
+  pagination: Pagination;
 };
 
 type NotificationStore = {
-  notificationState: NotificationState;
-  getAllNotifications: () => void;
+  listNotificationState: ListNotificationState;
+  getAllNotifications: (params: NotificationRequestParams) => void;
 };
 
 export const useNotificationStore = create<NotificationStore>((set, get) => ({
-  notificationState: {
+  listNotificationState: {
     loading: false,
     error: '',
-    data: {},
+    data: [],
+    pagination: {
+      limit: 10,
+      page: 1,
+      total: 1,
+    },
   },
-  getAllNotifications: async () => {
+  getAllNotifications: async (params) => {
     set({
-      notificationState: {
-        ...get().notificationState,
+      listNotificationState: {
+        ...get().listNotificationState,
         loading: true,
       },
     });
     try {
-      const res = await getAllNotifications();
+      const res = await getAllNotifications(params);
       set({
-        notificationState: {
+        listNotificationState: {
           loading: false,
           error: '',
           data: res.data,
+          pagination: res.pagination,
         },
       });
     } catch (error: any) {
       set({
-        notificationState: {
+        listNotificationState: {
           loading: false,
           error: error,
-          data: {},
+          data: [],
+          pagination: { limit: 10, page: 1, total: 1 },
         },
       });
     }

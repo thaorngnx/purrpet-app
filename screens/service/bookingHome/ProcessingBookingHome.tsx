@@ -22,6 +22,7 @@ import { formatCurrency, formatDateTime } from '../../../utils/formatData';
 import textInputStyles from '../../styles/TextInputStyles';
 import { createPaymentUrl } from '../../../api/pay';
 import openInChrome from '../../../utils/openInChrome';
+import { PAYMENT_METHOD } from '../../constants';
 
 const ProcessingBookingHome = ({ navigation, route }: any) => {
   const { bookingInfo } = route.params;
@@ -45,6 +46,7 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
       dateCheckIn: bookingInfo.dateCheckIn,
       dateCheckOut: bookingInfo.dateCheckOut,
       userPoint: userPoint,
+      payMethod: PAYMENT_METHOD.VNPAY,
     }).then((res) => {
       if (res) {
         if (res.err == 0) {

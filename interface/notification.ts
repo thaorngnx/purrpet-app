@@ -10,3 +10,8 @@ export interface Notification {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface NotificationRequestParams {
+  limit: number;
+  page: number;
+}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,43 +6,93 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  ScrollView,
+  FlatList,
 } from 'react-native';
 import textStyles from '../styles/TextStyles';
-import { Link, LinkText, get } from '@gluestack-ui/themed';
+import { Link, LinkText } from '@gluestack-ui/themed';
 import { useNotificationStore } from '../../zustand/notificationStore';
 import viewStyles from '../styles/ViewStyles';
 import { Circle } from 'lucide-react-native';
-// import { Socket } from 'socket.io-client';
 import { useCustomerStore } from '../../zustand/customerStore';
-import { Notification } from '../../interface/Notification';
+import {
+  Notification,
+  NotificationRequestParams,
+} from '../../interface/Notification';
 import { NOTIFICATION_TYPE } from '../constants';
 import { useFocusEffect } from '@react-navigation/native';
 import { formatTimeToNow } from '../../utils/formatData';
 import { viewNotification } from '../../api/notification';
+import { Pagination } from '../../interface/Pagination';
 
 const NotificationScreen = ({ navigation }: any) => {
   const customer = useCustomerStore((state) => state.customerState.data);
-  const notification = useNotificationStore(
-    (state) => state.notificationState.data,
+  const listNotificationState = useNotificationStore(
+    (state) => state.listNotificationState,
   );
 
   const { getAllNotifications } = useNotificationStore();
 
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [pagination, setPagination] = useState({
+    limit: 10,
+    page: 1,
+    total: 1,
+  } as Pagination);
+  const [loading, setLoading] = useState(false);
+  const [stopLoadMore, setStopLoadMore] = useState(true);
+  // const flatListRef = useRef<FlatList<Order> | null>(null);
+
   useEffect(() => {
-    getAllNotifications();
+    const params = {
+      limit: pagination.limit,
+      page: 1,
+    } as NotificationRequestParams;
+    getAllNotifications(params);
   }, []);
+
+  useEffect(() => {
+    console.log('listNotificationState:', listNotificationState.pagination);
+    if (listNotificationState.pagination.page > 1) {
+      setNotifications(notifications.concat(listNotificationState.data));
+      setLoading(false);
+      setPagination(listNotificationState.pagination);
+    } else {
+      console.log('set');
+      setNotifications(listNotificationState.data);
+      setPagination(listNotificationState.pagination);
+    }
+  }, [listNotificationState]);
 
   useFocusEffect(
     useCallback(() => {
       if (customer.accessToken) {
-        getAllNotifications();
+        const params = {
+          limit: pagination.limit,
+          page: 1,
+        } as NotificationRequestParams;
+        console.log('params:', params);
+        getAllNotifications(params);
       }
       return () => {
         // cleanup
       };
     }, []),
   );
+
+  const handleLoadMore = () => {
+    console.log('handleLoadMore');
+    if (!stopLoadMore) {
+      setLoading(true);
+      setStopLoadMore(true);
+      const params = {
+        limit: pagination.limit,
+        page: pagination.page + 1,
+      } as NotificationRequestParams;
+
+      console.log('params:', params);
+      getAllNotifications(params);
+    }
+  };
 
   const handleViewNotification = (notification: Notification) => {
     viewNotification(notification._id);
@@ -66,56 +116,72 @@ const NotificationScreen = ({ navigation }: any) => {
       <View style={viewStyles.titlePageBar}>
         <Text style={textStyles.title}>Thông báo</Text>
       </View>
-      <ScrollView
-        style={viewStyles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        {Object.keys(customer).length > 0 && notification?.length > 0 ? (
-          <View>
-            {notification.map((item: Notification, index: number) => (
-              <TouchableOpacity
-                onPress={() => handleViewNotification(item)}
-                key={index}
-                style={viewStyles.boxUnderline}
+
+      {Object.keys(customer).length > 0 && notifications?.length > 0 ? (
+        <FlatList
+          data={notifications}
+          // keyExtractor={(item) => item.purrPetCode}
+          // ref={flatListRef}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => handleViewNotification(item)}
+              key={item._id}
+              style={viewStyles.boxUnderline}
+            >
+              <View style={viewStyles.flexRow} className='items-center'>
+                {!item.seen && (
+                  <Circle size={10} fill={'red'} className='mr-2' />
+                )}
+                <Text style={textStyles.label}>{item.title}</Text>
+              </View>
+              <Text style={textStyles.normal}>{item.message}</Text>
+              <Text
+                style={[
+                  textStyles.hint,
+                  {
+                    textAlign: 'right',
+                  },
+                ]}
               >
-                <View style={viewStyles.flexRow} className='items-center'>
-                  {!item.seen && (
-                    <Circle size={10} fill={'red'} className='mr-2' />
-                  )}
-                  <Text style={textStyles.label}>{item.title}</Text>
-                </View>
-                <Text style={textStyles.normal}>{item.message}</Text>
-                <Text
-                  style={[
-                    textStyles.hint,
-                    {
-                      textAlign: 'right',
-                    },
-                  ]}
-                >
-                  {formatTimeToNow(item.createdAt)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : (
-          <View style={{ margin: 30 }}>
-            <Image
-              source={require('../../assets/image7.png')}
-              style={{ alignSelf: 'center' }}
-            />
-            <Text style={textStyles.label}>Bạn chưa có thông báo nào!!</Text>
-            <Text style={textStyles.label}>
-              Hãy xác minh tài khoản để nhận thông báo!
-            </Text>
-            {Object.keys(customer).length === 0 && (
-              <Link onPress={() => navigation.navigate('Tài khoản')}>
-                <LinkText style={{ alignSelf: 'center' }}>Tài khoản</LinkText>
-              </Link>
-            )}
-          </View>
-        )}
-      </ScrollView>
+                {formatTimeToNow(item.createdAt)}
+              </Text>
+            </TouchableOpacity>
+          )}
+          onEndReachedThreshold={0.1}
+          onEndReached={() => {
+            console.log('onEndReached');
+            if (pagination.page < pagination.total) {
+              handleLoadMore();
+            }
+          }}
+          onScrollBeginDrag={() => {
+            setStopLoadMore(false);
+          }}
+          ListFooterComponent={
+            loading ? (
+              <View>
+                <Text className=' text-black'>Loading...</Text>
+              </View>
+            ) : null
+          }
+        />
+      ) : (
+        <View style={{ margin: 30 }}>
+          <Image
+            source={require('../../assets/image7.png')}
+            style={{ alignSelf: 'center' }}
+          />
+          <Text style={textStyles.label}>Bạn chưa có thông báo nào!!</Text>
+          <Text style={textStyles.label}>
+            Hãy xác minh tài khoản để nhận thông báo!
+          </Text>
+          {Object.keys(customer).length === 0 && (
+            <Link onPress={() => navigation.navigate('Tài khoản')}>
+              <LinkText style={{ alignSelf: 'center' }}>Tài khoản</LinkText>
+            </Link>
+          )}
+        </View>
+      )}
     </SafeAreaView>
   );
 };
