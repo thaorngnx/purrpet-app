@@ -18,7 +18,6 @@ import textInputStyles from '../../styles/TextInputStyles';
 import openInChrome from '../../../utils/openInChrome';
 import { createPaymentUrl } from '../../../api/pay';
 import { createBookingSpa } from '../../../api/bookingSpa';
-import { PAYMENT_METHOD } from '../../constants';
 
 const ProcessingBookingSpa = ({ navigation, route }: any) => {
   const { bookingInfo } = route.params;
@@ -43,7 +42,6 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
       bookingDate: bookingInfo.bookingDate,
       bookingTime: bookingInfo.bookingTime,
       userPoint: userPoint,
-      payMethod: PAYMENT_METHOD.VNPAY,
     }).then((res) => {
       if (res) {
         if (res.err == 0) {

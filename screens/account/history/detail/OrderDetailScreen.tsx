@@ -5,21 +5,41 @@ import {
   Text,
   View,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import viewStyles from '../../../styles/ViewStyles';
-import { ArrowLeftIcon, Spinner } from '@gluestack-ui/themed';
+import {
+  ArrowLeftIcon,
+  Icon,
+  Select,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicator,
+  SelectDragIndicatorWrapper,
+  SelectInput,
+  SelectItem,
+  SelectPortal,
+  SelectTrigger,
+  Spinner,
+  Textarea,
+  TextareaInput,
+} from '@gluestack-ui/themed';
 import textStyles from '../../../styles/TextStyles';
 import { formatCurrency, formatDateTime } from '../../../../utils/formatData';
 import { Order } from '../../../../interface/Order';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getOrderByCode, updateStatusOrder } from '../../../../api/order';
 import { getProducts } from '../../../../api/product';
-import { ChevronRightIcon } from 'lucide-react-native';
+import { ChevronDownIcon, ChevronRightIcon } from 'lucide-react-native';
 import buttonStyles from '../../../styles/ButtonStyles';
 import * as CONST from '../../../constants';
 import { StyleSheet } from 'react-native';
-import { createPaymentUrl } from '../../../../api/pay';
+import { createPaymentUrl, requestRefund } from '../../../../api/pay';
 import openInChrome from '../../../../utils/openInChrome';
+import axios from 'axios';
+import textInputStyles from '../../../styles/TextInputStyles';
+import { MediaType, launchImageLibrary } from 'react-native-image-picker';
+import { set } from 'date-fns';
 
 interface ProductOrder {
   productCode: string;
@@ -39,6 +59,13 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
   const orderCode = route.params.orderCode as string;
   const [orderDetail, setOrderDetail] = useState<OrderDetail>();
   const [loading, setLoading] = useState(true);
+  const [clickRefund, setClickRefund] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+  const [bank, setBank] = useState<string[]>([]);
+  const [message, setMessage] = useState('');
+  const [bankNumber, setBSankNumber] = useState('');
+  const [bankName, setBankName] = useState('');
+  const [image, setImage] = useState('');
 
   useEffect(() => {
     getOrderByCode(orderCode).then((res) => {
@@ -76,6 +103,15 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
         });
       }
     });
+
+    const fetchData = async () => {
+      const bank = await axios.get('https://api.vietqr.io/v2/banks');
+      const shortNames = bank.data.data.map((item: any) => item.short_name);
+      setBank(shortNames);
+    };
+    if (clickRefund) {
+      fetchData();
+    }
   }, []);
   const handleCancelOrder = () => {
     updateStatusOrder(
@@ -96,6 +132,16 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
       (orderDetail?.productOrders as ProductOrder[]).length > 0
     ) {
       setLoading(false);
+      if (
+        orderDetail?.order?.createdAt &&
+        new Date().getTime() -
+          new Date(orderDetail?.order?.createdAt).getTime() >
+          86400000 * 7
+      ) {
+        setDisabled(true);
+      } else {
+        setDisabled(false);
+      }
     }
   }, [orderDetail]);
 
@@ -117,7 +163,45 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
   };
 
   const handleRefund = () => {
-    //api hoàn tiền trả hàng
+    const content = message + '+' + bankName + '+' + bankNumber;
+    console.log(image);
+    requestRefund({
+      orderCode: orderCode,
+      message: content,
+      images: [image],
+    }).then((res) => {
+      console.log(res);
+      if (res.err === 0) {
+        console.log('Yêu cầu hoàn tiền thành công!');
+        setClickRefund(false);
+        setMessage('');
+        setBankName('');
+        setBSankNumber('');
+        setImage('');
+      } else {
+        console.log('error', res.message);
+      }
+    });
+  };
+  const handleChooseImage = () => {
+    const options = {
+      mediaType: 'photo' as MediaType,
+      includeBase64: false,
+      maxHeight: 2000,
+      maxWidth: 2000,
+    };
+
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('Image picker error: ', response.errorCode);
+      } else {
+        if (response) {
+          setImage(response.assets[0].uri);
+        }
+      }
+    });
   };
 
   return (
@@ -327,20 +411,108 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
             </View>
           )}
 
-          {orderDetail?.order?.status === CONST.STATUS_ORDER.DONE && (
-            <View style={viewStyles.flexRow} className='justify-around'>
-              <TouchableOpacity
-                style={buttonStyles.buttonOutline}
-                onPress={() => handleReviewOrder()}
+          {orderDetail?.order?.status === CONST.STATUS_ORDER.DONE &&
+            !clickRefund && (
+              <View style={viewStyles.flexRow} className='justify-around'>
+                <TouchableOpacity
+                  style={buttonStyles.buttonOutline}
+                  onPress={() => handleReviewOrder()}
+                >
+                  <Text style={styles.buttonOutlineText}>Đánh giá</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    buttonStyles.buttonOutline,
+                    disabled ? buttonStyles.disabledButtonOutline : null,
+                  ]}
+                  onPress={() => setClickRefund(true)}
+                  disabled={disabled}
+                >
+                  <Text style={styles.buttonOutlineText}>
+                    Yêu cầu trả hàng/Hoàn tiền
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          {clickRefund && (
+            <View style={{ margin: 10 }}>
+              <Text style={textStyles.label}>Lý do hoàn tiền</Text>
+              <Textarea
+                size='md'
+                isReadOnly={false}
+                isInvalid={false}
+                isDisabled={false}
+                w='100%'
+                marginTop={10}
+                marginBottom={10}
               >
-                <Text style={styles.buttonOutlineText}>Đánh giá</Text>
+                <TextareaInput
+                  placeholder='Vui lòng nhập lý do trả hàng hoàn tiền....'
+                  value={message}
+                  onChangeText={(value) => setMessage(value)}
+                />
+              </Textarea>
+              <View>
+                <Select
+                  marginTop={5}
+                  onValueChange={(value) => setBankName(value)}
+                  selectedValue={bankName}
+                >
+                  <SelectTrigger size='md' paddingRight={10}>
+                    <SelectInput
+                      placeholder='Chọn ngân hàng nhận tiền hoàn'
+                      style={textInputStyles.textInputBorder}
+                    />
+                    <Icon as={ChevronDownIcon} className='m-5' />
+                  </SelectTrigger>
+                  <SelectPortal>
+                    <SelectBackdrop />
+                    <SelectContent>
+                      <SelectDragIndicatorWrapper>
+                        <SelectDragIndicator />
+                      </SelectDragIndicatorWrapper>
+
+                      {bank.map((value, index) => (
+                        <SelectItem key={index} label={value} value={value} />
+                      ))}
+                    </SelectContent>
+                  </SelectPortal>
+                </Select>
+              </View>
+
+              <TextInput
+                style={[textInputStyles.textInputBorder, { marginTop: 10 }]}
+                keyboardType='numeric'
+                placeholder='Số tài khoản'
+                value={bankNumber}
+                onChangeText={(value) => setBSankNumber(value)}
+              />
+
+              <TouchableOpacity
+                style={[buttonStyles.button, { width: '40%', marginTop: 10 }]}
+                onPress={handleChooseImage}
+              >
+                <Text style={{ color: '#ffffff', alignSelf: 'center' }}>
+                  Chọn ảnh
+                </Text>
               </TouchableOpacity>
+              <View style={{ margin: 10 }}>
+                {image ? (
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: 100, height: 100 }}
+                  />
+                ) : null}
+              </View>
+
               <TouchableOpacity
                 style={buttonStyles.buttonOutline}
                 onPress={() => handleRefund()}
               >
-                <Text style={styles.buttonOutlineText}>
-                  Yêu cầu trả hàng/Hoàn tiền
+                <Text
+                  style={[styles.buttonOutlineText, { alignSelf: 'center' }]}
+                >
+                  Gửi yêu cầu
                 </Text>
               </TouchableOpacity>
             </View>

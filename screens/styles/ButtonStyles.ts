@@ -53,6 +53,16 @@ const buttonStyles = StyleSheet.create({
     marginTop: 10,
     width: 'auto',
   },
+  disabledButtonOutline: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'white',
+    padding: 8,
+    borderRadius: 5,
+    marginTop: 10,
+    width: 'auto',
+    opacity: 0.5,
+  },
 });
 
 export default buttonStyles;

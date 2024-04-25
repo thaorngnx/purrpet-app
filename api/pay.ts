@@ -17,3 +17,12 @@ export async function vnpayReturn(body: any) {
     console.error(error);
   }
 }
+
+export async function requestRefund(body: any) {
+  try {
+    const response = await api.post('pay/request-refund', body);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
