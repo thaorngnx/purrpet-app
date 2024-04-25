@@ -58,7 +58,7 @@ const ProductCard = ({
           <Text style={styles.start} className='flex-row items-center mr-1'>
             {product.averageRating ? product.averageRating : 0}
           </Text>
-          <StarIcon color='#C54600' />
+          <StarIcon color='#C54600' fill={'#C54600'} />
         </View>
         {/* <TouchableOpacity
           onPress={() => handleAddToCart()}
@@ -73,7 +73,7 @@ const ProductCard = ({
           <ShoppingCart color='#C54600' />
         </TouchableOpacity>
       </View>
-      {/* <Text style={styles.text}>Đã bán {product.orderQuantity}</Text> */}
+      <Text style={styles.totalSale}>Đã bán {product.orderQuantity}</Text>
     </View>
   );
 };
@@ -117,6 +117,12 @@ const styles = StyleSheet.create({
   flatContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  totalSale: {
+    fontSize: 12,
+    color: 'black',
+    textAlign: 'right',
+    marginTop: 5,
   },
 });
 
