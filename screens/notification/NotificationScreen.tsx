@@ -12,7 +12,7 @@ import textStyles from '../styles/TextStyles';
 import { Link, LinkText } from '@gluestack-ui/themed';
 import { useNotificationStore } from '../../zustand/notificationStore';
 import viewStyles from '../styles/ViewStyles';
-import { Circle } from 'lucide-react-native';
+import { CheckCheck, Circle } from 'lucide-react-native';
 import { useCustomerStore } from '../../zustand/customerStore';
 import {
   Notification,
@@ -30,7 +30,7 @@ const NotificationScreen = ({ navigation }: any) => {
     (state) => state.listNotificationState,
   );
 
-  const { getAllNotifications } = useNotificationStore();
+  const { getAllNotifications, markAllAsRead } = useNotificationStore();
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [pagination, setPagination] = useState({
@@ -51,13 +51,11 @@ const NotificationScreen = ({ navigation }: any) => {
   }, []);
 
   useEffect(() => {
-    console.log('listNotificationState:', listNotificationState.pagination);
     if (listNotificationState.pagination.page > 1) {
       setNotifications(notifications.concat(listNotificationState.data));
       setLoading(false);
       setPagination(listNotificationState.pagination);
     } else {
-      console.log('set');
       setNotifications(listNotificationState.data);
       setPagination(listNotificationState.pagination);
     }
@@ -118,53 +116,89 @@ const NotificationScreen = ({ navigation }: any) => {
       </View>
 
       {Object.keys(customer).length > 0 && notifications?.length > 0 ? (
-        <FlatList
-          data={notifications}
-          // keyExtractor={(item) => item.purrPetCode}
-          // ref={flatListRef}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => handleViewNotification(item)}
-              key={item._id}
-              style={viewStyles.boxUnderline}
+        <>
+          <TouchableOpacity
+            style={[
+              viewStyles.flexRow,
+              {
+                paddingHorizontal: 10,
+                paddingBottom: 10,
+                borderBottomWidth: 1,
+                borderBottomColor: '#f5f5f5',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+              },
+            ]}
+            onPress={() => {
+              markAllAsRead();
+            }}
+          >
+            <CheckCheck color={'blue'} />
+            <Text
+              style={[
+                textStyles.hint,
+                {
+                  color: 'blue',
+                  marginLeft: 5,
+                },
+              ]}
             >
-              <View style={viewStyles.flexRow} className='items-center'>
-                {!item.seen && (
-                  <Circle size={10} fill={'red'} className='mr-2' />
-                )}
-                <Text style={textStyles.label}>{item.title}</Text>
-              </View>
-              <Text style={textStyles.normal}>{item.message}</Text>
-              <Text
+              Đánh dấu tất cả đã đọc
+            </Text>
+          </TouchableOpacity>
+          <FlatList
+            data={notifications}
+            // keyExtractor={(item) => item.purrPetCode}
+            // ref={flatListRef}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => handleViewNotification(item)}
+                key={item._id}
                 style={[
-                  textStyles.hint,
+                  viewStyles.boxUnderline,
                   {
-                    textAlign: 'right',
+                    backgroundColor: item.seen ? '#ffff' : '#f5f5f5',
                   },
                 ]}
               >
-                {formatTimeToNow(item.createdAt)}
-              </Text>
-            </TouchableOpacity>
-          )}
-          onEndReachedThreshold={0.1}
-          onEndReached={() => {
-            console.log('onEndReached');
-            if (pagination.page < pagination.total) {
-              handleLoadMore();
+                <View style={[viewStyles.flexRow]} className='items-center'>
+                  {!item.seen && (
+                    <Circle size={10} fill={'red'} className='mr-2' />
+                  )}
+                  <Text style={textStyles.label}>{item.title}</Text>
+                </View>
+                <Text style={textStyles.normal}>{item.message}</Text>
+                <Text
+                  style={[
+                    textStyles.hint,
+                    {
+                      textAlign: 'right',
+                    },
+                  ]}
+                >
+                  {formatTimeToNow(item.createdAt)}
+                </Text>
+              </TouchableOpacity>
+            )}
+            onEndReachedThreshold={0.1}
+            onEndReached={() => {
+              console.log('onEndReached');
+              if (pagination.page < pagination.total) {
+                handleLoadMore();
+              }
+            }}
+            onScrollBeginDrag={() => {
+              setStopLoadMore(false);
+            }}
+            ListFooterComponent={
+              loading ? (
+                <View>
+                  <Text className=' text-black'>Loading...</Text>
+                </View>
+              ) : null
             }
-          }}
-          onScrollBeginDrag={() => {
-            setStopLoadMore(false);
-          }}
-          ListFooterComponent={
-            loading ? (
-              <View>
-                <Text className=' text-black'>Loading...</Text>
-              </View>
-            ) : null
-          }
-        />
+          />
+        </>
       ) : (
         <View style={{ margin: 30 }}>
           <Image

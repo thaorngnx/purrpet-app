@@ -21,19 +21,30 @@ import {
 import HomeScreen from '../../product/HomeScreen';
 import { socket } from '../../../socket';
 import { Socket } from 'socket.io-client';
-import { getAllNotifications } from '../../../api/notification';
+// import { getAllNotifications } from '../../../api/notification';
 import { BadgeText, VStack } from '@gluestack-ui/themed';
 import { Badge } from '@gluestack-ui/themed';
-import { Notification } from '../../../interface/Notification';
+import {
+  Notification,
+  NotificationRequestParams,
+} from '../../../interface/Notification';
+import { useNotificationStore } from '../../../zustand/notificationStore';
 
 const MenuBottom = () => {
   const Tab = createBottomTabNavigator();
   const customerState = useCustomerStore((state) => state.customerState);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const listNotificationState = useNotificationStore(
+    (state) => state.listNotificationState,
+  );
+  const notificationRequestParams = {
+    limit: 10,
+    page: 1,
+  } as NotificationRequestParams;
+
+  const { getAllNotifications } = useNotificationStore();
+  // const [notifications, setNotifications] = useState<Notification[]>([]);
   //number of noti not yet seen\
-  const notiNotSeen = notifications.filter(
-    (noti) => noti.seen === false,
-  ).length;
+  const [notificationNotSeen, setNotificationNotSeen] = useState(0);
   const handleBackButton = () => {
     BackHandler.exitApp();
     return true;
@@ -43,13 +54,18 @@ const MenuBottom = () => {
 
   useEffect(() => {
     if (customerState.data.accessToken) {
-      getAllNotifications().then((res) => {
-        if (res.err === 0) {
-          setNotifications(res.data);
-        }
-      });
+      getAllNotifications(notificationRequestParams);
     }
   }, []);
+
+  useEffect(() => {
+    if (listNotificationState.data.length > 0) {
+      const notiNotSeen = listNotificationState.data.filter(
+        (noti: Notification) => noti.seen === false,
+      );
+      setNotificationNotSeen(notiNotSeen.length);
+    }
+  }, [listNotificationState.data]);
 
   useEffect(() => {
     if (
@@ -63,12 +79,8 @@ const MenuBottom = () => {
 
       function onTradeEvent(value: any) {
         const socketData = JSON.parse(value);
-        console.log('socketClient', socketData);
-        getAllNotifications().then((res) => {
-          if (res.err === 0) {
-            setNotifications(res.data);
-          }
-        });
+        // console.log('socketClient', socketData);
+        getAllNotifications(notificationRequestParams);
       }
       socketClient.on('connect', () => {
         console.log('socket connected');
@@ -145,7 +157,7 @@ const MenuBottom = () => {
           tabBarIcon: ({ focused }) => (
             // <Bell color={focused ? '#000000' : '#ca8a04'} />
             <VStack>
-              {notiNotSeen > 0 && (
+              {notificationNotSeen > 0 && (
                 <View
                   style={{
                     position: 'absolute',
