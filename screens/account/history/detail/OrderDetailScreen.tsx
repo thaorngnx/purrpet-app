@@ -65,7 +65,13 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
   const [message, setMessage] = useState('');
   const [bankNumber, setBSankNumber] = useState('');
   const [bankName, setBankName] = useState('');
-  const [image, setImage] = useState('');
+  const [picture, setPicture] = useState('');
+  const [error, setError] = useState({
+    message: '',
+    bankName: '',
+    bankNumber: '',
+    picture: '',
+  });
 
   useEffect(() => {
     getOrderByCode(orderCode).then((res) => {
@@ -112,7 +118,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
     if (clickRefund) {
       fetchData();
     }
-  }, []);
+  }, [clickRefund]);
   const handleCancelOrder = () => {
     updateStatusOrder(
       orderDetail?.order?.purrPetCode as string,
@@ -155,7 +161,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
     }).then((res) => {
       if (res.err === 0) {
         console.log('Đặt hàng thành công!');
-        openInChrome(res.data.paymentUrl);
+        openInChrome(res.data.paymentUrl, navigation);
       } else {
         console.log('error', res.message);
       }
@@ -163,45 +169,87 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
   };
 
   const handleRefund = () => {
+    if (!message) {
+      setError({ ...error, message: 'Vui lòng nhập lý do' });
+      return;
+    } else if (!bankName) {
+      setError({ ...error, bankName: 'Vui lòng chọn ngân hàng' });
+      return;
+    } else if (!bankNumber) {
+      setError({ ...error, bankNumber: 'Vui lòng nhập số tài khoản' });
+      return;
+    } else if (!picture) {
+      setError({ ...error, picture: 'Vui lòng chọn ảnh' });
+      return;
+    }
+
+    setError({
+      ...error,
+      message: '',
+      bankName: '',
+      bankNumber: '',
+      picture: '',
+    });
     const content = message + '+' + bankName + '+' + bankNumber;
-    console.log(image);
+
     requestRefund({
       orderCode: orderCode,
       message: content,
-      images: [image],
+      images: picture,
     }).then((res) => {
-      console.log(res);
+      //api upload image
       if (res.err === 0) {
-        console.log('Yêu cầu hoàn tiền thành công!');
+        console.log('Yêu cầu trả hàng thành công!');
         setClickRefund(false);
-        setMessage('');
-        setBankName('');
-        setBSankNumber('');
-        setImage('');
+        navigation.navigate('Sản phẩm');
       } else {
         console.log('error', res.message);
       }
     });
   };
-  const handleChooseImage = () => {
-    const options = {
-      mediaType: 'photo' as MediaType,
-      includeBase64: false,
-      maxHeight: 2000,
-      maxWidth: 2000,
-    };
-
-    launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.log('Image picker error: ', response.errorCode);
-      } else {
-        if (response) {
-          setImage(response.assets[0].uri);
+  const pickFromGallery = async () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        includeBase64: false,
+        maxHeight: 2000,
+        maxWidth: 2000,
+      },
+      (response) => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.log('Image picker error: ', response.errorCode);
+        } else {
+          if (response.assets?.[0]?.uri) {
+            const file = {
+              uri: response.assets[0].uri,
+              type: response.assets[0].type,
+              name: response.assets[0].fileName,
+            };
+            handleUpload(file);
+          }
         }
-      }
-    });
+      },
+    );
+  };
+  const handleUpload = (image: any) => {
+    const data = new FormData();
+    data.append('file', image);
+    data.append('upload_preset', 'g2rusnuv');
+    data.append('cloud_name', 'dmzahhttu');
+
+    fetch('https://api.cloudinary.com/v1_1/dmzahhttu/image/upload', {
+      method: 'POST',
+      body: data,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setPicture(data.url);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -451,6 +499,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
                   value={message}
                   onChangeText={(value) => setMessage(value)}
                 />
+                <Text style={textStyles.error}>{error.message}</Text>
               </Textarea>
               <View>
                 <Select
@@ -478,6 +527,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
                     </SelectContent>
                   </SelectPortal>
                 </Select>
+                <Text style={textStyles.error}>{error.bankName}</Text>
               </View>
 
               <TextInput
@@ -487,23 +537,25 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
                 value={bankNumber}
                 onChangeText={(value) => setBSankNumber(value)}
               />
+              <Text style={textStyles.error}>{error.bankNumber}</Text>
 
               <TouchableOpacity
                 style={[buttonStyles.button, { width: '40%', marginTop: 10 }]}
-                onPress={handleChooseImage}
+                onPress={() => pickFromGallery()}
               >
                 <Text style={{ color: '#ffffff', alignSelf: 'center' }}>
                   Chọn ảnh
                 </Text>
               </TouchableOpacity>
               <View style={{ margin: 10 }}>
-                {image ? (
+                {picture ? (
                   <Image
-                    source={{ uri: image }}
+                    source={{ uri: picture }}
                     style={{ width: 100, height: 100 }}
                   />
                 ) : null}
               </View>
+              <Text style={textStyles.error}>{error.picture}</Text>
 
               <TouchableOpacity
                 style={buttonStyles.buttonOutline}

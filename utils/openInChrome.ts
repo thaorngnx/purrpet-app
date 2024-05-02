@@ -4,7 +4,7 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 // Hàm để mở URL trong trình duyệt Chrome
-async function openInChrome(url: string) {
+async function openInChrome(url: string, navigation: any) {
   try {
     if (await InAppBrowser.isAvailable()) {
       console.log('InAppBrowser is available!');
@@ -39,8 +39,9 @@ async function openInChrome(url: string) {
         },
       });
       await sleep(800);
-      console.log('result:', result);
-      console.log(result);
+      if (result.type === 'cancel') {
+        navigation.navigate('Sản phẩm');
+      }
     } else {
       console.log('InAppBrowser is not available!');
       Linking.openURL(url);

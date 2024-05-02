@@ -26,3 +26,11 @@ export async function requestRefund(body: any) {
     console.error(error);
   }
 }
+export async function Statistics(params: any) {
+  try {
+    const response = await api.get('pay/financial-statistics', { params });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}

@@ -46,7 +46,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
   const [error, setError] = useState({
     point: '',
   });
-  const [paymentMethod, setPaymentMethod] = useState(CONST.PAYMENT_METHOD.COD);
+  const [payMethod, setPayMethod] = useState(CONST.PAYMENT_METHOD.COD);
 
   const handleOrder = () => {
     createOrder({
@@ -63,10 +63,11 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
       },
       userPoint: userPoint,
       customerNote: customerNote,
-      payMethod: paymentMethod,
+      payMethod: payMethod,
     }).then((res) => {
-      if (res.err == 0) {
-        if (paymentMethod === CONST.PAYMENT_METHOD.COD) {
+      console.log(res);
+      if (res.err === 0) {
+        if (payMethod === CONST.PAYMENT_METHOD.COD) {
           console.log('Đặt hàng thành công!');
 
           deleteCart();
@@ -80,7 +81,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
           }).then((res) => {
             if (res.err === 0) {
               console.log('Đặt hàng thành công!');
-              openInChrome(res.data.paymentUrl);
+              openInChrome(res.data.paymentUrl, navigation);
               deleteCart();
             }
           });
@@ -101,7 +102,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
     setCustomerNote(text);
   };
   const handlePayment = (event: any) => {
-    setPaymentMethod(event);
+    setPayMethod(event);
   };
   const handleChangePoint = (event: any) => {
     if (
@@ -271,7 +272,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
               >
                 <Text style={textStyles.label}>Phương thức thanh toán</Text>
                 <RadioGroup
-                  value={paymentMethod}
+                  value={payMethod}
                   onChange={(value) => handlePayment(value)}
                 >
                   <Radio
@@ -384,7 +385,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                   onPress={() => handleOrder()}
                 >
                   <Text style={textStyles.bold}>
-                    {paymentMethod === 'VNPAY'
+                    {payMethod === 'VNPAY'
                       ? 'Tiến hành thanh toán '
                       : 'Đặt hàng'}
                   </Text>

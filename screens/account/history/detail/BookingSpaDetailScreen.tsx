@@ -68,7 +68,7 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
     }).then((res) => {
       if (res.err === 0) {
         console.log('Đặt hàng thành công!');
-        openInChrome(res.data.paymentUrl);
+        openInChrome(res.data.paymentUrl, navigation);
       } else {
         console.log('error', res.message);
       }

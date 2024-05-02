@@ -18,7 +18,7 @@
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.20",
     "@types/realm": "^1.13.0",
-    "axios": "^1.6.7",
+    "axios": "^1.6.8",
     "core-js": "^3.36.0",
     "date-fns": "^3.3.1",
     "dayjs": "^1.11.10",

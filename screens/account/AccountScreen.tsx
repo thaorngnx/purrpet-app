@@ -4,7 +4,12 @@ import textStyles from '../styles/TextStyles';
 import viewStyles from '../styles/ViewStyles';
 import { useCustomerStore } from '../../zustand/customerStore';
 import buttonStyles from '../styles/ButtonStyles';
-import { LogOut, ShoppingBag, SquareUser } from 'lucide-react-native';
+import {
+  BarChartBig,
+  LogOut,
+  ShoppingBag,
+  SquareUser,
+} from 'lucide-react-native';
 
 const AccountScreen = ({ navigation }: any) => {
   const customer = useCustomerStore((state) => state.customerState.data);
@@ -59,6 +64,13 @@ const AccountScreen = ({ navigation }: any) => {
         >
           <ShoppingBag style={styles.icon} />
           <Text style={textStyles.normal}>Đơn hàng của tôi</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => navigation.navigate('FinancialStatistics')}
+        >
+          <BarChartBig style={styles.icon} />
+          <Text style={textStyles.normal}>Thống kê</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.option} onPress={() => handleLogout()}>
           <LogOut style={styles.icon} />
