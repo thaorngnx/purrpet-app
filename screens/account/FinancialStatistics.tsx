@@ -62,83 +62,93 @@ const FinancialStatistics = ({ navigation }: any) => {
           <Text style={textStyles.normal}>{customer.point}</Text>
         </View>
       </View>
-      <View style={viewStyles.card}>
-        <Text style={textStyles.labelCenter}>Tổng chi tiêu </Text>
-        <View style={viewStyles.flexRow}>
-          <Text style={textStyles.label}>Đơn hàng: </Text>
-          <Text
-            style={[
-              textStyles.normal,
-              {
-                flex: 1,
-              },
-            ]}
-          >
-            {formatCurrency(type.order)}
-          </Text>
-          <Text
-            style={[
-              textStyles.normal,
-              {
-                flex: 1,
-              },
-            ]}
-          >
-            {quantity.order} đơn
-          </Text>
-        </View>
+      <View>
+        <Text style={[textStyles.labelCenter, { marginTop: 10 }]}>
+          Tổng chi tiêu đơn hàng{' '}
+        </Text>
         <View style={[viewStyles.flexRow]}>
-          <Text style={textStyles.label}>Đặt lịch spa: </Text>
-          <Text
-            style={[
-              textStyles.normal,
-              {
-                flex: 1,
-              },
-            ]}
-          >
-            {formatCurrency(type.spa)}
-          </Text>
-          <Text
-            style={[
-              textStyles.normal,
-              {
-                flex: 1,
-              },
-            ]}
-          >
-            {quantity.spa} đơn
-          </Text>
+          <View style={[viewStyles.card, { width: '43%' }]}>
+            <Text style={textStyles.label}>Tổng doanh thu: </Text>
+            <Text style={[textStyles.normal, { marginTop: 5 }]}>
+              {formatCurrency(type.order)}
+            </Text>
+          </View>
+          <View style={[viewStyles.card, { width: '43%' }]}>
+            <Text style={[textStyles.label]}>Tổng đơn hàng:</Text>
+            <Text style={[textStyles.normal, { marginTop: 5 }]}>
+              {quantity.order} đơn
+            </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('OrderHistoryScreen')}
+              style={{ alignItems: 'flex-end', marginTop: 10 }}
+            >
+              <Text style={[textStyles.hintBoldItalic, { color: '#265F77' }]}>
+                Danh sách đơn
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
+      </View>
+      <View>
+        <Text style={[textStyles.labelCenter, { marginTop: 10 }]}>
+          Tổng chi tiêu đơn đặt lịch spa{' '}
+        </Text>
+        <View style={[viewStyles.flexRow]}>
+          <View style={[viewStyles.card, { width: '43%' }]}>
+            <Text style={textStyles.label}>Tổng doanh thu: </Text>
+            <Text style={[textStyles.normal, { marginTop: 5 }]}>
+              {formatCurrency(type.spa)}
+            </Text>
+          </View>
+          <View style={[viewStyles.card, { width: '43%' }]}>
+            <Text style={[textStyles.label]}>Tổng số đơn đặt lịch:</Text>
+            <Text style={[textStyles.normal, { marginTop: 5 }]}>
+              {quantity.spa} đơn
+            </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('SpaHistoryScreen')}
+              style={{ alignItems: 'flex-end', marginTop: 10 }}
+            >
+              <Text style={[textStyles.hintBoldItalic, { color: '#265F77' }]}>
+                Danh sách đơn
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+      <View>
+        <Text style={[textStyles.labelCenter, { marginTop: 10 }]}>
+          Tổng chi tiêu đơn đặt lịch homestay{' '}
+        </Text>
         <View style={viewStyles.flexRow}>
-          <Text style={textStyles.label}>Đặt phòng homestay: </Text>
-          <Text
-            style={[
-              textStyles.normal,
-              {
-                flex: 1,
-              },
-            ]}
-          >
-            {formatCurrency(type.homestay)}
-          </Text>
-          <Text
-            style={[
-              textStyles.normal,
-              {
-                flex: 1,
-              },
-            ]}
-          >
-            {quantity.homestay} đơn
-          </Text>
+          <View style={[viewStyles.card, { width: '43%' }]}>
+            <Text style={textStyles.label}>Tổng doanh thu: </Text>
+            <Text style={[textStyles.normal, { marginTop: 5 }]}>
+              {formatCurrency(type.homestay)}
+            </Text>
+          </View>
+          <View style={[viewStyles.card, { width: '43%' }]}>
+            <Text style={[textStyles.label]}>Tổng số đơn đặt phòng:</Text>
+            <Text style={[textStyles.normal, { marginTop: 5 }]}>
+              {quantity.homestay} đơn
+            </Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('HomestayHistoryScreen')}
+              style={{ alignItems: 'flex-end', marginTop: 10 }}
+            >
+              <Text style={[textStyles.hintBoldItalic, { color: '#265F77' }]}>
+                Danh sách đơn
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={[viewStyles.flexRow, { marginTop: 10 }]}>
-          <Text style={textStyles.label}>Tổng cộng: </Text>
-          <Text style={textStyles.normal}>
-            {formatCurrency(type.homestay + type.order + type.spa)}
-          </Text>
-        </View>
+      </View>
+
+      <View style={[viewStyles.flexRow, { margin: 10 }]}>
+        <Text style={textStyles.label}>Tổng cộng: </Text>
+        <Text style={[textStyles.normal, { color: 'red' }]}>
+          {formatCurrency(type.homestay + type.order + type.spa)}
+        </Text>
       </View>
     </SafeAreaView>
   );
