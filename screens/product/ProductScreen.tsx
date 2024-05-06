@@ -27,6 +27,7 @@ import { v4 as uuidv4 } from 'uuid';
 import ProductCard from '../components/Product/ProductCard';
 import { Pagination } from '../../interface/Pagination';
 import { useCategoryStore } from '../../zustand/categoryStore';
+import { getRecentlyViewedProducts } from '../../utils/productAsyncStorage';
 
 const ProductScreen = ({ navigation, route }: any) => {
   const categories: Category[] = useCategoryStore(
@@ -103,7 +104,6 @@ const ProductScreen = ({ navigation, route }: any) => {
       }
     }
   };
-
   const handleSelectCategory = (value: string) => {
     if (value === '') {
       setSearch('');

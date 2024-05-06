@@ -6,6 +6,7 @@ import viewStyles from '../../styles/ViewStyles';
 import { useCartStore } from '../../../zustand/cartStore';
 // import { favoriteProduct } from '../../../api/favorite';
 import { useState } from 'react';
+import { addRecentlyViewedProduct } from '../../../utils/productAsyncStorage';
 
 const ProductCard = ({
   navigation,
@@ -37,13 +38,13 @@ const ProductCard = ({
   if (!product || !product.images) {
     return <></>;
   }
+  const handleClickProduct = () => {
+    addRecentlyViewedProduct(product);
+    navigation.navigate('DetailProductScreen', { product: product });
+  };
   return (
     <View key={productKey} style={styles.productWrapper}>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('DetailProductScreen', { product: product })
-        }
-      >
+      <TouchableOpacity onPress={() => handleClickProduct()}>
         <Image source={{ uri: product.images[0].path }} style={styles.image} />
         <Text style={styles.name} numberOfLines={2} className='truncate'>
           {product.productName}

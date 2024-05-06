@@ -18,9 +18,16 @@ import ProductCard from '../components/Product/ProductCard';
 import { TouchableOpacity } from 'react-native';
 import viewStyles from '../styles/ViewStyles';
 import { ChevronsRightIcon } from 'lucide-react-native';
+import {
+  clearRecentlyViewedProducts,
+  getRecentlyViewedProducts,
+} from '../../utils/productAsyncStorage';
 
 const HomeScreen = ({ navigation, route }: any) => {
   const [bestSeller, setBestSeller] = useState<Product[]>([]);
+  const [recentlyViewedProducts, setRecentlyViewedProducts] = useState<
+    Product[]
+  >([]);
 
   useEffect(() => {
     getProductBestSeller({}).then((res) => {
@@ -30,7 +37,11 @@ const HomeScreen = ({ navigation, route }: any) => {
         err('Không có sản phẩm bán chạy');
       }
     });
+    getRecentlyViewedProducts().then((res) => {
+      setRecentlyViewedProducts(res);
+    });
   }, []);
+
   const imageSpa = [
     {
       image: require('../../assets/cho1.jpg'),
@@ -83,7 +94,6 @@ const HomeScreen = ({ navigation, route }: any) => {
       image: require('../../assets/phong8.jpg'),
     },
   ];
-
   return (
     <SafeAreaView className=' bg-white'>
       <ScrollView>
@@ -199,6 +209,31 @@ const HomeScreen = ({ navigation, route }: any) => {
               </View>
             )}
             <View>
+              <View border-t border-b border-cyan-600>
+                {recentlyViewedProducts.length > 0 && (
+                  <View>
+                    <View className='items-center'>
+                      <Text style={textStyles.title}>
+                        Sản phẩm đã xem gần đây
+                      </Text>
+                      <FlatList
+                        data={recentlyViewedProducts}
+                        renderItem={({ item }) => (
+                          <ProductCard
+                            product={item}
+                            navigation={navigation}
+                            productKey={uuidv4()}
+                          />
+                        )}
+                        horizontal
+                        keyExtractor={() => uuidv4()}
+                        contentContainerStyle={styles.flatContainer}
+                        showsHorizontalScrollIndicator={false}
+                      />
+                    </View>
+                  </View>
+                )}
+              </View>
               <Image
                 source={require('../../assets/petgrooming.jpg')}
                 style={{
