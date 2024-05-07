@@ -39,6 +39,7 @@ import { useNotificationStore } from './zustand/notificationStore';
 import { socket } from './socket';
 import { Socket } from 'socket.io-client';
 import FinancialStatistics from './screens/account/FinancialStatistics';
+import ProductReviewScreen from './screens/product/ProductReviewScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -223,6 +224,11 @@ export default function App() {
           <Stack.Screen
             name='FinancialStatistics'
             component={FinancialStatistics}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='ProductReviewScreen'
+            component={ProductReviewScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

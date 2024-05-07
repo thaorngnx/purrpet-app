@@ -36,6 +36,7 @@ export interface Review {
   orderCode?: string;
   rating?: number;
   comment?: string;
+  createdAt?: string;
   user?: {
     _id: string;
     name: string;

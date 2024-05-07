@@ -37,6 +37,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     });
     try {
       const res = await addToCart(cart);
+      console.log('res', res);
       set({
         cartState: {
           loading: false,

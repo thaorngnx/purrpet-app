@@ -113,7 +113,7 @@ const CartScreen = ({ navigation }: any) => {
   const [showBtnConfirmOrder, setShowBtnConfirmOrder] = useState(false);
 
   useEffect(() => {
-    if (cart.length === 0) {
+    if (cart?.length === 0) {
       setProductCart([]);
       setShowBtnConfirmOrder(false);
       if (openCustomerInfoForm) {
@@ -123,7 +123,7 @@ const CartScreen = ({ navigation }: any) => {
       const fetchData = async () => {
         try {
           const productList = [];
-          for (let i = 0; i < cart.length; i++) {
+          for (let i = 0; i < cart?.length; i++) {
             const productData = await getProductByCode(cart[i].productCode);
             if (productData.data.inventory < cart[i].quantity) {
               deleteProductCart({ productCode: cart[i].productCode });
@@ -160,10 +160,10 @@ const CartScreen = ({ navigation }: any) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={viewStyles.scrollContainer}
       >
-        {productCart.length > 0 ? (
+        {productCart?.length > 0 ? (
           <View>
-            {productCart.length > 0 &&
-              productCart.map((product: any, index: number) => (
+            {productCart?.length > 0 &&
+              productCart?.map((product: any, index: number) => (
                 <View key={index}>
                   <ProductCart navigation={navigation} product={product} />
                 </View>

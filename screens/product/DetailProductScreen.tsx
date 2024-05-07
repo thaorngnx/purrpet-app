@@ -1,5 +1,5 @@
 import { AddIcon, ArrowLeftIcon, RemoveIcon, View } from '@gluestack-ui/themed';
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import {
   Image,
   SafeAreaView,
@@ -12,10 +12,21 @@ import { StyleSheet } from 'react-native';
 import buttonStyles from '../styles/ButtonStyles';
 import { formatCurrency } from '../../utils/formatData';
 import textStyles from '../styles/TextStyles';
-import { Star, StarHalf } from 'lucide-react-native';
+import {
+  ChevronDownIcon,
+  ChevronDownSquareIcon,
+  ChevronUpIcon,
+  ChevronsRightIcon,
+  Star,
+  StarHalf,
+} from 'lucide-react-native';
 import viewStyles from '../styles/ViewStyles';
 import { Product, ProductDetail } from '../../interface/Product';
-import { getProductDetailByCode } from '../../api/product';
+import { getActiveProducts, getProductDetailByCode } from '../../api/product';
+import { vi } from 'date-fns/locale';
+import ProductCard from '../components/Product/ProductCard';
+import { v4 as uuidv4 } from 'uuid';
+import { useCartStore } from '../../zustand/cartStore';
 
 const ratings = [
   { stars: 5, width: '65%', percent: '65%' },
@@ -26,10 +37,16 @@ const ratings = [
 ];
 
 const DetailProductScreen = ({ navigation, route }: any) => {
-  const [quantity, setQuantity] = React.useState(1);
+  const { addToCart } = useCartStore();
+
+  const [quantity, setQuantity] = useState(1);
   const { product } = route.params;
-  const [productDetail, setProductDetail] =
-    React.useState<ProductDetail | null>(null);
+  const [productDetail, setProductDetail] = useState<ProductDetail | null>(
+    null,
+  );
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [tab, setTab] = useState(0);
+  const [recommendProducts, setRecommendProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     getProductDetailByCode(product.purrPetCode).then((res) => {
@@ -38,6 +55,19 @@ const DetailProductScreen = ({ navigation, route }: any) => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    const params = {
+      limit: 10,
+      page: 1,
+      categoryCode: product.categoryCode,
+    } as any;
+    getActiveProducts(params).then((res) => {
+      if (res.err === 0) {
+        setRecommendProducts(res.data);
+      }
+    });
+  }, [product]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -158,183 +188,305 @@ const DetailProductScreen = ({ navigation, route }: any) => {
               Đã bán {productDetail?.product.orderQuantity}
             </Text>
 
-            <View>
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: '#A16207',
-                  fontWeight: 'bold',
-                  marginTop: 10,
-                }}
+            <View
+              style={[
+                viewStyles.flexRow,
+                {
+                  paddingTop: 10,
+                },
+              ]}
+            >
+              <TouchableOpacity
+                style={[
+                  styles.tab,
+                  {
+                    backgroundColor: tab === 0 ? '#f0f0f0' : '#fff',
+                    borderBottomWidth: tab === 0 ? 3 : 1,
+                  },
+                ]}
+                onPress={() => setTab(0)}
               >
-                Mô tả
-              </Text>
-              <View>
-                <Text style={textStyles.normal}>
-                  {productDetail?.product.description}
-                </Text>
-              </View>
-            </View>
-            <View>
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: '#A16207',
-                  fontWeight: 'bold',
-                  marginTop: 10,
-                }}
-              >
-                Đánh giá sản phẩm
-              </Text>
-            </View>
-            {(productDetail?.product.averageRating as number) > 0 && (
-              <View style={styles.count}>
-                <View
-                  style={[
-                    viewStyles.flexRow,
-                    {
-                      alignItems: 'center',
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      textStyles.title,
-                      {
-                        marginRight: 2,
-                      },
-                    ]}
-                  >
-                    {productDetail?.product.averageRating}
-                  </Text>
-                  {[
-                    ...Array(
-                      Math.ceil(
-                        (productDetail?.product.averageRating as number) || 0,
-                      ),
-                    ),
-                  ].map((star, index) => {
-                    const isHalf =
-                      index + 1 >
-                      (productDetail?.product.averageRating as number);
-                    return (
-                      <Fragment key={index}>
-                        {!isHalf ? (
-                          <Star
-                            fill={
-                              index <
-                              (productDetail?.product.averageRating as number)
-                                ? '#FFD700'
-                                : '#C0C0C0'
-                            }
-                            size={30}
-                          />
-                        ) : (
-                          <StarHalf fill='#FFD700' size={30} />
-                        )}
-                      </Fragment>
-                    );
-                  })}
-                  <Text
-                    style={[
-                      textStyles.hintBoldItalic,
-                      {
-                        color: '#d0021c',
-                      },
-                    ]}
-                  >
-                    ({productDetail?.rating.reviews.length} đánh giá)
-                  </Text>
-                </View>
-              </View>
-            )}
-            <View>
-              {productDetail?.rating.starRate &&
-              (productDetail.product.averageRating as number) > 0 ? (
-                Object.keys(productDetail.rating.starRate)
-                  .reverse()
-                  .map((rating, index) => {
-                    const starKeys = Object.keys(
-                      productDetail.rating.starRate,
-                    ) as Array<keyof typeof productDetail.rating.starRate>;
-
-                    const averageRatingStar = ((
-                      productDetail.rating.starRate[starKeys[index]] * 100
-                    ).toString() + '%') as any;
-
-                    return (
-                      <View key={index} style={styles.listItem}>
-                        <View style={viewStyles.flexRow}>
-                          <Text className='text-black'>
-                            {index + 1}
-                            <Star color='#C54600' size={15} />
-                          </Text>
-                        </View>
-                        <View style={styles.timelineStar}>
-                          <View
-                            style={[
-                              styles.timing,
-                              {
-                                width: averageRatingStar,
-                              },
-                            ]}
-                          />
-                        </View>
-                        <Text style={styles.numberPercent}>
-                          {averageRatingStar}
-                        </Text>
-                      </View>
-                    );
-                  })
-              ) : (
                 <Text
-                  style={[
-                    textStyles.hintBoldItalic,
-                    {
-                      fontSize: 16,
-                      fontWeight: 'normal',
-                      marginTop: 10,
-                    },
-                  ]}
+                  style={{
+                    fontSize: 18,
+                    color: tab === 0 ? '#C54600' : '#000000',
+                    fontWeight: 'bold',
+                  }}
                 >
-                  Chưa có đánh giá
+                  Mô tả
                 </Text>
-              )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.tab,
+                  {
+                    backgroundColor: tab === 1 ? '#f0f0f0' : '#fff',
+                    borderBottomWidth: tab === 1 ? 3 : 1,
+                  },
+                ]}
+                onPress={() => setTab(1)}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: tab === 1 ? '#C54600' : '#000000',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Đánh giá
+                </Text>
+              </TouchableOpacity>
             </View>
+
             <View
               style={{
-                margin: 4,
+                marginTop: 10,
               }}
             >
-              {productDetail?.rating.reviews.map((review, index) => {
-                return (
-                  <View
-                    key={index}
-                    style={{
-                      marginTop: 10,
-                    }}
-                  >
-                    <Text style={textStyles.bold}>{review.user?.name}</Text>
-                    <View style={viewStyles.flexRow}>
-                      {[...Array(5)].map((star, index) => {
-                        return (
-                          <Star
-                            key={index}
-                            size={15}
-                            fill={
-                              index < (review.rating as number)
-                                ? '#FFD700'
-                                : '#C0C0C0'
-                            }
-                            className='mr-1 my-2'
-                          />
-                        );
-                      })}
-                    </View>
-                    <Text style={textStyles.normal}>{review.comment}</Text>
+              {tab === 0 ? (
+                <View>
+                  <View>
+                    <Text
+                      style={[
+                        textStyles.normal,
+                        {
+                          textAlign: 'justify',
+                        },
+                      ]}
+                      numberOfLines={descriptionExpanded ? undefined : 4}
+                    >
+                      {productDetail?.product.description}
+                    </Text>
                   </View>
-                );
-              })}
+                  <TouchableOpacity
+                    style={viewStyles.flexRow}
+                    className='self-center mt-2'
+                    onPress={() => setDescriptionExpanded(!descriptionExpanded)}
+                  >
+                    <Text className='mr-1 text-[#000000] text-sx'>
+                      {descriptionExpanded ? 'Thu gọn' : 'Xem thêm'}
+                    </Text>
+                    {descriptionExpanded ? (
+                      <ChevronUpIcon color='#000000' />
+                    ) : (
+                      <ChevronDownIcon color='#000000' />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View>
+                  {(productDetail?.product.averageRating as number) > 0 && (
+                    <View style={[styles.count, { marginTop: 0 }]}>
+                      <View
+                        style={[
+                          viewStyles.flexRow,
+                          {
+                            alignItems: 'center',
+                          },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            textStyles.title,
+                            {
+                              marginRight: 2,
+                            },
+                          ]}
+                        >
+                          {productDetail?.product.averageRating}
+                        </Text>
+                        {[
+                          ...Array(
+                            Math.ceil(
+                              (productDetail?.product
+                                .averageRating as number) || 0,
+                            ),
+                          ),
+                        ].map((star, index) => {
+                          const isHalf =
+                            index + 1 >
+                            (productDetail?.product.averageRating as number);
+                          return (
+                            <Fragment key={index}>
+                              {!isHalf ? (
+                                <Star
+                                  fill={
+                                    index <
+                                    (productDetail?.product
+                                      .averageRating as number)
+                                      ? '#FFD700'
+                                      : '#C0C0C0'
+                                  }
+                                  size={30}
+                                />
+                              ) : (
+                                <StarHalf fill='#FFD700' size={30} />
+                              )}
+                            </Fragment>
+                          );
+                        })}
+                        <Text
+                          style={[
+                            textStyles.hintBoldItalic,
+                            {
+                              color: '#d0021c',
+                            },
+                          ]}
+                        >
+                          ({productDetail?.rating.reviews.length} đánh giá)
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+                  <View>
+                    {productDetail?.rating.starRate &&
+                    (productDetail.product.averageRating as number) > 0 ? (
+                      Object.keys(productDetail.rating.starRate)
+                        .reverse()
+                        .map((rating, index) => {
+                          const starKeys = Object.keys(
+                            productDetail.rating.starRate,
+                          ) as Array<
+                            keyof typeof productDetail.rating.starRate
+                          >;
+
+                          const averageRatingStar = ((
+                            productDetail.rating.starRate[starKeys[index]] * 100
+                          ).toString() + '%') as any;
+
+                          return (
+                            <View key={index} style={styles.listItem}>
+                              <View style={viewStyles.flexRow}>
+                                <Text className='text-black'>
+                                  {index + 1}
+                                  <Star color='#C54600' size={15} />
+                                </Text>
+                              </View>
+                              <View style={styles.timelineStar}>
+                                <View
+                                  style={[
+                                    styles.timing,
+                                    {
+                                      width: averageRatingStar,
+                                    },
+                                  ]}
+                                />
+                              </View>
+                              <Text style={styles.numberPercent}>
+                                {averageRatingStar}
+                              </Text>
+                            </View>
+                          );
+                        }) && (
+                        <View
+                          style={{
+                            margin: 4,
+                          }}
+                        >
+                          {productDetail?.rating.reviews.map(
+                            (review, index) => {
+                              return (
+                                <View
+                                  key={index}
+                                  style={{
+                                    marginTop: 10,
+                                  }}
+                                >
+                                  <Text style={textStyles.bold}>
+                                    {review.user?.name}
+                                  </Text>
+                                  <View style={viewStyles.flexRow}>
+                                    {[...Array(5)].map((star, index) => {
+                                      return (
+                                        <Star
+                                          key={index}
+                                          size={15}
+                                          fill={
+                                            index < (review.rating as number)
+                                              ? '#FFD700'
+                                              : '#C0C0C0'
+                                          }
+                                          className='mr-1 my-2'
+                                        />
+                                      );
+                                    })}
+                                  </View>
+                                  <Text style={textStyles.normal}>
+                                    {review.comment}
+                                  </Text>
+                                </View>
+                              );
+                            },
+                          )}
+                          <View
+                            style={{
+                              marginTop: 10,
+                            }}
+                          >
+                            <TouchableOpacity
+                              style={viewStyles.flexRow}
+                              className='self-center mt-2'
+                              onPress={() =>
+                                navigation.navigate('ProductReviewScreen', {
+                                  productCode: product.purrPetCode,
+                                })
+                              }
+                            >
+                              <Text className='mr-1 text-[#000000] text-sx'>
+                                Xem tất cả
+                              </Text>
+                              <ChevronsRightIcon color='#000000' />
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      )
+                    ) : (
+                      <Text
+                        style={[
+                          textStyles.hintBoldItalic,
+                          {
+                            fontSize: 16,
+                            fontWeight: 'normal',
+                            marginTop: 10,
+                          },
+                        ]}
+                      >
+                        Chưa có đánh giá
+                      </Text>
+                    )}
+                  </View>
+                </View>
+              )}
+              <View
+                style={{
+                  marginTop: 20,
+                }}
+              >
+                <Text style={styles.textButton}>Sản phẩm liên quan</Text>
+                <ScrollView
+                  key={uuidv4()}
+                  horizontal
+                  style={{
+                    marginTop: 10,
+                  }}
+                >
+                  {recommendProducts.map((product, index) => (
+                    <ProductCard
+                      product={product}
+                      navigation={navigation}
+                      productKey={uuidv4()}
+                    />
+                  ))}
+                </ScrollView>
+                <TouchableOpacity
+                  style={viewStyles.flexRow}
+                  className='self-center mt-2'
+                  onPress={() => navigation.navigate('Sản phẩm')}
+                >
+                  <Text className='mr-1 text-[#000000] text-sx'>Xem thêm</Text>
+                  <ChevronsRightIcon color='#000000' />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
@@ -381,7 +533,12 @@ const DetailProductScreen = ({ navigation, route }: any) => {
         </View>
         <TouchableOpacity
           style={styles.buttonAddToCart}
-          onPress={() => navigation.navigate('SearchScreen')}
+          onPress={() => {
+            addToCart({
+              productCode: productDetail?.product.purrPetCode,
+              quantity,
+            });
+          }}
         >
           <Text style={textStyles.bold}>Thêm vào giỏ hàng</Text>
         </TouchableOpacity>
@@ -486,6 +643,13 @@ const styles = StyleSheet.create({
     flex: 1,
     // textAlign: 'right',
     color: textStyles.normal.color,
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    borderBottomColor: '#C54600',
   },
 });
 

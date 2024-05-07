@@ -7,7 +7,8 @@ const realm = new Realm({ schema: [TokenSchema] });
 const api = axios.create({
   //   baseURL: process.env.API_URL,
   // baseURL: 'https://petshop-api-f5ef07c9f712.herokuapp.com/api',
-  baseURL: 'https://6eca-1-55-87-140.ngrok-free.app/api',
+  baseURL:
+    'https://23e3-2402-800-63b6-eaf5-1900-fe87-e569-6adf.ngrok-free.app/api',
   headers: {
     'Content-Type': 'application/json',
   },
