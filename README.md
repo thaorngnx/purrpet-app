@@ -28,9 +28,6 @@ Mở thư mục `purrpet-app` đã được sao chép trong Visual Studio Code.
 
 Mở terminal trong Visual Studio Code.
 
-### Bước Tiếp tục từ phần trước:
-
-```markdown
 ### Bước 6: Cài đặt các phụ thuộc
 
 Chạy lệnh sau trong terminal để cài đặt các phụ thuộc của dự án:
@@ -56,4 +53,3 @@ Nếu bạn gặp bất kỳ vấn đề nào trong quá trình thiết lập, t
 ## Giấy phép
 
 Dự án này được cấp giấy phép theo [Giấy phép MIT](LICENSE).
-```
