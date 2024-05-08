@@ -33,8 +33,7 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
   const [error, setError] = useState({ point: '' });
 
   const handleChangeNote = (event: any) => {
-    const { text } = event.nativeEvent;
-    setCustomerNote(text);
+    setCustomerNote(event);
   };
   const handleBooking = () => {
     createBookingHome({
@@ -185,9 +184,9 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
                   marginTop={10}
                 >
                   <TextareaInput
-                    value={bookingInfo.customerNote}
+                    value={customerNote}
                     placeholder='Ghi chú cho nhân viên cửa hàng'
-                    onChange={(event) => handleChangeNote(event)}
+                    onChangeText={(event) => handleChangeNote(event)}
                   />
                 </Textarea>
               </View>

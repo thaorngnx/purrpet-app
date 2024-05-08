@@ -242,7 +242,7 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
                 style={buttonStyles.buttonOutline}
                 onPress={() => handlePay()}
               >
-                <Text style={styles.buttonOutlineText}>Thanh toans</Text>
+                <Text style={styles.buttonOutlineText}>Thanh toán</Text>
               </TouchableOpacity>
             </View>
           )}

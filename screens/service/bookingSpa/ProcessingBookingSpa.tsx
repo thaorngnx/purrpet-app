@@ -29,10 +29,8 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
   const [error, setError] = useState({ point: '' });
 
   const handleChangeNote = (event: any) => {
-    const { text } = event.nativeEvent;
-    setCustomerNote(text);
+    setCustomerNote(event);
   };
-  console.log(customerNote);
   const handleBooking = () => {
     createBookingSpa({
       petName: bookingInfo.petName,
@@ -168,10 +166,9 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
                   marginTop={10}
                 >
                   <TextareaInput
-                    value={bookingInfo.customerNote}
+                    value={customerNote}
                     placeholder='Ghi chú cho nhân viên cửa hàng'
-                    placeholderTextColor={'#A0A0A0'}
-                    onChange={(event) => handleChangeNote(event)}
+                    onChangeText={(event) => handleChangeNote(event)}
                   />
                 </Textarea>
               </View>

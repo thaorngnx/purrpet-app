@@ -110,7 +110,7 @@ const MenuBottom = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <Home color={focused ? '#000000' : '#ca8a04'} />
+            <Home color={focused ? '#000000' : '#265F77'} />
           ),
           tabBarLabelStyle: styles.tabBarLabel,
         }}
@@ -121,7 +121,7 @@ const MenuBottom = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <Menu color={focused ? '#000000' : '#ca8a04'} />
+            <Menu color={focused ? '#000000' : '#265F77'} />
           ),
           // headerRight: () => <SearchProduct navigation={'SearchScreen'} />,
           tabBarLabelStyle: styles.tabBarLabel,
@@ -133,7 +133,7 @@ const MenuBottom = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <ShoppingBasket color={focused ? '#000000' : '#ca8a04'} />
+            <ShoppingBasket color={focused ? '#000000' : '#265F77'} />
           ),
           tabBarLabelStyle: styles.tabBarLabel,
         }}
@@ -144,7 +144,7 @@ const MenuBottom = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <PawPrint color={focused ? '#000000' : '#ca8a04'} />
+            <PawPrint color={focused ? '#000000' : '#265F77'} />
           ),
           tabBarLabelStyle: styles.tabBarLabel,
         }}
@@ -155,7 +155,7 @@ const MenuBottom = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            // <Bell color={focused ? '#000000' : '#ca8a04'} />
+            // <Bell color={focused ? '#000000' : '#265F77'} />
             <VStack>
               {notificationNotSeen > 0 && (
                 <View
@@ -170,7 +170,7 @@ const MenuBottom = () => {
                   <Circle size={10} fill={'red'} />
                 </View>
               )}
-              <Bell color={focused ? '#000000' : '#ca8a04'} />
+              <Bell color={focused ? '#000000' : '#265F77'} />
             </VStack>
           ),
           tabBarLabelStyle: styles.tabBarLabel,
@@ -186,7 +186,7 @@ const MenuBottom = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <UserRound color={focused ? '#000000' : '#ca8a04'} />
+            <UserRound color={focused ? '#000000' : '#265F77'} />
           ),
           tabBarLabelStyle: styles.tabBarLabel,
         }}
@@ -198,7 +198,7 @@ const MenuBottom = () => {
 const styles = StyleSheet.create({
   tabBarLabel: {
     fontSize: 10,
-    color: '#ca8a04',
+    color: '#265F77',
   },
 });
 

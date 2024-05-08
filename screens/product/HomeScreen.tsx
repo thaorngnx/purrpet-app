@@ -94,6 +94,7 @@ const HomeScreen = ({ navigation, route }: any) => {
       image: require('../../assets/phong8.jpg'),
     },
   ];
+
   return (
     <SafeAreaView className=' bg-white'>
       <ScrollView>
