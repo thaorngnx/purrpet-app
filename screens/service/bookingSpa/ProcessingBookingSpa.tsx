@@ -11,7 +11,7 @@ import textStyles from '../../styles/TextStyles';
 import { ChevronLeftIcon } from 'lucide-react-native';
 import { Icon, Textarea, TextareaInput } from '@gluestack-ui/themed';
 import viewStyles from '../../styles/ViewStyles';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCustomerStore } from '../../../zustand/customerStore';
 import { formatCurrency } from '../../../utils/formatData';
 import textInputStyles from '../../styles/TextInputStyles';
@@ -19,6 +19,8 @@ import openInChrome from '../../../utils/openInChrome';
 import { createPaymentUrl } from '../../../api/pay';
 import { createBookingSpa } from '../../../api/bookingSpa';
 import { PAYMENT_METHOD } from '../../constants';
+import { socket } from '../../../socket';
+import { Socket } from 'socket.io-client';
 
 const ProcessingBookingSpa = ({ navigation, route }: any) => {
   const { bookingInfo } = route.params;
@@ -27,6 +29,30 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
   const hasCustomerInfo = Object.keys(customer).length > 0;
   const [userPoint, setUserPoint] = useState(0);
   const [error, setError] = useState({ point: '' });
+
+  const socketRef = useRef<Socket>();
+
+  useEffect(() => {
+    if (hasCustomerInfo) {
+      const accessToken = customer.accessToken;
+      const socketClient = socket(accessToken);
+      socketRef.current = socketClient;
+
+      function onTradeEvent(value: any) {
+        navigation.navigate('Sản phẩm');
+      }
+
+      socketClient.on('connect', () => {
+        console.log('socket connected');
+      });
+
+      socketClient.on(accessToken, onTradeEvent);
+
+      return () => {
+        socketClient.off(accessToken, onTradeEvent);
+      };
+    }
+  }, [customer]);
 
   const handleChangeNote = (event: any) => {
     setCustomerNote(event);

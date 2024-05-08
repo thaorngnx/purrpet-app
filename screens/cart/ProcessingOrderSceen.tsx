@@ -25,7 +25,7 @@ import {
 import { ProductCartInfo } from '../../interface/Cart';
 import { Image } from 'react-native';
 import { formatCurrency } from '../../utils/formatData';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CustomerInfoOrder from './CustomerInfoOrder';
 import { createOrder } from '../../api/order';
 import textInputStyles from '../styles/TextInputStyles';
@@ -33,6 +33,8 @@ import { createPaymentUrl } from '../../api/pay';
 import openInChrome from '../../utils/openInChrome';
 import * as CONST from '../constants';
 import { Banknote } from 'lucide-react-native';
+import { socket } from '../../socket';
+import { Socket } from 'socket.io-client';
 
 const ProcessingOrderSceen = ({ navigation, route }: any) => {
   const { productCart } = route.params;
@@ -47,6 +49,31 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
     point: '',
   });
   const [payMethod, setPayMethod] = useState(CONST.PAYMENT_METHOD.COD);
+
+  const socketRef = useRef<Socket>();
+
+  useEffect(() => {
+    if (hasCustomerInfo) {
+      setCustomerInfo(customer);
+      const accessToken = customer.accessToken;
+      const socketClient = socket(accessToken);
+      socketRef.current = socketClient;
+
+      function onTradeEvent(value: any) {
+        navigation.navigate('Sản phẩm');
+      }
+
+      socketClient.on('connect', () => {
+        console.log('socket connected');
+      });
+
+      socketClient.on(accessToken, onTradeEvent);
+
+      return () => {
+        socketClient.off(accessToken, onTradeEvent);
+      };
+    }
+  }, [customer]);
 
   const handleOrder = () => {
     createOrder({
@@ -91,11 +118,6 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
       }
     });
   };
-  useEffect(() => {
-    if (hasCustomerInfo) {
-      setCustomerInfo(customer);
-    }
-  }, [customer]);
 
   const handleChangeNote = (event: any) => {
     const { text } = event.nativeEvent;

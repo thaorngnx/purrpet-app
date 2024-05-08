@@ -5,7 +5,7 @@ import CartScreen from '../../cart/CartScreen';
 import ServiceScreen from '../../service/ServiceScreen';
 import NotificationScreen from '../../notification/NotificationScreen';
 import AccountScreen from '../../account/AccountScreen';
-import { BackHandler, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useCustomerStore } from '../../../zustand/customerStore';
 import UnverifyAccountScreen from '../../account/UnverifyAccountScreen';
 import {
@@ -21,9 +21,7 @@ import {
 import HomeScreen from '../../product/HomeScreen';
 import { socket } from '../../../socket';
 import { Socket } from 'socket.io-client';
-// import { getAllNotifications } from '../../../api/notification';
-import { BadgeText, VStack } from '@gluestack-ui/themed';
-import { Badge } from '@gluestack-ui/themed';
+import { VStack } from '@gluestack-ui/themed';
 import {
   Notification,
   NotificationRequestParams,
@@ -45,10 +43,6 @@ const MenuBottom = () => {
   // const [notifications, setNotifications] = useState<Notification[]>([]);
   //number of noti not yet seen\
   const [notificationNotSeen, setNotificationNotSeen] = useState(0);
-  const handleBackButton = () => {
-    BackHandler.exitApp();
-    return true;
-  };
 
   const socketRef = useRef<Socket>();
 
@@ -93,14 +87,6 @@ const MenuBottom = () => {
       };
     }
   }, [customerState?.data?.accessToken]);
-
-  useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', handleBackButton);
-
-    return () => {
-      BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
-    };
-  }, []);
 
   return (
     <Tab.Navigator initialRouteName='HomeScreen'>

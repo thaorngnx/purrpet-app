@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useCustomerStore } from '../../../zustand/customerStore';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ChevronLeftIcon,
   Icon,
@@ -23,6 +23,8 @@ import textInputStyles from '../../styles/TextInputStyles';
 import { createPaymentUrl } from '../../../api/pay';
 import openInChrome from '../../../utils/openInChrome';
 import { PAYMENT_METHOD } from '../../constants';
+import { socket } from '../../../socket';
+import { Socket } from 'socket.io-client';
 
 const ProcessingBookingHome = ({ navigation, route }: any) => {
   const { bookingInfo } = route.params;
@@ -31,6 +33,30 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
   const hasCustomerInfo = Object.keys(customer).length > 0;
   const [userPoint, setUserPoint] = useState(0);
   const [error, setError] = useState({ point: '' });
+
+  const socketRef = useRef<Socket>();
+
+  useEffect(() => {
+    if (hasCustomerInfo) {
+      const accessToken = customer.accessToken;
+      const socketClient = socket(accessToken);
+      socketRef.current = socketClient;
+
+      function onTradeEvent(value: any) {
+        navigation.navigate('Sản phẩm');
+      }
+
+      socketClient.on('connect', () => {
+        console.log('socket connected');
+      });
+
+      socketClient.on(accessToken, onTradeEvent);
+
+      return () => {
+        socketClient.off(accessToken, onTradeEvent);
+      };
+    }
+  }, [customer]);
 
   const handleChangeNote = (event: any) => {
     setCustomerNote(event);
