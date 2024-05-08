@@ -64,6 +64,7 @@ export async function updateCustomer(body: any) {
   try {
     const cus = { ...body };
     delete cus.email;
+    delete cus.point;
     const response = await api.put(`/customer/update/${cus.purrPetCode}`, cus);
     return response.data;
   } catch (error) {
