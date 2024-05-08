@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  StyleSheet,
 } from 'react-native';
 import { useCustomerStore } from '../../../zustand/customerStore';
 import { useEffect, useRef, useState } from 'react';
@@ -128,7 +129,7 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
         </TouchableOpacity>
         <Text style={textStyles.title}>Đặt lịch</Text>
       </View>
-      <ScrollView>
+      <ScrollView style={style.scrollView}>
         <CustomerInfoForm />
         {hasCustomerInfo && (
           <>
@@ -242,31 +243,46 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
                 </View>
               </View>
             </View>
-            <TouchableOpacity
-              style={{
-                backgroundColor: 'pink',
-                height: 50,
-                flex: 1,
-                justifyContent: 'center',
-              }}
-              onPress={() => handleBooking()}
-            >
-              <Text
-                style={{
-                  color: '#000000',
-                  fontWeight: 'bold',
-                  alignSelf: 'center',
-                  fontSize: 17,
-                }}
-              >
-                Thanh toán VNPAY{' '}
-                {formatCurrency(bookingInfo.bookingHomePrice - userPoint)}
-              </Text>
-            </TouchableOpacity>
           </>
         )}
       </ScrollView>
+      {hasCustomerInfo && (
+        <TouchableOpacity
+          style={{
+            backgroundColor: 'pink',
+            height: 60,
+            justifyContent: 'center',
+            marginTop: 10,
+          }}
+          onPress={() => handleBooking()}
+        >
+          <Text
+            style={{
+              color: '#000000',
+              fontWeight: 'bold',
+              alignSelf: 'center',
+              fontSize: 17,
+            }}
+          >
+            Thanh toán VNPAY{' '}
+            {formatCurrency(bookingInfo.bookingHomePrice - userPoint)}
+          </Text>
+        </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 };
+
+const style = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
+  bottomBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 60,
+    backgroundColor: '#fff',
+  },
+});
 export default ProcessingBookingHome;
