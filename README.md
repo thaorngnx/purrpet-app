@@ -1,79 +1,59 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# PurrPet App
 
-# Getting Started
+Đây là một dự án React Native cho ứng dụng PurrPet.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Bắt đầu
 
-## Step 1: Start the Metro Server
+Để bắt đầu với ứng dụng PurrPet, làm theo các bước sau:
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+### Bước 1: Sao chép Repository
 
-To start Metro, run the following command from the _root_ of your React Native project:
+Sao chép repository của ứng dụng PurrPet từ GitHub bằng cách chạy lệnh sau:
 
-```bash
-# using npm
+git clone https://github.com/thaorngnx/purrpet-app.git
+
+### Bước 2: Cài đặt React Native
+
+Theo hướng dẫn chính thức của React Native tại [reactnative.dev](https://reactnative.dev/) để cài đặt React Native trên hệ thống của bạn.
+
+### Bước 3: Cài đặt Visual Studio Code
+
+Tải xuống và cài đặt Visual Studio Code (VSCode) từ trang web chính thức: [code.visualstudio.com](https://code.visualstudio.com/).
+
+### Bước 4: Mở Dự án
+
+Mở thư mục `purrpet-app` đã được sao chép trong Visual Studio Code.
+
+### Bước 5: Mở Terminal
+
+Mở terminal trong Visual Studio Code.
+
+### Bước Tiếp tục từ phần trước:
+
+```markdown
+### Bước 6: Cài đặt các phụ thuộc
+
+Chạy lệnh sau trong terminal để cài đặt các phụ thuộc của dự án:
+
+npm install
+
+### Bước 7: Khởi động Máy chủ Phát triển
+
+Khởi động máy chủ phát triển cho React Native bằng cách chạy lệnh sau:
+
 npm start
 
-# OR using Yarn
-yarn start
+Chúc mừng! Bạn đã thiết lập dự án PurrPet App thành công. Bây giờ bạn có thể tiếp tục chỉnh sửa ứng dụng theo yêu cầu của bạn.
+
+## Khắc phục sự cố
+
+Nếu bạn gặp bất kỳ vấn đề nào trong quá trình thiết lập, tham khảo trang Khắc phục sự cố trong tài liệu dự án.
+
+## Tìm hiểu thêm
+
+Để tìm hiểu thêm về React Native, truy cập [trang web React Native](https://reactnative.dev/) để có thêm tài liệu, hướng dẫn và blog chính thức của React Native.
+
+## Giấy phép
+
+Dự án này được cấp giấy phép theo [Giấy phép MIT](LICENSE).
 ```
-
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
