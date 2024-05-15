@@ -48,7 +48,7 @@ const NotificationScreen = ({ navigation }: any) => {
       page: 1,
     } as NotificationRequestParams;
     getAllNotifications(params);
-  }, []);
+  }, [customer]);
 
   useEffect(() => {
     if (listNotificationState.pagination.page > 1) {

@@ -79,7 +79,7 @@ const DetailProductScreen = ({ navigation, route }: any) => {
           <SearchProduct navigation={navigation} />
         </View>
       </View>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView style={styles.scrollView} key={uuidv4()}>
         <View>
           <Image
             source={{ uri: product.images[0]?.path }}

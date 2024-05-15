@@ -40,6 +40,7 @@ import { socket } from './socket';
 import { Socket } from 'socket.io-client';
 import FinancialStatistics from './screens/account/FinancialStatistics';
 import ProductReviewScreen from './screens/product/ProductReviewScreen';
+import { LogBox } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -67,6 +68,9 @@ export default function App() {
   //     getAllNotifications();
   //   }
   // }, [customer]);
+
+  LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+  LogBox.ignoreAllLogs(); //Ignore all log notifications
 
   useEffect(() => {
     //get cart from server

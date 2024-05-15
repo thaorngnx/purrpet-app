@@ -44,9 +44,7 @@ import {
   createReview,
   getReivewByCodeAndCustomer,
 } from '../../../../api/review';
-import { useCustomerStore } from '../../../../zustand/customerStore';
 import { Review } from '../../../../interface/Product';
-import { set } from 'date-fns';
 
 interface ProductOrder {
   productCode: string;
@@ -160,8 +158,8 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
     review.orderCode = order.purrPetCode;
     createReview(review).then((res: any) => {
       if (res.err === 0) {
-        console.log('Review success');
         setIsReviewed(true);
+        setReview({} as Review);
       } else {
         console.log(res.message);
       }
@@ -229,7 +227,10 @@ const OrderReviewScreen = ({ navigation, route }: any) => {
                       style={viewStyles.flexRow}
                       onPress={() =>
                         navigation.navigate('DetailProductScreen', {
-                          product: productOrder,
+                          product: {
+                            purrPetCode: productOrder.productCode,
+                            ...productOrder,
+                          },
                         })
                       }
                     >

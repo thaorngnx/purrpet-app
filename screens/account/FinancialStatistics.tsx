@@ -68,7 +68,7 @@ const FinancialStatistics = ({ navigation }: any) => {
         </Text>
         <View style={[viewStyles.flexRow]}>
           <View style={[viewStyles.card, { width: '43%' }]}>
-            <Text style={textStyles.label}>Tổng doanh thu: </Text>
+            <Text style={textStyles.label}>Tổng chi tiêu: </Text>
             <Text style={[textStyles.normal, { marginTop: 5 }]}>
               {formatCurrency(type.order)}
             </Text>
@@ -95,7 +95,7 @@ const FinancialStatistics = ({ navigation }: any) => {
         </Text>
         <View style={[viewStyles.flexRow]}>
           <View style={[viewStyles.card, { width: '43%' }]}>
-            <Text style={textStyles.label}>Tổng doanh thu: </Text>
+            <Text style={textStyles.label}>Tổng chi tiêu: </Text>
             <Text style={[textStyles.normal, { marginTop: 5 }]}>
               {formatCurrency(type.spa)}
             </Text>
@@ -122,7 +122,7 @@ const FinancialStatistics = ({ navigation }: any) => {
         </Text>
         <View style={viewStyles.flexRow}>
           <View style={[viewStyles.card, { width: '43%' }]}>
-            <Text style={textStyles.label}>Tổng doanh thu: </Text>
+            <Text style={textStyles.label}>Tổng chi tiêu: </Text>
             <Text style={[textStyles.normal, { marginTop: 5 }]}>
               {formatCurrency(type.homestay)}
             </Text>

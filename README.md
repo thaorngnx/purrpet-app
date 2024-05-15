@@ -32,13 +32,13 @@ Mở terminal trong Visual Studio Code.
 
 Chạy lệnh sau trong terminal để cài đặt các phụ thuộc của dự án:
 
-npm install
+`npm install`
 
-### Bước 7: Khởi động Máy chủ Phát triển
+### Bước 7: Khởi động Máy chủ
 
 Khởi động máy chủ phát triển cho React Native bằng cách chạy lệnh sau:
 
-npm start
+`npm start`
 
 Chúc mừng! Bạn đã thiết lập dự án PurrPet App thành công. Bây giờ bạn có thể tiếp tục chỉnh sửa ứng dụng theo yêu cầu của bạn.
 
@@ -49,7 +49,3 @@ Nếu bạn gặp bất kỳ vấn đề nào trong quá trình thiết lập, t
 ## Tìm hiểu thêm
 
 Để tìm hiểu thêm về React Native, truy cập [trang web React Native](https://reactnative.dev/) để có thêm tài liệu, hướng dẫn và blog chính thức của React Native.
-
-## Giấy phép
-
-Dự án này được cấp giấy phép theo [Giấy phép MIT](LICENSE).
