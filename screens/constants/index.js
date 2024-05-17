@@ -102,6 +102,7 @@ export const PREFIX = {
 export const PAYMENT_METHOD = {
   COD: 'Tiền mặt',
   VNPAY: 'VNPAY',
+  COIN: 'Xu',
 };
 
 export const ACTION_TYPE = {

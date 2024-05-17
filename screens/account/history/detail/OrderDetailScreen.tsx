@@ -426,12 +426,15 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
               </Text>
             </View>
             <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Thanh toán bằng xu:</Text>
+              <Text style={textStyles.normal}>
+                -{formatCurrency(orderDetail?.order?.useCoin || 0)}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
               <Text style={textStyles.label}>Tổng thanh toán:</Text>
               <Text style={textStyles.normal}>
-                {formatCurrency(
-                  (orderDetail?.order?.totalPayment as number) ||
-                    (orderDetail?.order?.orderPrice as number),
-                )}
+                {formatCurrency(orderDetail?.order?.totalPayment as number)}
               </Text>
             </View>
           </View>

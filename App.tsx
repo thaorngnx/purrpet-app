@@ -41,6 +41,7 @@ import { Socket } from 'socket.io-client';
 import FinancialStatistics from './screens/account/FinancialStatistics';
 import ProductReviewScreen from './screens/product/ProductReviewScreen';
 import { LogBox } from 'react-native';
+import { CoinWalletScreen } from './screens/account/CoinWalletScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -233,6 +234,11 @@ export default function App() {
           <Stack.Screen
             name='ProductReviewScreen'
             component={ProductReviewScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='CoinWalletScreen'
+            component={CoinWalletScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

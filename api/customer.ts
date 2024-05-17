@@ -17,6 +17,7 @@ export interface Customer {
     province: string;
   };
   point: number;
+  coin: number;
   role: string;
   accessToken: string;
   refreshToken: string;

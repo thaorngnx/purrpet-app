@@ -19,6 +19,7 @@ import {
   RadioIcon,
   RadioIndicator,
   RadioLabel,
+  Switch,
   Textarea,
   TextareaInput,
 } from '@gluestack-ui/themed';
@@ -32,9 +33,11 @@ import textInputStyles from '../styles/TextInputStyles';
 import { createPaymentUrl } from '../../api/pay';
 import openInChrome from '../../utils/openInChrome';
 import * as CONST from '../constants';
-import { Banknote } from 'lucide-react-native';
+import { Banknote, CircleDollarSign } from 'lucide-react-native';
 import { socket } from '../../socket';
 import { Socket } from 'socket.io-client';
+import { set } from 'date-fns';
+import { el, tr } from 'react-native-paper-dates';
 
 const ProcessingOrderSceen = ({ navigation, route }: any) => {
   const { productCart } = route.params;
@@ -49,7 +52,13 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
     point: '',
   });
   const [payMethod, setPayMethod] = useState(CONST.PAYMENT_METHOD.COD);
-
+  const [showCoin, setShowCoin] = useState(0);
+  const [coin, setCoin] = useState(0);
+  const [disableRadio, setDisableRadio] = useState({
+    COD: false,
+    VNPAY: false,
+    COIN: true,
+  });
   const socketRef = useRef<Socket>();
 
   useEffect(() => {
@@ -74,6 +83,22 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
       };
     }
   }, [customer]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const total =
+        productCart.reduce(
+          (total: number, product: ProductCartInfo) =>
+            total + product.price * product.quantity,
+          0,
+        ) - userPoint;
+      if (total > customer.coin) {
+        setShowCoin(customer.coin);
+      } else {
+        setShowCoin(total);
+      }
+    };
+    fetchData();
+  }, [customerInfo]);
 
   const handleOrder = () => {
     createOrder({
@@ -91,10 +116,14 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
       userPoint: userPoint,
       customerNote: customerNote,
       payMethod: payMethod,
+      useCoin: coin,
     }).then((res) => {
       console.log(res);
       if (res.err === 0) {
-        if (payMethod === CONST.PAYMENT_METHOD.COD) {
+        if (
+          payMethod === CONST.PAYMENT_METHOD.COD ||
+          payMethod === CONST.PAYMENT_METHOD.COIN
+        ) {
           console.log('Đặt hàng thành công!');
 
           deleteCart();
@@ -156,6 +185,43 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
       });
     }
   };
+  const handleChangeCoin = (event: any) => {
+    const total =
+      productCart.reduce(
+        (total: number, product: ProductCartInfo) =>
+          total + product.price * product.quantity,
+        0,
+      ) -
+      userPoint -
+      showCoin;
+    if (event === true) {
+      setCoin(showCoin);
+      if (total === 0) {
+        setPayMethod(CONST.PAYMENT_METHOD.COIN);
+        setDisableRadio({
+          COIN: false,
+          COD: true,
+          VNPAY: true,
+        });
+      } else {
+        setPayMethod(CONST.PAYMENT_METHOD.COD);
+        setDisableRadio({
+          COD: false,
+          VNPAY: false,
+          COIN: true,
+        });
+      }
+    } else {
+      setCoin(showCoin);
+      setPayMethod(CONST.PAYMENT_METHOD.COD);
+      setDisableRadio({
+        COD: false,
+        VNPAY: false,
+        COIN: true,
+      });
+    }
+  };
+
   return (
     <SafeAreaView style={viewStyles.container}>
       <View
@@ -272,6 +338,26 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                 onChangeText={(event) => handleChangePoint(event)}
               />
               <Text style={textStyles.error}>{error.point}</Text>
+              {showCoin > 0 && (
+                <View
+                  style={[
+                    viewStyles.flexRow,
+                    { justifyContent: 'space-around', marginTop: 10 },
+                  ]}
+                >
+                  <Text style={textStyles.label}>
+                    Sử dụng xu trong ví để thanh toán
+                  </Text>
+                  <Switch onValueChange={(e) => handleChangeCoin(e)} />
+                  <Text style={textStyles.normal}>
+                    {formatCurrency(showCoin)}
+                  </Text>
+                  <Image
+                    source={require('../../assets/coin.png')}
+                    style={{ width: 20, height: 20 }}
+                  />
+                </View>
+              )}
             </View>
             <View style={{ padding: 10, backgroundColor: '#fff' }}>
               <Textarea
@@ -301,6 +387,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                     value={CONST.PAYMENT_METHOD.COD}
                     size='sm'
                     style={{ marginTop: 20 }}
+                    isDisabled={disableRadio.COD}
                   >
                     <RadioIndicator mr='$2'>
                       <RadioIcon as={CircleIcon} />
@@ -314,6 +401,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                     value={CONST.PAYMENT_METHOD.VNPAY}
                     size='sm'
                     style={{ marginTop: 20 }}
+                    isDisabled={disableRadio.VNPAY}
                   >
                     <RadioIndicator mr='$2'>
                       <RadioIcon as={CircleIcon} />
@@ -325,6 +413,23 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                     />
                     <Text style={textStyles.normal}>
                       {CONST.PAYMENT_METHOD.VNPAY}
+                    </Text>
+                  </Radio>
+                  <Radio
+                    value={CONST.PAYMENT_METHOD.COIN}
+                    size='sm'
+                    style={{ marginTop: 20 }}
+                    isDisabled={disableRadio.COIN}
+                  >
+                    <RadioIndicator mr='$2'>
+                      <RadioIcon as={CircleIcon} />
+                    </RadioIndicator>
+                    <Image
+                      source={require('../../assets/coin.png')}
+                      style={{ width: 20, height: 20 }}
+                    />
+                    <Text style={textStyles.normal}>
+                      Ví xu ({formatCurrency(customer.coin)})
                     </Text>
                   </Radio>
                 </RadioGroup>
@@ -361,6 +466,17 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                     -{formatCurrency(userPoint) || 0}
                   </Text>
                 </View>
+                <View
+                  style={[
+                    viewStyles.flexRow,
+                    { marginTop: 5, justifyContent: 'space-between' },
+                  ]}
+                >
+                  <Text style={[textStyles.normal]}>Sử ví xu:</Text>
+                  <Text style={[textStyles.normal]}>
+                    -{formatCurrency(coin) || 0}
+                  </Text>
+                </View>
               </View>
 
               <View
@@ -390,7 +506,10 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                     {formatCurrency(
                       productCart.reduce(
                         (total: number, product: ProductCartInfo) =>
-                          total + product.price * product.quantity - userPoint,
+                          total +
+                          product.price * product.quantity -
+                          userPoint -
+                          coin,
                         0,
                       ),
                     )}

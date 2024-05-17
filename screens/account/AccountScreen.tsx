@@ -6,6 +6,7 @@ import { useCustomerStore } from '../../zustand/customerStore';
 import buttonStyles from '../styles/ButtonStyles';
 import {
   BarChartBig,
+  CircleDollarSign,
   LogOut,
   ShoppingBag,
   SquareUser,
@@ -71,6 +72,14 @@ const AccountScreen = ({ navigation }: any) => {
         >
           <BarChartBig style={styles.icon} />
           <Text style={textStyles.normal}>Thống kê</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => navigation.navigate('CoinWalletScreen')}
+        >
+          <CircleDollarSign style={styles.icon} />
+
+          <Text style={textStyles.normal}>Ví xu của bạn</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.option} onPress={() => handleLogout()}>
           <LogOut style={styles.icon} />

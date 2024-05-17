@@ -11,6 +11,7 @@ export interface BookingSpa {
   bookingTime: string;
   totalPayment: number;
   pointUsed: number;
+  useCoin: number;
   status: string;
   createdAt: Date;
   updatedAt: Date;
@@ -28,8 +29,10 @@ export interface BookingSpaDetail {
   bookingSpaPrice?: number;
   totalPayment?: number;
   pointUsed?: number;
+  useCoin?: number;
   status?: string;
   createdAt?: string;
+  payMethod?: string;
   spa?: Spa;
 }
 

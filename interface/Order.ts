@@ -24,6 +24,7 @@ export interface Order {
   payMethod: string;
   paymentStatus: string;
   pointUsed: number;
+  useCoin: number;
   totalPayment: number;
   status: string;
   createdAt: Date;

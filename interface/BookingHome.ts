@@ -33,6 +33,8 @@ export interface BookingHomeDetail {
   createdAt: string;
   totalPayment: number;
   pointUsed: number;
+  useCoin: number;
+  payMethod: string;
   homestay?: {
     purrPetCode?: string;
     homeType?: string;

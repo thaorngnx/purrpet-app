@@ -22,11 +22,13 @@ import { getSpaByCode } from '../../../../api/spa';
 import buttonStyles from '../../../styles/ButtonStyles';
 import { createPaymentUrl } from '../../../../api/pay';
 import openInChrome from '../../../../utils/openInChrome';
+import dayjs from 'dayjs';
 
 const BookingSpaDetailScreen = ({ navigation, route }: any) => {
   const bookingSpaId = route.params.bookingSpaCode as string;
   const [loading, setLoading] = useState(true);
   const [bookingSpaDetail, setBookingSpaDetail] = useState<BookingSpaDetail>();
+  const [checkExpiredCancel, setCheckExpiredCancel] = useState(false);
 
   useEffect(() => {
     //api get booking spa by code
@@ -49,6 +51,31 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
       setLoading(false);
     });
   }, []); //bookingSpa.purrPetCode
+
+  useEffect(() => {
+    const checkExpiredCancel = () => {
+      const timeNow = dayjs();
+      const bookingTime = dayjs(bookingSpaDetail?.bookingTime, 'HH:mm'); // Chuyển đổi chuỗi thời gian thành đối tượng dayjs
+      // Chuyển đổi chuỗi ngày thành đối tượng dayjs
+
+      const bookingDate = dayjs(bookingSpaDetail?.bookingDate);
+      bookingDate.set('hour', bookingTime.hour());
+      bookingDate.set('minute', bookingTime.minute());
+      bookingDate.set('second', 0);
+      bookingDate.set('millisecond', 0);
+      const timeDiff = bookingDate.diff(timeNow); // Tính khoảng thời gian giữa thời gian hiện tại và thời gian check-in
+
+      const fourHours = 4 * 60 * 60 * 1000; // 4 giờ expressed in milliseconds
+
+      if (
+        timeDiff > fourHours &&
+        bookingSpaDetail?.status === CONST.STATUS_BOOKING.PAID
+      ) {
+        setCheckExpiredCancel(true);
+      }
+    };
+    checkExpiredCancel();
+  }, [bookingSpaDetail]);
 
   const handleCancelBooking = () => {
     updateStatusBookingSpa(bookingSpaId, CONST.STATUS_BOOKING.CANCEL).then(
@@ -121,6 +148,12 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
                 <Text style={textStyles.label}>Ghi chú:</Text>
                 <Text style={textStyles.normal}>
                   {bookingSpaDetail?.customerNote}
+                </Text>
+              </View>
+              <View style={viewStyles.flexRow} className='mb-1'>
+                <Text style={textStyles.label}>Phương thức thanh toán:</Text>
+                <Text style={textStyles.normal}>
+                  {bookingSpaDetail?.payMethod}
                 </Text>
               </View>
               <View style={viewStyles.line} />
@@ -223,6 +256,12 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
               </Text>
             </View>
             <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Sử dụng ví xu:</Text>
+              <Text style={textStyles.normal}>
+                -{formatCurrency(bookingSpaDetail?.useCoin as number)}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
               <Text style={textStyles.label}>Tổng thanh toán:</Text>
               <Text style={textStyles.normal}>
                 {formatCurrency(bookingSpaDetail?.totalPayment as number)}
@@ -243,6 +282,16 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
                 onPress={() => handlePay()}
               >
                 <Text style={styles.buttonOutlineText}>Thanh toán</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {checkExpiredCancel === true && (
+            <View style={viewStyles.flexRow} className='justify-center'>
+              <TouchableOpacity
+                style={buttonStyles.buttonOutline}
+                onPress={() => handleCancelBooking()}
+              >
+                <Text style={styles.buttonOutlineText}>Huỷ đơn</Text>
               </TouchableOpacity>
             </View>
           )}

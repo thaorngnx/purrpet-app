@@ -12,10 +12,7 @@ import {
 import { useEffect, useState } from 'react';
 import textStyles from '../../../styles/TextStyles';
 import { formatCurrency, formatDateTime } from '../../../../utils/formatData';
-import {
-  BookingHome,
-  BookingHomeDetail,
-} from '../../../../interface/BookingHome';
+import { BookingHomeDetail } from '../../../../interface/BookingHome';
 import {
   getBookingHomeByCode,
   updateStatusBookingHome,
@@ -25,12 +22,14 @@ import buttonStyles from '../../../styles/ButtonStyles';
 import * as CONST from '../../../constants';
 import { createPaymentUrl } from '../../../../api/pay';
 import openInChrome from '../../../../utils/openInChrome';
+import dayjs from 'dayjs';
 
 const BookingHomeDetailScreen = ({ navigation, route }: any) => {
   const bookingHomeCode = route.params.bookingHomeCode as string;
   const [loading, setLoading] = useState(true);
   const [bookingHomeDetail, setBookingHomeDetail] =
     useState<BookingHomeDetail>();
+  const [cancel, setCancel] = useState(false);
 
   useEffect(() => {
     //api get booking spa by code
@@ -53,7 +52,21 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
       setLoading(false);
     });
   }, []); //bookingSpa.purrPetCode
-
+  useEffect(() => {
+    const checkedTimeCancel = () => {
+      const timeNow = dayjs();
+      const timeCheckin = dayjs(bookingHomeDetail?.dateCheckIn);
+      const timeDiff = timeCheckin.diff(timeNow);
+      const twentyFourHours = 24 * 60 * 60 * 1000; // 24 giờ expressed in milliseconds
+      if (
+        timeDiff > twentyFourHours &&
+        bookingHomeDetail?.status === CONST.STATUS_BOOKING.PAID
+      ) {
+        setCancel(true);
+      }
+    };
+    checkedTimeCancel();
+  }, [bookingHomeDetail]);
   const handleCancelBooking = () => {
     updateStatusBookingHome(bookingHomeCode, CONST.STATUS_BOOKING.CANCEL).then(
       (res) => {
@@ -123,6 +136,12 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
                 <Text style={textStyles.label}>Ghi chú:</Text>
                 <Text style={textStyles.normal}>
                   {bookingHomeDetail?.customerNote}
+                </Text>
+              </View>
+              <View style={viewStyles.flexRow}>
+                <Text style={textStyles.label}>Phuơng thức thanh toán:</Text>
+                <Text style={textStyles.normal}>
+                  {bookingHomeDetail?.payMethod}
                 </Text>
               </View>
               <View style={viewStyles.line} />
@@ -274,6 +293,12 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
               </Text>
             </View>
             <View style={viewStyles.flexRow} className='justify-between'>
+              <Text style={textStyles.label}>Sử dụng ví xu:</Text>
+              <Text style={textStyles.normal}>
+                -{formatCurrency(bookingHomeDetail?.useCoin as number)}
+              </Text>
+            </View>
+            <View style={viewStyles.flexRow} className='justify-between'>
               <Text style={textStyles.label}>Tổng thanh toán:</Text>
               <Text style={textStyles.normal}>
                 {formatCurrency(bookingHomeDetail?.totalPayment as number)}
@@ -294,6 +319,16 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
                 onPress={() => handlePay()}
               >
                 <Text style={styles.buttonOutlineText}>Thanh toán</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {cancel === true && (
+            <View style={viewStyles.flexRow} className='justify-center'>
+              <TouchableOpacity
+                style={buttonStyles.buttonOutline}
+                onPress={() => handleCancelBooking()}
+              >
+                <Text style={styles.buttonOutlineText}>Huỷ đơn</Text>
               </TouchableOpacity>
             </View>
           )}
