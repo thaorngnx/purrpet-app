@@ -26,7 +26,7 @@ import {
 import { ProductCartInfo } from '../../interface/Cart';
 import { Image } from 'react-native';
 import { formatCurrency } from '../../utils/formatData';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import CustomerInfoOrder from './CustomerInfoOrder';
 import { createOrder } from '../../api/order';
 import textInputStyles from '../styles/TextInputStyles';
@@ -61,28 +61,28 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
   });
   const socketRef = useRef<Socket>();
 
-  useEffect(() => {
-    if (hasCustomerInfo) {
-      setCustomerInfo(customer);
-      const accessToken = customer.accessToken;
-      const socketClient = socket(accessToken);
-      socketRef.current = socketClient;
+  // useEffect(() => {
+  //   if (hasCustomerInfo) {
+  //     setCustomerInfo(customer);
+  //     const accessToken = customer.accessToken;
+  //     const socketClient = socket(accessToken);
+  //     socketRef.current = socketClient;
 
-      function onTradeEvent(value: any) {
-        navigation.navigate('Sản phẩm');
-      }
+  //     function onTradeEvent(value: any) {
+  //       navigation.navigate('Sản phẩm');
+  //     }
 
-      socketClient.on('connect', () => {
-        console.log('socket connected');
-      });
+  //     socketClient.on('connect', () => {
+  //       console.log('socket connected');
+  //     });
 
-      socketClient.on(accessToken, onTradeEvent);
+  //     socketClient.on(accessToken, onTradeEvent);
 
-      return () => {
-        socketClient.off(accessToken, onTradeEvent);
-      };
-    }
-  }, [customer]);
+  //     return () => {
+  //       socketClient.off(accessToken, onTradeEvent);
+  //     };
+  //   }
+  // }, [customer]);
   useEffect(() => {
     const fetchData = async () => {
       const total =
@@ -99,7 +99,28 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
     };
     fetchData();
   }, [customerInfo]);
+  // useEffect(() => {
+  //   console.log('Connecting');
+  //   const socketInstance = socket(`${customer?.accessToken}`);
 
+  //   socketInstance.on('connect', () => {
+  //     console.log('Connected to WebSocket server');
+  //   });
+
+  //   socketInstance.on('payment_success', (data) => {
+  //     console.log(data);
+  //     // Chuyển hướng sang trang sản phẩm
+  //     console.log('Payment success');
+  //   });
+
+  //   socketInstance.on('disconnect', () => {
+  //     console.log('Disconnected from WebSocket server');
+  //   });
+
+  //   return () => {
+  //     socketInstance.disconnect();
+  //   };
+  // }, []);
   const handleOrder = () => {
     createOrder({
       customerCode: customerInfo.purrPetCode,
@@ -127,17 +148,15 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
           console.log('Đặt hàng thành công!');
 
           deleteCart();
-          // navigation.navigate('OrderDetailScreen', {
-          //   orderCode: res.data.purrPetCode,
-          // });
           navigation.navigate('Sản phẩm');
         } else {
           createPaymentUrl({
             orderCode: res.data.purrPetCode,
+            returnUrl: '/vnpay-returnForMoblie',
           }).then((res) => {
             if (res.err === 0) {
               console.log('Đặt hàng thành công!');
-              openInChrome(res.data.paymentUrl, navigation);
+              openInChrome(res.data.paymentUrl, navigation, customerInfo);
               deleteCart();
             }
           });

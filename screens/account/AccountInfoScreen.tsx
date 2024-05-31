@@ -33,6 +33,7 @@ import {
   IProvince,
   IWard,
 } from '../../interface/Customer';
+import { socket } from '../../socket';
 
 const AccountInfoScreen = ({ navigation, route }: any) => {
   const customer = useCustomerStore((state) => state.customerState.data);

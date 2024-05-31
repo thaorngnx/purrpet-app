@@ -1,5 +1,5 @@
 import { AddIcon, ArrowLeftIcon, RemoveIcon, View } from '@gluestack-ui/themed';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import {
   Image,
   SafeAreaView,

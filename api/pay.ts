@@ -9,14 +9,14 @@ export async function createPaymentUrl(body: any) {
   }
 }
 
-export async function vnpayReturn(body: any) {
-  try {
-    const response = await api.post('pay/vnpayReturn', body);
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
-}
+// export async function vnpayReturn(body: any) {
+//   try {
+//     const response = await api.post('pay/vnpayReturn', body);
+//     return response.data;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
 
 export async function requestRefund(body: any) {
   try {

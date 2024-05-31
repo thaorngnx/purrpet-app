@@ -48,6 +48,7 @@ export const CoinWalletScreen = ({ navigation }: any) => {
   } else {
     coins = coinInfo.filter((coin: any) => coin.status === 'trừ');
   }
+
   return (
     <SafeAreaView style={viewStyles.container}>
       <View style={viewStyles.titlePageBar}>

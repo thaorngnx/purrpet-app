@@ -1,4 +1,6 @@
+import { io } from 'socket.io-client';
 import api from './token';
+import { socket } from '../socket';
 
 export async function getProducts(params: any) {
   try {

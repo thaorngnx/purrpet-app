@@ -10,16 +10,6 @@ import {
 import viewStyles from '../../../styles/ViewStyles';
 import {
   ArrowLeftIcon,
-  Icon,
-  Select,
-  SelectBackdrop,
-  SelectContent,
-  SelectDragIndicator,
-  SelectDragIndicatorWrapper,
-  SelectInput,
-  SelectItem,
-  SelectPortal,
-  SelectTrigger,
   Spinner,
   Textarea,
   TextareaInput,
@@ -61,15 +51,11 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
   const [loading, setLoading] = useState(true);
   const [clickRefund, setClickRefund] = useState(false);
   const [disabled, setDisabled] = useState(false);
-  const [bank, setBank] = useState<string[]>([]);
   const [message, setMessage] = useState('');
-  const [bankNumber, setBSankNumber] = useState('');
-  const [bankName, setBankName] = useState('');
   const [picture, setPicture] = useState('');
   const [error, setError] = useState({
     message: '',
-    bankName: '',
-    bankNumber: '',
+
     picture: '',
   });
 
@@ -109,15 +95,6 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
         });
       }
     });
-
-    const fetchData = async () => {
-      const bank = await axios.get('https://api.vietqr.io/v2/banks');
-      const shortNames = bank.data.data.map((item: any) => item.short_name);
-      setBank(shortNames);
-    };
-    if (clickRefund) {
-      fetchData();
-    }
   }, [clickRefund]);
   const handleCancelOrder = () => {
     updateStatusOrder(
@@ -172,12 +149,6 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
     if (!message) {
       setError({ ...error, message: 'Vui lòng nhập lý do' });
       return;
-    } else if (!bankName) {
-      setError({ ...error, bankName: 'Vui lòng chọn ngân hàng' });
-      return;
-    } else if (!bankNumber) {
-      setError({ ...error, bankNumber: 'Vui lòng nhập số tài khoản' });
-      return;
     } else if (!picture) {
       setError({ ...error, picture: 'Vui lòng chọn ảnh' });
       return;
@@ -186,15 +157,12 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
     setError({
       ...error,
       message: '',
-      bankName: '',
-      bankNumber: '',
       picture: '',
     });
-    const content = message + '+' + bankName + '+' + bankNumber;
 
     requestRefund({
       orderCode: orderCode,
-      message: content,
+      message: message,
       images: picture,
     }).then((res) => {
       //api upload image
@@ -505,71 +473,35 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
                 <Text style={textStyles.error}>{error.message}</Text>
               </Textarea>
               <View>
-                <Select
-                  marginTop={5}
-                  onValueChange={(value) => setBankName(value)}
-                  selectedValue={bankName}
+                <TouchableOpacity
+                  style={[buttonStyles.button, { width: '40%', marginTop: 10 }]}
+                  onPress={() => pickFromGallery()}
                 >
-                  <SelectTrigger size='md' paddingRight={10}>
-                    <SelectInput
-                      placeholder='Chọn ngân hàng nhận tiền hoàn'
-                      style={textInputStyles.textInputBorder}
+                  <Text style={{ color: '#ffffff', alignSelf: 'center' }}>
+                    Chọn ảnh
+                  </Text>
+                </TouchableOpacity>
+                <View style={{ margin: 10 }}>
+                  {picture ? (
+                    <Image
+                      source={{ uri: picture }}
+                      style={{ width: 100, height: 100 }}
                     />
-                    <Icon as={ChevronDownIcon} className='m-5' />
-                  </SelectTrigger>
-                  <SelectPortal>
-                    <SelectBackdrop />
-                    <SelectContent>
-                      <SelectDragIndicatorWrapper>
-                        <SelectDragIndicator />
-                      </SelectDragIndicatorWrapper>
+                  ) : null}
+                </View>
+                <Text style={textStyles.error}>{error.picture}</Text>
 
-                      {bank.map((value, index) => (
-                        <SelectItem key={index} label={value} value={value} />
-                      ))}
-                    </SelectContent>
-                  </SelectPortal>
-                </Select>
-                <Text style={textStyles.error}>{error.bankName}</Text>
-              </View>
-
-              <TextInput
-                style={[textInputStyles.textInputBorder, { marginTop: 10 }]}
-                keyboardType='numeric'
-                placeholder='Số tài khoản'
-                value={bankNumber}
-                onChangeText={(value) => setBSankNumber(value)}
-              />
-              <Text style={textStyles.error}>{error.bankNumber}</Text>
-
-              <TouchableOpacity
-                style={[buttonStyles.button, { width: '40%', marginTop: 10 }]}
-                onPress={() => pickFromGallery()}
-              >
-                <Text style={{ color: '#ffffff', alignSelf: 'center' }}>
-                  Chọn ảnh
-                </Text>
-              </TouchableOpacity>
-              <View style={{ margin: 10 }}>
-                {picture ? (
-                  <Image
-                    source={{ uri: picture }}
-                    style={{ width: 100, height: 100 }}
-                  />
-                ) : null}
-              </View>
-              <Text style={textStyles.error}>{error.picture}</Text>
-
-              <TouchableOpacity
-                style={buttonStyles.buttonOutline}
-                onPress={() => handleRefund()}
-              >
-                <Text
-                  style={[styles.buttonOutlineText, { alignSelf: 'center' }]}
+                <TouchableOpacity
+                  style={buttonStyles.buttonOutline}
+                  onPress={() => handleRefund()}
                 >
-                  Gửi yêu cầu
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={[styles.buttonOutlineText, { alignSelf: 'center' }]}
+                  >
+                    Gửi yêu cầu
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
         </ScrollView>

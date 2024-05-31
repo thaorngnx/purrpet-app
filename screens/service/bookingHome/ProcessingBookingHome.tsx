@@ -106,10 +106,11 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
         if (payMethod === CONST.PAYMENT_METHOD.VNPAY) {
           createPaymentUrl({
             orderCode: res.data.purrPetCode,
+            returnUrl: '/vnpay-returnForMoblie',
           }).then((res) => {
             if (res.err === 0) {
               console.log('Đặt hàng thành công!');
-              openInChrome(res.data.paymentUrl, navigation);
+              openInChrome(res.data.paymentUrl, navigation, customer);
             }
           });
         } else {

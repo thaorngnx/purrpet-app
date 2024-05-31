@@ -1,11 +1,14 @@
+import { useEffect } from 'react';
 import { Linking } from 'react-native';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
+import { socket } from '../socket';
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 // Hàm để mở URL trong trình duyệt Chrome
-async function openInChrome(url: string, navigation: any) {
+async function openInChrome(url: string, navigation: any, customer: any) {
   try {
+    const socketInstance = socket(`${customer?.accessToken}`);
     if (await InAppBrowser.isAvailable()) {
       console.log('InAppBrowser is available!');
       const result = await InAppBrowser.open(url, {
@@ -37,6 +40,11 @@ async function openInChrome(url: string, navigation: any) {
         headers: {
           'my-custom-header': 'my custom header value',
         },
+      });
+      socketInstance.on('payment_success', () => {
+        // Đóng trình duyệt
+        InAppBrowser.close();
+        navigation.navigate('Sản phẩm');
       });
       await sleep(800);
       if (result.type === 'cancel') {
