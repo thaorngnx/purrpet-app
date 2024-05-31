@@ -57,9 +57,20 @@ const ProductCart = ({
           </View>
 
           <View style={viewStyles.flexRow} className='justify-between'>
-            <Text style={textStyles.normal}>
+            <Text
+              style={
+                product.discountQuantity
+                  ? [{ textDecorationLine: 'line-through' }, textStyles.normal]
+                  : textStyles.normal
+              }
+            >
               {formatCurrency(product.price)}
             </Text>
+            {product.discountQuantity && (
+              <Text style={textStyles.normal}>
+                {formatCurrency(product.priceDiscount)}
+              </Text>
+            )}
             <View style={viewStyles.flexRow}>
               <View style={viewStyles.flexRow} className='items-center'>
                 <TouchableOpacity
@@ -70,6 +81,7 @@ const ProductCart = ({
                       quantity: product.quantity - 1,
                     })
                   }
+                  disabled={product.quantity === 1}
                 >
                   <Minus size={16} color={'black'} />
                 </TouchableOpacity>
@@ -81,6 +93,12 @@ const ProductCart = ({
                       productCode: product.purrPetCode,
                       quantity: product.quantity + 1,
                     })
+                  }
+                  disabled={
+                    product.quantity ===
+                    (product.discountQuantity
+                      ? product.discountQuantity
+                      : product.inventory)
                   }
                 >
                   <Plus size={16} color={'black'} />
@@ -125,7 +143,13 @@ const CartScreen = ({ navigation }: any) => {
           const productList = [];
           for (let i = 0; i < cart?.length; i++) {
             const productData = await getProductByCode(cart[i].productCode);
-            if (productData.data.inventory < cart[i].quantity) {
+            const price = productData.data.discountQuantity
+              ? productData.data.priceDiscount
+              : productData.data.price;
+            const inventory = productData.data.discountQuantity
+              ? productData.data.discountQuantity
+              : productData.data.inventory;
+            if (inventory < cart[i].quantity) {
               deleteProductCart({ productCode: cart[i].productCode });
               continue;
             }
@@ -133,7 +157,7 @@ const CartScreen = ({ navigation }: any) => {
             productList.push({
               ...productData.data,
               quantity: cart[i].quantity,
-              totalPrice: productData.data.price * cart[i].quantity,
+              totalPrice: price * cart[i].quantity,
             });
           }
           setProductCart(productList);

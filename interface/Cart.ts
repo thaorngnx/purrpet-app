@@ -16,4 +16,6 @@ export interface ProductCartInfo {
   updatedAt: string;
   quantity: number;
   totalPrice: number;
+  priceDiscount: number;
+  discountQuantity: number;
 }

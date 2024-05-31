@@ -42,6 +42,7 @@ const ProductCard = ({
     addRecentlyViewedProduct(product);
     navigation.navigate('DetailProductScreen', { product: product });
   };
+
   return (
     <View key={productKey} style={styles.productWrapper}>
       <TouchableOpacity onPress={() => handleClickProduct()}>
@@ -50,7 +51,39 @@ const ProductCard = ({
           {product.productName}
         </Text>
       </TouchableOpacity>
-      <Text style={styles.price}>{formatCurrency(product.price)}</Text>
+      <View
+        style={viewStyles.flexRow}
+        className='flex justify-between items-center mt-3'
+      >
+        <Text
+          className={
+            product.discountQuantity > 0
+              ? 'text-gray-500 line-through '
+              : 'font-bold  text-[#C54600] text-[15px]'
+          }
+        >
+          {formatCurrency(product.price)}
+        </Text>
+        {product.priceDiscount > 0 && (
+          <Text className='font-bold  text-[#C54600] text-[15px]'>
+            {formatCurrency(product.priceDiscount)}
+          </Text>
+        )}
+      </View>
+
+      {product.priceDiscount > 0 && (
+        <TouchableOpacity className='absolute right-2 top-3 bg-red-600 px-2 py-1 rounded-md'>
+          <Text className='text-white font-bold'>
+            - {((product.price - product.priceDiscount) / product.price) * 100}%
+          </Text>
+        </TouchableOpacity>
+      )}
+      {product.discountQuantity > 0 && (
+        <Text className='text-gray-500'>
+          Số lượng {product.discountQuantity}
+        </Text>
+      )}
+
       <View
         style={viewStyles.flexRow}
         className='flex justify-between items-center'
@@ -92,11 +125,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: 'black',
   },
-  price: {
-    marginTop: 5,
-    fontSize: 15,
-    color: '#C54600',
-  },
+
   start: {
     marginTop: 5,
     fontSize: 15,

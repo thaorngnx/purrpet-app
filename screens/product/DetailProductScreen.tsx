@@ -181,9 +181,39 @@ const DetailProductScreen = ({ navigation, route }: any) => {
                   </Fragment>
                 )}
               </View>
-
-              <Text style={styles.price}>{formatCurrency(product.price)}</Text>
+              <View style={viewStyles.flexColumn}>
+                {product.discountQuantity > 0 && (
+                  <Text style={styles.price}>
+                    {formatCurrency(product.priceDiscount)}
+                  </Text>
+                )}
+                <View style={viewStyles.flexRow}>
+                  <Text
+                    style={
+                      product.discountQuantity
+                        ? {
+                            color: 'text-gray-500',
+                            textDecorationLine: 'line-through',
+                            fontSize: 17,
+                          }
+                        : styles.price
+                    }
+                  >
+                    {formatCurrency(product.price)}{' '}
+                  </Text>
+                  {product.discountQuantity > 0 && (
+                    <Text className=' text-white  bg-red-600 px-2 py-1 rounded-md'>
+                      -{' '}
+                      {((product.price - product.priceDiscount) /
+                        product.price) *
+                        100}
+                      %
+                    </Text>
+                  )}
+                </View>
+              </View>
             </View>
+
             <Text style={{ marginTop: 10, color: '#000000' }}>
               Đã bán {productDetail?.product.orderQuantity}
             </Text>
@@ -519,13 +549,26 @@ const DetailProductScreen = ({ navigation, route }: any) => {
           <View>
             <TouchableOpacity
               onPress={() => setQuantity(quantity + 1)}
-              disabled={quantity === product.inventory}
-              style={[
-                buttonStyles.buttonIncrease,
-                quantity === product.inventory
-                  ? { backgroundColor: '#ccc' }
-                  : {},
-              ]}
+              disabled={
+                product.discountQuantity
+                  ? quantity === product.discountQuantity
+                  : quantity === product.inventory
+              }
+              style={
+                product.discountQuantity
+                  ? [
+                      buttonStyles.buttonIncrease,
+                      quantity === product.discountQuantity
+                        ? { backgroundColor: '#ccc' }
+                        : {},
+                    ]
+                  : [
+                      buttonStyles.buttonIncrease,
+                      quantity === product.inventory
+                        ? { backgroundColor: '#ccc' }
+                        : {},
+                    ]
+              }
             >
               <AddIcon size='xl' color='#fff' alignSelf='center' />
             </TouchableOpacity>

@@ -88,7 +88,9 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
       const total =
         productCart.reduce(
           (total: number, product: ProductCartInfo) =>
-            total + product.price * product.quantity,
+            total +
+            (product.discountQuantity ? product.priceDiscount : product.price) *
+              product.quantity,
           0,
         ) - userPoint;
       if (total > customer.coin) {
@@ -179,7 +181,9 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
       event <=
       productCart.reduce(
         (total: number, product: ProductCartInfo) =>
-          total + product.price * product.quantity,
+          total +
+          (product.discountQuantity ? product.priceDiscount : product.price) *
+            product.quantity,
         0,
       ) /
         10
@@ -208,7 +212,9 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
     const total =
       productCart.reduce(
         (total: number, product: ProductCartInfo) =>
-          total + product.price * product.quantity,
+          total +
+          (product.discountQuantity ? product.priceDiscount : product.price) *
+            product.quantity,
         0,
       ) -
       userPoint -
@@ -326,7 +332,9 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                         className='justify-between'
                       >
                         <Text style={textStyles.normal}>
-                          {formatCurrency(product.price)}
+                          {product.discountQuantity
+                            ? formatCurrency(product.priceDiscount)
+                            : formatCurrency(product.price)}
                         </Text>
                         <Text style={textStyles.normal}>
                           x{product.quantity}
@@ -468,7 +476,11 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                     {formatCurrency(
                       productCart.reduce(
                         (total: number, product: ProductCartInfo) =>
-                          total + product.price * product.quantity,
+                          total +
+                          (product.discountQuantity
+                            ? product.priceDiscount
+                            : product.price) *
+                            product.quantity,
                         0,
                       ),
                     )}
@@ -526,7 +538,9 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                       productCart.reduce(
                         (total: number, product: ProductCartInfo) =>
                           total +
-                          product.price * product.quantity -
+                          (product.discountQuantity
+                            ? product.priceDiscount
+                            : product.price) -
                           userPoint -
                           coin,
                         0,

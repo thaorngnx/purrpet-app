@@ -13,6 +13,8 @@ export interface Product {
   inventory: string;
   averageRating?: number;
   orderQuantity?: number;
+  priceDiscount: number;
+  discountQuantity: number;
 }
 
 export interface ProductDetail {
