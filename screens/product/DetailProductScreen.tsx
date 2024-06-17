@@ -6,6 +6,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
 } from 'react-native';
 import SearchProduct from '../components/Search/SearchProduct';
 import { StyleSheet } from 'react-native';
@@ -27,6 +28,7 @@ import { vi } from 'date-fns/locale';
 import ProductCard from '../components/Product/ProductCard';
 import { v4 as uuidv4 } from 'uuid';
 import { useCartStore } from '../../zustand/cartStore';
+import RenderHTML from 'react-native-render-html';
 
 const ratings = [
   { stars: 5, width: '65%', percent: '65%' },
@@ -47,7 +49,7 @@ const DetailProductScreen = ({ navigation, route }: any) => {
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const [tab, setTab] = useState(0);
   const [recommendProducts, setRecommendProducts] = useState<Product[]>([]);
-
+  const { height, width, scale, fontScale } = useWindowDimensions();
   useEffect(() => {
     getProductDetailByCode(product.purrPetCode).then((res) => {
       if (res.err === 0) {
@@ -192,7 +194,7 @@ const DetailProductScreen = ({ navigation, route }: any) => {
                     style={
                       product.discountQuantity
                         ? {
-                            color: 'text-gray-500',
+                            color: '#808080',
                             textDecorationLine: 'line-through',
                             fontSize: 17,
                           }
@@ -287,6 +289,12 @@ const DetailProductScreen = ({ navigation, route }: any) => {
                     >
                       {productDetail?.product.description}
                     </Text>
+                    {/* <RenderHTML
+                      source={{
+                        html: productDetail?.product.description ?? '',
+                      }}
+                      contentWidth={width}
+                    /> */}
                   </View>
                   <TouchableOpacity
                     style={viewStyles.flexRow}

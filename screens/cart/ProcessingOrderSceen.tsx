@@ -154,7 +154,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
         } else {
           createPaymentUrl({
             orderCode: res.data.purrPetCode,
-            returnUrl: '/vnpay-returnForMoblie',
+            returnUrl: 'vnpay-returnForMoblie',
           }).then((res) => {
             if (res.err === 0) {
               console.log('Đặt hàng thành công!');

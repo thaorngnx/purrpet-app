@@ -23,6 +23,7 @@ export interface Order {
   customerNote: string;
   payMethod: string;
   paymentStatus: string;
+  statusRefund: string;
   pointUsed: number;
   useCoin: number;
   totalPayment: number;

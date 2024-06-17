@@ -35,6 +35,7 @@ export const STATUS_ORDER = {
   DELIVERING: 'Đang giao hàng',
   CANCEL: 'Đã hủy',
   DONE: 'Đã hoàn thành',
+  RETURN: 'Trả hàng',
 };
 
 export const STATUS_BOOKING = {

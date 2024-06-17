@@ -30,6 +30,7 @@ import axios from 'axios';
 import textInputStyles from '../../../styles/TextInputStyles';
 import { MediaType, launchImageLibrary } from 'react-native-image-picker';
 import { set } from 'date-fns';
+import { useCustomerStore } from '../../../../zustand/customerStore';
 
 interface ProductOrder {
   productCode: string;
@@ -52,7 +53,8 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
   const [clickRefund, setClickRefund] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [message, setMessage] = useState('');
-  const [picture, setPicture] = useState('');
+  const [picture, setPicture] = useState([] as any);
+  const customer = useCustomerStore((state) => state.customerState.data);
   const [error, setError] = useState({
     message: '',
 
@@ -138,7 +140,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
     }).then((res) => {
       if (res.err === 0) {
         console.log('Đặt hàng thành công!');
-        openInChrome(res.data.paymentUrl, navigation);
+        openInChrome(res.data.paymentUrl, navigation, customer);
       } else {
         console.log('error', res.message);
       }
@@ -166,8 +168,10 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
       images: picture,
     }).then((res) => {
       //api upload image
+      console.log('res', res);
       if (res.err === 0) {
         console.log('Yêu cầu trả hàng thành công!');
+        setPicture([]);
         setClickRefund(false);
         navigation.navigate('Sản phẩm');
       } else {
@@ -213,7 +217,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setPicture(data.url);
+        setPicture([...picture, data.url]);
       })
       .catch((err) => {
         console.log(err);
@@ -309,6 +313,14 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
                   {orderDetail?.order?.paymentStatus}
                 </Text>
               </View>
+              {orderDetail?.order?.status === CONST.STATUS_ORDER.RETURN && (
+                <View style={viewStyles.flexRow} className='mb-1'>
+                  <Text style={textStyles.label}>Trạng thái trả hàng:</Text>
+                  <Text style={textStyles.normal}>
+                    {orderDetail?.order?.statusRefund}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
           <View>
@@ -482,12 +494,14 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
                   </Text>
                 </TouchableOpacity>
                 <View style={{ margin: 10 }}>
-                  {picture ? (
-                    <Image
-                      source={{ uri: picture }}
-                      style={{ width: 100, height: 100 }}
-                    />
-                  ) : null}
+                  {picture.length > 0 &&
+                    picture.map((item: any, index: number) => (
+                      <Image
+                        key={index}
+                        source={{ uri: item }}
+                        style={{ width: 100, height: 100, margin: 5 }}
+                      />
+                    ))}
                 </View>
                 <Text style={textStyles.error}>{error.picture}</Text>
 
