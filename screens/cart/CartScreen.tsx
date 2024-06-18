@@ -115,8 +115,8 @@ const ProductCart = ({
             navigation.navigate('DetailProductScreen', { product })
           }
         >
-          <Text className='mr-1 text-[#A16207]'>Xem chi tiết</Text>
-          <ChevronRightIcon color='#A16207' />
+          <Text className='mr-1 text-[#265F77]'>Xem chi tiết</Text>
+          <ChevronRightIcon color='#265F77' />
         </TouchableOpacity>
       </View>
     </View>

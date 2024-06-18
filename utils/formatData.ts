@@ -23,3 +23,7 @@ export const formatTimeToNow = (value: any) => {
   const date = new Date(value);
   return formatDistanceToNow(date, { addSuffix: true, locale: vi });
 };
+
+export function formatNumber(number: any) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}

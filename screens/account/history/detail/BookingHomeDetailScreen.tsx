@@ -23,8 +23,10 @@ import * as CONST from '../../../constants';
 import { createPaymentUrl } from '../../../../api/pay';
 import openInChrome from '../../../../utils/openInChrome';
 import dayjs from 'dayjs';
+import { useCustomerStore } from '../../../../zustand/customerStore';
 
 const BookingHomeDetailScreen = ({ navigation, route }: any) => {
+  const customer = useCustomerStore((state) => state.customerState.data);
   const bookingHomeCode = route.params.bookingHomeCode as string;
   const [loading, setLoading] = useState(true);
   const [bookingHomeDetail, setBookingHomeDetail] =
@@ -82,10 +84,11 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
   const handlePay = () => {
     createPaymentUrl({
       orderCode: bookingHomeCode,
+      returnUrl: 'vnpay-returnForMoblie',
     }).then((res) => {
       if (res.err === 0) {
         console.log('Đặt hàng thành công!');
-        openInChrome(res.data.paymentUrl, navigation);
+        openInChrome(res.data.paymentUrl, navigation, customer);
       } else {
         console.log('error', res.message);
       }

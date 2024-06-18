@@ -137,6 +137,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
   const handlePay = () => {
     createPaymentUrl({
       orderCode: orderCode,
+      returnUrl: 'vnpay-returnForMoblie',
     }).then((res) => {
       if (res.err === 0) {
         console.log('Đặt hàng thành công!');

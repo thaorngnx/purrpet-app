@@ -10,7 +10,11 @@ import viewStyles from '../styles/ViewStyles';
 import textStyles from '../styles/TextStyles';
 import { useCustomerStore } from '../../zustand/customerStore';
 import { ArrowLeftIcon, Info } from 'lucide-react-native';
-import { formatCurrency, formatDateTime } from '../../utils/formatData';
+import {
+  formatCurrency,
+  formatDateTime,
+  formatNumber,
+} from '../../utils/formatData';
 import {
   Modal,
   ModalBackdrop,
@@ -70,7 +74,7 @@ export const CoinWalletScreen = ({ navigation }: any) => {
               { fontSize: 26, color: '#f6a700', marginRight: 5 },
             ]}
           >
-            {customer.coin}
+            {formatNumber(customer.coin)}
           </Text>
           <Text
             style={[
@@ -177,8 +181,14 @@ export const CoinWalletScreen = ({ navigation }: any) => {
                   <View style={{ marginLeft: 10, width: '70%' }}>
                     <Text style={[textStyles.normal]}>
                       {item.status === 'cộng'
-                        ? `Bạn được cộng ${item?.coin} xu vì huỷ đơn hàng đã thanh toán cho đơn hàng ${item?.orderCode}`
-                        : `Bạn đã dùng ${item?.coin} xu để thanh toán cho đơn hàng ${item?.orderCode}`}
+                        ? `Bạn được cộng ${formatNumber(
+                            item?.coin,
+                          )} xu vì huỷ đơn hàng đã thanh toán cho đơn hàng ${
+                            item?.orderCode
+                          }`
+                        : `Bạn đã dùng ${formatNumber(
+                            item?.coin,
+                          )} xu để thanh toán cho đơn hàng ${item?.orderCode}`}
                     </Text>
                     <Text style={textStyles.miniLabel}>
                       {formatDateTime(item.createdAt)}
@@ -195,15 +205,15 @@ export const CoinWalletScreen = ({ navigation }: any) => {
                     className='mr-1'
                   >
                     {item.status === 'cộng'
-                      ? `+ ${item.coin}`
-                      : `- ${item.coin}`}
+                      ? `+ ${formatNumber(item?.coin)}`
+                      : `- ${formatNumber(item?.coin)}`}
                   </Text>
                 </View>
               </View>
             )}
           />
         ) : (
-          <View>
+          <View className='m-[auto]'>
             <Text style={textStyles.label}>Chưa có dữ liệu</Text>
           </View>
         )}
