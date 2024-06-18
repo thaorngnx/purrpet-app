@@ -93,6 +93,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
               product.quantity,
           0,
         ) - userPoint;
+
       if (total > customer.coin) {
         setShowCoin(customer.coin);
       } else {
@@ -100,7 +101,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
       }
     };
     fetchData();
-  }, [customerInfo]);
+  }, [customerInfo, productCart, userPoint]);
   // useEffect(() => {
   //   console.log('Connecting');
   //   const socketInstance = socket(`${customer?.accessToken}`);

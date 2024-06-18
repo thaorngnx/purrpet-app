@@ -223,7 +223,7 @@ const BookingHomeScreen = ({ navigation }: any) => {
     });
   };
   const handleClickContinue = () => {
-    if (bookingInfo.petName === undefined) {
+    if (!bookingInfo.petName) {
       setError({ ...error, petName: 'Tên thú cưng không được để trống!' });
       return;
     }

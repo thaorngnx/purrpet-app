@@ -15,6 +15,7 @@ import textInputStyles from '../styles/TextInputStyles.ts';
 import buttonStyles from '../styles/ButtonStyles.ts';
 import textStyles from '../styles/TextStyles.ts';
 import viewStyles from '../styles/ViewStyles.ts';
+import { validateEmail } from '../../utils/validationData.ts';
 
 const VerifyUserEmailScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
@@ -31,7 +32,7 @@ const VerifyUserEmailScreen = ({ navigation }: any) => {
 
   const handleSendOTP = () => {
     console.log('send otp:', email);
-    if (!email) {
+    if (!email || validateEmail(email) === false) {
       setError({ message: 'Email không hợp lệ', status: true });
       return;
     }
@@ -52,6 +53,7 @@ const VerifyUserEmailScreen = ({ navigation }: any) => {
         </TouchableOpacity>
         <Text style={textStyles.title}>Xác thực người dùng</Text>
       </View>
+      {error.status && <Text style={textStyles.error}>{error.message}</Text>}
       <View style={viewStyles.form}>
         <Text style={textStyles.label}>Email:</Text>
         <TextInput

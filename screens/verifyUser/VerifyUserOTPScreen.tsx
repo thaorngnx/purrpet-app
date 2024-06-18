@@ -1,5 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
+  Button,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -8,13 +9,28 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { ArrowLeftIcon, Icon, set } from '@gluestack-ui/themed';
+import {
+  ArrowLeftIcon,
+  CloseIcon,
+  Heading,
+  Icon,
+  Modal,
+  ModalBackdrop,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Popover,
+  set,
+} from '@gluestack-ui/themed';
 import { sendOTP, verifyOTP } from '../../api/otp';
 import textInputStyles from '../styles/TextInputStyles.ts';
 import buttonStyles from '../styles/ButtonStyles.ts';
 import textStyles from '../styles/TextStyles.ts';
 import { useCustomerStore } from '../../zustand/customerStore.ts';
 import viewStyles from '../styles/ViewStyles.ts';
+import { validateEmail } from '../../utils/validationData.ts';
 
 const VerifyUserOTPScreen = ({ navigation, route }: any) => {
   // const customerState = useCustomerStore((state) => state.customerState);
@@ -23,6 +39,7 @@ const VerifyUserOTPScreen = ({ navigation, route }: any) => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState({ message: '', status: false });
   const [otp, setOTP] = useState(['', '', '', '']);
+  const [isOpen, setIsOpen] = useState(false);
 
   const otpInputs = useRef<TextInput[]>([]);
 
@@ -51,11 +68,12 @@ const VerifyUserOTPScreen = ({ navigation, route }: any) => {
 
   const handleSendOTP = () => {
     console.log('send otp');
-    console.log(email);
-    if (!email) {
+    console.log(validateEmail(email));
+    if (!email || validateEmail(email) === false) {
       setError({ message: 'Email không hợp lệ', status: true });
       return;
     }
+
     sendOTP({ email }).then((res) => {
       if (res) {
         navigation.navigate('VerifyUserOTPScreen');
@@ -74,9 +92,13 @@ const VerifyUserOTPScreen = ({ navigation, route }: any) => {
 
     verifyOTP({ email, otp: otpJoin }).then((res) => {
       if (res.err == 0) {
-        console.log('verify success');
-        setCustomer(res.data);
-        navigation.navigate('Tài khoản');
+        if (res.data !== null) {
+          console.log('verify success');
+          setCustomer(res.data);
+          navigation.navigate('Tài khoản');
+        } else {
+          setIsOpen(true);
+        }
       } else {
         setError({ message: 'Mã OTP không hợp lệ', status: true });
         setOTP(['', '', '', '']);
@@ -140,6 +162,60 @@ const VerifyUserOTPScreen = ({ navigation, route }: any) => {
           </TouchableOpacity>
         </View>
       </View>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          setIsOpen(false);
+        }}
+      >
+        <ModalBackdrop />
+        <ModalContent>
+          <ModalHeader>
+            <Heading size='lg'>Thông Báo</Heading>
+            <ModalCloseButton>
+              <Icon as={CloseIcon} />
+            </ModalCloseButton>
+          </ModalHeader>
+          <ModalBody>
+            <Text>
+              Hiện tại tài khoản của quý khách chưa có đơn hàng nào. Mời bạn
+              tiếp tục mua hàng
+            </Text>
+          </ModalBody>
+          <ModalFooter>
+            <TouchableOpacity
+              style={buttonStyles.button}
+              onPress={() => {
+                setIsOpen(false);
+                navigation.navigate('Sản phẩm');
+              }}
+            >
+              <Text>Tiếp tục mua sắm</Text>
+            </TouchableOpacity>
+            {/* <Button
+              variant='outline'
+              size='sm'
+              action='secondary'
+              mr='$3'
+              onPress={() => {
+                setShowModal(false);
+              }}
+            >
+              <ButtonText>Cancel</ButtonText>
+            </Button>
+            <Button
+              size='sm'
+              action='positive'
+              borderWidth='$0'
+              onPress={() => {
+                setShowModal(false);
+              }}
+            >
+              <ButtonText>Explore</ButtonText>
+            </Button> */}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </SafeAreaView>
   );
 };

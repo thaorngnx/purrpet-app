@@ -7,6 +7,7 @@ import { useCustomerStore } from '../../zustand/customerStore';
 import textInputStyles from '../styles/TextInputStyles';
 import { useState } from 'react';
 import { sendOTP } from '../../api/otp';
+import { validateEmail } from '../../utils/validationData';
 
 const UnverifyAccountScreen = ({ navigation }: any) => {
   const customerState = useCustomerStore((state) => state.customerState);
@@ -20,12 +21,18 @@ const UnverifyAccountScreen = ({ navigation }: any) => {
     } else {
       setError({ message: 'Email không hợp lệ', status: true });
     }
+
     setEmail(text);
   };
 
   const handleSendOTP = () => {
     if (!email) {
-      setError({ message: 'Email không hợp lệ', status: true });
+      setError({ message: 'Email không hợp lệ!', status: true });
+      return;
+    }
+    console.log('send otp:', validateEmail(email));
+    if (validateEmail(email) === false) {
+      setError({ message: 'Email không hợp lệ!', status: true });
       return;
     }
     sendOTP({ email }).then((res) => {
@@ -45,12 +52,14 @@ const UnverifyAccountScreen = ({ navigation }: any) => {
           Bạn chưa xác thực tài khoản. Vui lòng xác thực tài khoản để sử dụng
           tính năng này
         </Text>
+
         <TextInput
           style={textInputStyles.textInputBorder}
           placeholder='Email'
           placeholderTextColor={'#A0A0A0'}
           onChangeText={(text) => handleEmailChange(text)}
         />
+        <Text style={textStyles.error}>{error.message}</Text>
         <View style={buttonStyles.buttonWrapper}>
           <TouchableOpacity
             style={buttonStyles.button}
