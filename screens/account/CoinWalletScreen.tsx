@@ -32,11 +32,12 @@ import { getCoins } from '../../api/coin';
 import { Image } from 'react-native';
 
 export const CoinWalletScreen = ({ navigation }: any) => {
-  const customer = useCustomerStore((state) => state.customerState.data);
   const [showHelp, setShowHelp] = React.useState(false);
   const ref = React.useRef(null);
   const [coinInfo, setCoinInfo] = React.useState({} as any);
   const [tabCoin, setTabCoin] = React.useState(0);
+  const customer = useCustomerStore((state) => state.customerState.data);
+  console.log('customer:', customer);
   useEffect(() => {
     getCoins().then((res) => {
       if (res.err === 0) {

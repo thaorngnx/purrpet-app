@@ -11,6 +11,7 @@ import {
   ShoppingBag,
   SquareUser,
 } from 'lucide-react-native';
+import { formatNumber } from '../../utils/formatData';
 
 const AccountScreen = ({ navigation }: any) => {
   const customer = useCustomerStore((state) => state.customerState.data);
@@ -48,7 +49,7 @@ const AccountScreen = ({ navigation }: any) => {
         </View>
         <View style={viewStyles.flexRow}>
           <Text style={textStyles.label}>Điểm tích luỹ: </Text>
-          <Text style={textStyles.normal}>{customer.point}</Text>
+          <Text style={textStyles.normal}>{formatNumber(customer.point)}</Text>
         </View>
       </View>
       <View style={viewStyles.card}>

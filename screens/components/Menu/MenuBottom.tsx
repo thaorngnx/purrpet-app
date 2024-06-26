@@ -31,6 +31,7 @@ import { useNotificationStore } from '../../../zustand/notificationStore';
 const MenuBottom = () => {
   const Tab = createBottomTabNavigator();
   const customerState = useCustomerStore((state) => state.customerState);
+
   const listNotificationState = useNotificationStore(
     (state) => state.listNotificationState,
   );

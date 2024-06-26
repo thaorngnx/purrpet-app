@@ -45,7 +45,6 @@ import { CoinWalletScreen } from './screens/account/CoinWalletScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
-  const customer = useCustomerStore((state) => state.customerState.data);
   const { getCustomerById } = useCustomerStore();
   const { getCart } = useCartStore();
   const { getActiveCategories } = useCategoryStore();

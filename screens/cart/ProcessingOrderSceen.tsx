@@ -45,7 +45,6 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
   const { deleteCart } = useCartStore();
   const customer = useCustomerStore((state) => state.customerState.data);
   const hasCustomerInfo = Object.keys(customer).length > 0;
-  const [customerInfo, setCustomerInfo] = useState(customer);
   const [customerNote, setCustomerNote] = useState('');
   const [userPoint, setUserPoint] = useState(0);
   const [error, setError] = useState({
@@ -59,7 +58,6 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
     VNPAY: false,
     COIN: true,
   });
-  const socketRef = useRef<Socket>();
 
   // useEffect(() => {
   //   if (hasCustomerInfo) {
@@ -101,7 +99,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
       }
     };
     fetchData();
-  }, [customerInfo, productCart, userPoint]);
+  }, [customer, productCart, userPoint]);
   // useEffect(() => {
   //   console.log('Connecting');
   //   const socketInstance = socket(`${customer?.accessToken}`);
@@ -126,16 +124,16 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
   // }, []);
   const handleOrder = () => {
     createOrder({
-      customerCode: customerInfo.purrPetCode,
+      customerCode: customer.purrPetCode,
       orderItems: productCart.map((product: ProductCartInfo) => ({
         productCode: product.purrPetCode,
         quantity: product.quantity,
       })),
       customerAddress: {
-        street: customerInfo.address.street,
-        ward: customerInfo.address.ward,
-        district: customerInfo.address.district,
-        province: customerInfo.address.province,
+        street: customer.address.street,
+        ward: customer.address.ward,
+        district: customer.address.district,
+        province: customer.address.province,
       },
       userPoint: userPoint,
       customerNote: customerNote,
@@ -159,7 +157,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
           }).then((res) => {
             if (res.err === 0) {
               console.log('Đặt hàng thành công!');
-              openInChrome(res.data.paymentUrl, navigation, customerInfo);
+              openInChrome(res.data.paymentUrl, navigation, customer);
               deleteCart();
             }
           });
@@ -366,7 +364,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                 onChangeText={(event) => handleChangePoint(event)}
               />
               <Text style={textStyles.error}>{error.point}</Text>
-              {showCoin > 0 && (
+              {customer.coin > 0 && (
                 <View
                   style={[
                     viewStyles.flexRow,
@@ -541,7 +539,8 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                           total +
                           (product.discountQuantity
                             ? product.priceDiscount
-                            : product.price) -
+                            : product.price) *
+                            product.quantity -
                           userPoint -
                           coin,
                         0,

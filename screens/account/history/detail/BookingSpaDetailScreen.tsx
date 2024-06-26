@@ -29,7 +29,7 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
   const bookingSpaId = route.params.bookingSpaCode as string;
   const [loading, setLoading] = useState(true);
   const [bookingSpaDetail, setBookingSpaDetail] = useState<BookingSpaDetail>();
-  const [checkExpiredCancel, setCheckExpiredCancel] = useState(false);
+  // const [checkExpiredCancel, setCheckExpiredCancel] = useState(false);
   const customer = useCustomerStore((state) => state.customerState.data);
 
   useEffect(() => {
@@ -54,30 +54,30 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
     });
   }, []); //bookingSpa.purrPetCode
 
-  useEffect(() => {
-    const checkExpiredCancel = () => {
-      const timeNow = dayjs();
-      const bookingTime = dayjs(bookingSpaDetail?.bookingTime, 'HH:mm'); // Chuyển đổi chuỗi thời gian thành đối tượng dayjs
-      // Chuyển đổi chuỗi ngày thành đối tượng dayjs
+  // useEffect(() => {
+  //   const checkExpiredCancel = () => {
+  //     const timeNow = dayjs();
+  //     const bookingTime = dayjs(bookingSpaDetail?.bookingTime, 'HH:mm'); // Chuyển đổi chuỗi thời gian thành đối tượng dayjs
+  //     // Chuyển đổi chuỗi ngày thành đối tượng dayjs
 
-      const bookingDate = dayjs(bookingSpaDetail?.bookingDate);
-      bookingDate.set('hour', bookingTime.hour());
-      bookingDate.set('minute', bookingTime.minute());
-      bookingDate.set('second', 0);
-      bookingDate.set('millisecond', 0);
-      const timeDiff = bookingDate.diff(timeNow); // Tính khoảng thời gian giữa thời gian hiện tại và thời gian check-in
+  //     const bookingDate = dayjs(bookingSpaDetail?.bookingDate);
+  //     bookingDate.set('hour', bookingTime.hour());
+  //     bookingDate.set('minute', bookingTime.minute());
+  //     bookingDate.set('second', 0);
+  //     bookingDate.set('millisecond', 0);
+  //     const timeDiff = bookingDate.diff(timeNow); // Tính khoảng thời gian giữa thời gian hiện tại và thời gian check-in
 
-      const fourHours = 4 * 60 * 60 * 1000; // 4 giờ expressed in milliseconds
+  //     const fourHours = 4 * 60 * 60 * 1000; // 4 giờ expressed in milliseconds
 
-      if (
-        timeDiff > fourHours &&
-        bookingSpaDetail?.status === CONST.STATUS_BOOKING.PAID
-      ) {
-        setCheckExpiredCancel(true);
-      }
-    };
-    checkExpiredCancel();
-  }, [bookingSpaDetail]);
+  //     if (
+  //       timeDiff > fourHours &&
+  //       bookingSpaDetail?.status === CONST.STATUS_BOOKING.PAID
+  //     ) {
+  //       setCheckExpiredCancel(true);
+  //     }
+  //   };
+  //   checkExpiredCancel();
+  // }, [bookingSpaDetail]);
 
   const handleCancelBooking = () => {
     updateStatusBookingSpa(bookingSpaId, CONST.STATUS_BOOKING.CANCEL).then(
@@ -115,6 +115,24 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
           Chi tiết đặt lịch spa {bookingSpaId}
         </Text>
       </View>
+
+      {bookingSpaDetail?.status === CONST.STATUS_BOOKING.WAITING_FOR_PAY && (
+        <>
+          <Text className='text-base italic text-red-800'>
+            Vui lòng thanh toán để hoàn tất đơn. Đơn hàng sẽ tự động hủy sau 10
+            phút đặt hàng nếu không thanh toán.
+          </Text>
+        </>
+      )}
+      {bookingSpaDetail?.status === CONST.STATUS_BOOKING.PAID && (
+        <>
+          <Text className='text-base italic text-green-800'>
+            Sau 4h so với thời gian check-in: Chỉ được hoàn 90% số tiền đã thanh
+            toán.
+          </Text>
+        </>
+      )}
+
       {loading ? (
         <View style={viewStyles.centerContainer}>
           <Spinner size='large' />
@@ -288,7 +306,7 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
               </TouchableOpacity>
             </View>
           )}
-          {checkExpiredCancel === true && (
+          {bookingSpaDetail?.status === CONST.STATUS_BOOKING.PAID && (
             <View style={viewStyles.flexRow} className='justify-center'>
               <TouchableOpacity
                 style={buttonStyles.buttonOutline}

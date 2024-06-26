@@ -264,7 +264,7 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
                   onChangeText={(event) => handleChangePoint(event)}
                 />
                 <Text style={textStyles.error}>{error.point}</Text>
-                {showCoin > 0 && (
+                {customer.coin > 0 && (
                   <View
                     style={[
                       viewStyles.flexRow,

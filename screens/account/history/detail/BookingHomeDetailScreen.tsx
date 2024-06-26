@@ -31,7 +31,7 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
   const [loading, setLoading] = useState(true);
   const [bookingHomeDetail, setBookingHomeDetail] =
     useState<BookingHomeDetail>();
-  const [cancel, setCancel] = useState(false);
+  // const [cancel, setCancel] = useState(false);
 
   useEffect(() => {
     //api get booking spa by code
@@ -54,21 +54,22 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
       setLoading(false);
     });
   }, []); //bookingSpa.purrPetCode
-  useEffect(() => {
-    const checkedTimeCancel = () => {
-      const timeNow = dayjs();
-      const timeCheckin = dayjs(bookingHomeDetail?.dateCheckIn);
-      const timeDiff = timeCheckin.diff(timeNow);
-      const twentyFourHours = 24 * 60 * 60 * 1000; // 24 giờ expressed in milliseconds
-      if (
-        timeDiff > twentyFourHours &&
-        bookingHomeDetail?.status === CONST.STATUS_BOOKING.PAID
-      ) {
-        setCancel(true);
-      }
-    };
-    checkedTimeCancel();
-  }, [bookingHomeDetail]);
+  // useEffect(() => {
+  //   const checkedTimeCancel = () => {
+  //     const timeNow = dayjs();
+  //     const timeCheckin = dayjs(bookingHomeDetail?.dateCheckIn);
+  //     const timeDiff = timeCheckin.diff(timeNow);
+  //     const twentyFourHours = 24 * 60 * 60 * 1000; // 24 giờ expressed in milliseconds
+
+  //     if (
+  //       timeDiff > twentyFourHours &&
+  //       bookingHomeDetail?.status === CONST.STATUS_BOOKING.PAID
+  //     ) {
+  //       setCancel(true);
+  //     }
+  //   };
+  //   checkedTimeCancel();
+  // }, [bookingHomeDetail]);
   const handleCancelBooking = () => {
     updateStatusBookingHome(bookingHomeCode, CONST.STATUS_BOOKING.CANCEL).then(
       (res) => {
@@ -103,6 +104,22 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
         </TouchableOpacity>
         <Text style={textStyles.title}>Chi tiết đơn hàng</Text>
       </View>
+      {bookingHomeDetail?.status === CONST.STATUS_BOOKING.WAITING_FOR_PAY && (
+        <>
+          <Text className='text-base italic text-red-800'>
+            Vui lòng thanh toán để hoàn tất đơn. Đơn hàng sẽ tự động hủy sau 10
+            phút đặt hàng nếu không thanh toán.
+          </Text>
+        </>
+      )}
+      {bookingHomeDetail?.status === CONST.STATUS_BOOKING.PAID && (
+        <>
+          <Text className='text-base italic text-green-800'>
+            Sau 24h so với thời gian check-in: Chỉ được hoàn 90% số tiền đã
+            thanh toán.
+          </Text>
+        </>
+      )}
       {loading ? (
         <View style={viewStyles.centerContainer}>
           <Spinner size='large' />
@@ -325,7 +342,7 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
               </TouchableOpacity>
             </View>
           )}
-          {cancel === true && (
+          {bookingHomeDetail?.status === CONST.STATUS_BOOKING.PAID && (
             <View style={viewStyles.flexRow} className='justify-center'>
               <TouchableOpacity
                 style={buttonStyles.buttonOutline}

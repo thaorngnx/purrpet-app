@@ -79,12 +79,12 @@ const CustomerInfoOrder = () => {
       street: customerState?.address?.street || '',
     },
   });
+
   const [editInfo, setEditInfo] = useState(true);
   const [existCustomer, setExistCustomer] = useState(false);
   const [provinces, setProvinces] = useState<IProvince[]>([]);
   const [districts, setDistricts] = useState<IDistrict[]>([]);
   const [wards, setWards] = useState<IWard[]>([]);
-
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
@@ -112,7 +112,7 @@ const CustomerInfoOrder = () => {
     };
 
     fetchData();
-  }, []);
+  }, [customerState.address]);
 
   useEffect(() => {
     if (hasCustomerInfo) {
@@ -121,6 +121,12 @@ const CustomerInfoOrder = () => {
         customerName: customerState.name,
         customerPhone: customerState.phoneNumber,
         customerCode: customerState.purrPetCode,
+        address: {
+          province: customerState.address?.province || '',
+          district: customerState.address?.district || '',
+          ward: customerState.address?.ward || '',
+          street: customerState.address?.street || '',
+        },
       });
       setExistCustomer(true);
       setEditInfo(false);
@@ -337,6 +343,7 @@ const CustomerInfoOrder = () => {
     });
   };
 
+  console.log('customerInfo:', customerInfo.address?.province);
   return (
     <SafeAreaView style={{ margin: 5, backgroundColor: '#fff' }}>
       <View style={{ marginTop: 10 }}>
