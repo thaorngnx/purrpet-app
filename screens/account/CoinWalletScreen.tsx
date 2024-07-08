@@ -37,7 +37,7 @@ export const CoinWalletScreen = ({ navigation }: any) => {
   const [coinInfo, setCoinInfo] = React.useState({} as any);
   const [tabCoin, setTabCoin] = React.useState(0);
   const customer = useCustomerStore((state) => state.customerState.data);
-  console.log('customer:', customer);
+
   useEffect(() => {
     getCoins().then((res) => {
       if (res.err === 0) {
@@ -111,7 +111,7 @@ export const CoinWalletScreen = ({ navigation }: any) => {
               </ModalCloseButton>
             </ModalHeader>
             <ModalBody>
-              <Text>
+              <Text style={textStyles.normal}>
                 Đây là số dư Xu của bạn. Có được khi bạn huỷ các đơn hàng đã
                 thanh toán. Bạn có thể sử dụng nó để thanh toán các đơn hàng
                 sau!
@@ -135,28 +135,26 @@ export const CoinWalletScreen = ({ navigation }: any) => {
       </View>
 
       <View>
-        <View>
-          <FlatList
-            horizontal
-            data={['Tất cả', 'Đã nhận', 'Đã dùng']}
-            keyExtractor={(item) => item.toString()}
-            renderItem={({ item, index }) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  viewStyles.tab,
-                  tabCoin === index && viewStyles.activeTab,
-                  { width: 'auto', marginLeft: 35 },
-                ]}
-                onPress={() => setTabCoin(index)}
-              >
-                <Text style={viewStyles.tabText}>{item.toString()}</Text>
-              </TouchableOpacity>
-            )}
-            showsHorizontalScrollIndicator={false}
-            key={tabCoin}
-          />
-        </View>
+        <FlatList
+          horizontal
+          data={['Tất cả', 'Đã nhận', 'Đã dùng']}
+          keyExtractor={(item) => item.toString()}
+          renderItem={({ item, index }) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                viewStyles.tab,
+                tabCoin === index && viewStyles.activeTab,
+                { width: 'auto', marginLeft: 30 },
+              ]}
+              onPress={() => setTabCoin(index)}
+            >
+              <Text style={viewStyles.tabText}>{item.toString()}</Text>
+            </TouchableOpacity>
+          )}
+          showsHorizontalScrollIndicator={false}
+          key={tabCoin}
+        />
         {coins.length > 0 ? (
           <FlatList
             data={coins}

@@ -118,7 +118,7 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
 
       {bookingSpaDetail?.status === CONST.STATUS_BOOKING.WAITING_FOR_PAY && (
         <>
-          <Text className='text-base italic text-red-800'>
+          <Text className='text-base italic text-red-800 p-1'>
             Vui lòng thanh toán để hoàn tất đơn. Đơn hàng sẽ tự động hủy sau 10
             phút đặt hàng nếu không thanh toán.
           </Text>
@@ -126,7 +126,7 @@ const BookingSpaDetailScreen = ({ navigation, route }: any) => {
       )}
       {bookingSpaDetail?.status === CONST.STATUS_BOOKING.PAID && (
         <>
-          <Text className='text-base italic text-green-800'>
+          <Text className='text-base italic text-green-800 p-1'>
             Sau 4h so với thời gian check-in: Chỉ được hoàn 90% số tiền đã thanh
             toán.
           </Text>
