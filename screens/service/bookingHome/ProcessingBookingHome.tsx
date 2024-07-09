@@ -34,6 +34,7 @@ import { PAYMENT_METHOD } from '../../constants';
 import { socket } from '../../../socket';
 import { Socket } from 'socket.io-client';
 import * as CONST from '../../constants';
+import { getCustomerById } from '../../../api/customer';
 
 const ProcessingBookingHome = ({ navigation, route }: any) => {
   const { bookingInfo } = route.params;
@@ -45,6 +46,7 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
   const [payMethod, setPayMethod] = useState(CONST.PAYMENT_METHOD.VNPAY);
   const [showCoin, setShowCoin] = useState(0);
   const [coin, setCoin] = useState(0);
+  const [coinforCus, setCoinforCus] = useState(0);
   const [disableRadio, setDisableRadio] = useState({
     VNPAY: false,
     COIN: true,
@@ -76,15 +78,18 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const res = await getCustomerById();
+      const coinforCus = res.data.coin;
+      setCoinforCus(coinforCus);
       const total = bookingInfo.bookingHomePrice - userPoint;
-      if (total > customer.coin) {
-        setShowCoin(customer.coin);
+      if (total > coinforCus) {
+        setShowCoin(coinforCus);
       } else {
         setShowCoin(total);
       }
     };
     fetchData();
-  }, [bookingInfo]);
+  }, [bookingInfo.bookingHomePrice, userPoint, coinforCus]);
 
   const handleChangeNote = (event: any) => {
     setCustomerNote(event);
@@ -264,7 +269,7 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
                   onChangeText={(event) => handleChangePoint(event)}
                 />
                 <Text style={textStyles.error}>{error.point}</Text>
-                {customer.coin > 0 && (
+                {coinforCus > 0 && (
                   <View
                     style={[
                       viewStyles.flexRow,
@@ -298,6 +303,7 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
                   <TextareaInput
                     value={customerNote}
                     placeholder='Ghi chú cho nhân viên cửa hàng'
+                    color='black'
                     onChangeText={(event) => handleChangeNote(event)}
                   />
                 </Textarea>
@@ -339,7 +345,7 @@ const ProcessingBookingHome = ({ navigation, route }: any) => {
                     style={{ width: 20, height: 20 }}
                   />
                   <Text style={textStyles.normal}>
-                    Ví xu ({formatCurrency(customer.coin)})
+                    Ví xu ({formatCurrency(coinforCus)})
                   </Text>
                 </Radio>
               </RadioGroup>

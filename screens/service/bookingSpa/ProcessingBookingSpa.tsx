@@ -32,6 +32,7 @@ import { socket } from '../../../socket';
 import { Socket } from 'socket.io-client';
 import { StyleSheet } from 'react-native';
 import * as CONST from '../../constants';
+import { getCustomerById } from '../../../api/customer';
 
 const ProcessingBookingSpa = ({ navigation, route }: any) => {
   const { bookingInfo } = route.params;
@@ -42,6 +43,7 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
   const [error, setError] = useState({ point: '' });
   const [payMethod, setPayMethod] = useState(CONST.PAYMENT_METHOD.VNPAY);
   const [showCoin, setShowCoin] = useState(0);
+  const [coinforCus, setCoinforCus] = useState(0);
   const [coin, setCoin] = useState(0);
   const [disableRadio, setDisableRadio] = useState({
     VNPAY: false,
@@ -73,15 +75,18 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
   }, [customer]);
   useEffect(() => {
     const fetchData = async () => {
+      const res = await getCustomerById();
+      const coinforCus = res.data.coin;
+      setCoinforCus(coinforCus);
       const total = bookingInfo.bookingSpaPrice - userPoint;
-      if (total > customer.coin) {
-        setShowCoin(customer.coin);
+      if (total > coinforCus) {
+        setShowCoin(coinforCus);
       } else {
         setShowCoin(total);
       }
     };
     fetchData();
-  }, [bookingInfo]);
+  }, [userPoint, bookingInfo.bookingSpaPrice, coinforCus]);
 
   const handleChangeNote = (event: any) => {
     setCustomerNote(event);
@@ -242,7 +247,7 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
                 onChangeText={(event) => handleChangePoint(event)}
               />
               <Text style={textStyles.error}>{error.point}</Text>
-              {customer.coin > 0 && (
+              {coinforCus > 0 && (
                 <View
                   style={[
                     viewStyles.flexRow,
@@ -276,6 +281,7 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
                 <TextareaInput
                   value={customerNote}
                   placeholder='Ghi chú cho nhân viên cửa hàng'
+                  color='black'
                   onChangeText={(event) => handleChangeNote(event)}
                 />
               </Textarea>
@@ -316,7 +322,7 @@ const ProcessingBookingSpa = ({ navigation, route }: any) => {
                     style={{ width: 20, height: 20 }}
                   />
                   <Text style={textStyles.normal}>
-                    Ví xu ({formatCurrency(customer.coin)})
+                    Ví xu ({formatCurrency(coinforCus)})
                   </Text>
                 </Radio>
               </RadioGroup>

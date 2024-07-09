@@ -38,6 +38,7 @@ import { socket } from '../../socket';
 import { Socket } from 'socket.io-client';
 import { set } from 'date-fns';
 import { el, tr } from 'react-native-paper-dates';
+import { getCustomerById } from '../../api/customer';
 
 const ProcessingOrderSceen = ({ navigation, route }: any) => {
   const { productCart } = route.params;
@@ -53,6 +54,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
   const [payMethod, setPayMethod] = useState(CONST.PAYMENT_METHOD.COD);
   const [showCoin, setShowCoin] = useState(0);
   const [coin, setCoin] = useState(0);
+  const [coinforCus, setCoinforCus] = useState(0);
   const [disableRadio, setDisableRadio] = useState({
     COD: false,
     VNPAY: false,
@@ -83,6 +85,9 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
   // }, [customer]);
   useEffect(() => {
     const fetchData = async () => {
+      const res = await getCustomerById();
+      const coin = res.data.coin;
+      setCoinforCus(coin);
       const total =
         productCart.reduce(
           (total: number, product: ProductCartInfo) =>
@@ -92,14 +97,15 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
           0,
         ) - userPoint;
 
-      if (total > customer.coin) {
-        setShowCoin(customer.coin);
+      if (total > coinforCus) {
+        setShowCoin(coinforCus);
       } else {
         setShowCoin(total);
       }
     };
     fetchData();
-  }, [customer, productCart, userPoint]);
+  }, [productCart, userPoint, coinforCus]);
+
   // useEffect(() => {
   //   console.log('Connecting');
   //   const socketInstance = socket(`${customer?.accessToken}`);
@@ -140,7 +146,6 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
       payMethod: payMethod,
       useCoin: coin,
     }).then((res) => {
-      console.log(res);
       if (res.err === 0) {
         if (
           payMethod === CONST.PAYMENT_METHOD.COD ||
@@ -364,7 +369,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                 onChangeText={(event) => handleChangePoint(event)}
               />
               <Text style={textStyles.error}>{error.point}</Text>
-              {customer.coin > 0 && (
+              {coinforCus > 0 && (
                 <View
                   style={[
                     viewStyles.flexRow,
@@ -396,6 +401,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                 <TextareaInput
                   value={customerNote}
                   placeholder='Yêu cầu khác (nếu có)'
+                  color='black'
                   onChange={(event) => handleChangeNote(event)}
                 />
               </Textarea>
@@ -455,7 +461,7 @@ const ProcessingOrderSceen = ({ navigation, route }: any) => {
                       style={{ width: 20, height: 20 }}
                     />
                     <Text style={textStyles.normal}>
-                      Ví xu ({formatCurrency(customer.coin)})
+                      Ví xu ({formatCurrency(coinforCus)})
                     </Text>
                   </Radio>
                 </RadioGroup>

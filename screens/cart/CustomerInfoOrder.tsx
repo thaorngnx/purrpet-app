@@ -190,7 +190,6 @@ const CustomerInfoOrder = () => {
       email: customerInfo.customerEmail,
       otp: customerInfo.otp,
     }).then((res) => {
-      console.log(res);
       if (res.err === 0) {
         setOtpValid(true);
         if (res.data === null) {
@@ -343,7 +342,6 @@ const CustomerInfoOrder = () => {
     });
   };
 
-  console.log('customerInfo:', customerInfo.address?.province);
   return (
     <SafeAreaView style={{ margin: 5, backgroundColor: '#fff' }}>
       <View style={{ marginTop: 10 }}>

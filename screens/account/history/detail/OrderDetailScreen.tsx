@@ -224,6 +224,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
         console.log(err);
       });
   };
+  console.log('orderDetail', picture);
 
   return (
     <SafeAreaView style={viewStyles.container}>
@@ -528,7 +529,7 @@ const OrderDetailScreen = ({ navigation, route }: any) => {
 const styles = StyleSheet.create({
   buttonOutlineText: {
     ...textStyles.bold,
-    color: '#60A5FA',
+    color: '#000000',
     marginHorizontal: 10,
   },
 });

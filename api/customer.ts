@@ -32,9 +32,9 @@ export async function getCustomerByCode(code: string) {
   }
 }
 
-export async function getCustomerById(id: string) {
+export async function getCustomerById() {
   try {
-    const response = await api.post(`customer/find-by-id/${id}`);
+    const response = await api.get(`customer/find-by-id`);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -45,6 +45,7 @@ export async function createCustomer(body: any) {
   try {
     const response = await api.post('/customer/create', body);
     //save token to realm
+    console.log(response);
     if (
       response.data.err === 0 &&
       response.data.data.accessToken &&

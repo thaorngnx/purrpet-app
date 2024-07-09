@@ -49,7 +49,7 @@ export const useCustomerStore = create<CustomerStore>((set, get) => ({
       },
     });
     try {
-      const res = await getCustomerById(id);
+      const res = await getCustomerById();
       if (res.err === 0) {
         set({
           customerState: {

@@ -20,6 +20,7 @@ export async function createPaymentUrl(body: any) {
 
 export async function requestRefund(body: any) {
   try {
+    console.log('body', body);
     const response = await api.post('pay/request-refund', body);
     return response.data;
   } catch (error) {

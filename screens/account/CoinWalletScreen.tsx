@@ -30,11 +30,13 @@ import {
 } from '@gluestack-ui/themed';
 import { getCoins } from '../../api/coin';
 import { Image } from 'react-native';
+import { getCustomerById } from '../../api/customer';
 
 export const CoinWalletScreen = ({ navigation }: any) => {
   const [showHelp, setShowHelp] = React.useState(false);
   const ref = React.useRef(null);
   const [coinInfo, setCoinInfo] = React.useState({} as any);
+  const [coin, setCoin] = React.useState(0);
   const [tabCoin, setTabCoin] = React.useState(0);
   const customer = useCustomerStore((state) => state.customerState.data);
 
@@ -42,6 +44,11 @@ export const CoinWalletScreen = ({ navigation }: any) => {
     getCoins().then((res) => {
       if (res.err === 0) {
         setCoinInfo(res.data);
+      }
+    });
+    getCustomerById().then((res) => {
+      if (res.err === 0) {
+        setCoin(res.data.coin);
       }
     });
   }, [coinInfo]);
@@ -75,7 +82,7 @@ export const CoinWalletScreen = ({ navigation }: any) => {
               { fontSize: 26, color: '#f6a700', marginRight: 5 },
             ]}
           >
-            {formatNumber(customer.coin)}
+            {formatNumber(coin)}
           </Text>
           <Text
             style={[

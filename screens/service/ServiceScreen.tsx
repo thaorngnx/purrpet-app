@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#000000',
   },
   bottomImage: {
     width: 360,
