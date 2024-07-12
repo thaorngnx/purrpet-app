@@ -5,8 +5,9 @@ import TokenSchema from '../realmModel/TokenSchema';
 const realm = new Realm({ schema: [TokenSchema] });
 
 const api = axios.create({
-  //   baseURL: process.env.API_URL,
-  baseURL: 'https://api.purrpet.me/api',
+  baseURL: process.env.API_URL,
+  // baseURL: 'https://api.purrpet.me/api',
+
   headers: {
     'Content-Type': 'application/json',
   },
