@@ -1,11 +1,10 @@
 import { create } from 'zustand';
 import { favoriteProduct, getFavorite } from '../api/favorite';
-import { Favorite } from '../interface/Favorite';
 
 type ListFavoriteState = {
   loading: boolean;
   error: string;
-  data: Favorite[];
+  data: String[];
 };
 
 type FavoriteStore = {
