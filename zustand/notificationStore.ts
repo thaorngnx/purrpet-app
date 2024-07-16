@@ -6,12 +6,6 @@ import {
 } from '../interface/Notification';
 import { Pagination } from '../interface/Pagination';
 
-type NotificationState = {
-  loading: boolean;
-  error: string;
-  data: Notification;
-};
-
 type ListNotificationState = {
   loading: boolean;
   error: string;
