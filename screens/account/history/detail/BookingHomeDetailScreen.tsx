@@ -223,43 +223,7 @@ const BookingHomeDetailScreen = ({ navigation, route }: any) => {
               </View>
             </View>
           </View>
-          <View>
-            {/* {bookingSpaDetail.productOrders.map((productOrder, index) => (
-              <View style={viewStyles.boxUnderline} key={index}>
-                <View style={viewStyles.flexRow}>
-                  <Image
-                    source={{ uri: productOrder.images[0]?.path }}
-                    style={viewStyles.historyImage}
-                  />
-                  <View style={viewStyles.flexColumn} className='w-[76%]'>
-                    <Text
-                      numberOfLines={1}
-                      style={textStyles.normal}
-                      className='truncate'
-                    >
-                      {productOrder.name}
-                    </Text>
-                    <View
-                      style={viewStyles.flexRow}
-                      className='justify-between'
-                    >
-                      <Text style={textStyles.normal}>
-                        {formatCurrency(productOrder.price)}
-                      </Text>
-                      <Text style={textStyles.normal}>
-                        x{productOrder.quantity}
-                      </Text>
-                    </View>
-                    <View style={viewStyles.flexRow} className='justify-end'>
-                      <Text style={textStyles.normal}>
-                        {formatCurrency(productOrder.totalPrice)}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            ))} */}
-          </View>
+          <View></View>
           <View style={viewStyles.boxUnderline}>
             <Text style={[textStyles.title]}>Thông tin phòng</Text>
             <View style={viewStyles.flexRow} className='justify-between'>

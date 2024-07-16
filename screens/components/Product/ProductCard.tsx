@@ -1,12 +1,13 @@
 import { TouchableOpacity, View, Image, Text, StyleSheet } from 'react-native';
 import { Product } from '../../../interface/Product';
-import { ShoppingCart, StarIcon } from 'lucide-react-native';
+import { Heart, ShoppingCart, StarIcon } from 'lucide-react-native';
 import { formatCurrency } from '../../../utils/formatData';
 import viewStyles from '../../styles/ViewStyles';
 import { useCartStore } from '../../../zustand/cartStore';
 // import { favoriteProduct } from '../../../api/favorite';
 import { useState } from 'react';
 import { addRecentlyViewedProduct } from '../../../utils/productAsyncStorage';
+import { favoriteProduct } from '../../../api/favorite';
 
 const ProductCard = ({
   navigation,
@@ -26,14 +27,14 @@ const ProductCard = ({
       quantity: 1,
     });
   };
-  // const handleFavorite = () => {
-  //   console.log('Favorite');
-  //   favoriteProduct(product.purrPetCode).then((res) => {
-  //     if (res.err === 0) {
-  //       console.log('Favorite success');
-  //     }
-  //   });
-  // };
+  const handleFavorite = () => {
+    console.log('Favorite');
+    favoriteProduct(product.purrPetCode).then((res) => {
+      if (res.err === 0) {
+        console.log('Favorite success');
+      }
+    });
+  };
 
   if (!product || !product.images) {
     return <></>;
@@ -53,7 +54,7 @@ const ProductCard = ({
       </TouchableOpacity>
       <View
         style={viewStyles.flexRow}
-        className='flex justify-between items-center mt-3'
+        className='flex justify-between items-center my-1'
       >
         <Text
           className={
@@ -86,7 +87,7 @@ const ProductCard = ({
 
       <View
         style={viewStyles.flexRow}
-        className='flex justify-between items-center'
+        className='flex justify-between items-center my-1'
       >
         <View style={viewStyles.flexRow}>
           <Text style={styles.start} className='flex-row items-center mr-1'>
@@ -94,20 +95,17 @@ const ProductCard = ({
           </Text>
           <StarIcon color='#C54600' fill={'#C54600'} />
         </View>
-        {/* <TouchableOpacity
-          onPress={() => handleAddToCart()}
-          style={viewStyles.flexRow}
-        >
-          <Heart color={'red'} fill={'red'} />
-        </TouchableOpacity> */}
-        <TouchableOpacity
-          onPress={() => handleAddToCart()}
-          style={viewStyles.flexRow}
-        >
+
+        <TouchableOpacity onPress={() => handleAddToCart()}>
           <ShoppingCart color='#C54600' />
         </TouchableOpacity>
       </View>
-      <Text style={styles.totalSale}>Đã bán {product.orderQuantity}</Text>
+      <View style={viewStyles.flexRow} className='flex justify-between'>
+        <TouchableOpacity onPress={() => handleFavorite()}>
+          <Heart color={'red'} fill={'red'} />
+        </TouchableOpacity>
+        <Text style={styles.totalSale}>Đã bán {product.orderQuantity}</Text>
+      </View>
     </View>
   );
 };

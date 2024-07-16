@@ -3,10 +3,10 @@ import { View } from 'react-native';
 import textStyles from '../styles/TextStyles';
 import viewStyles from '../styles/ViewStyles';
 import { useCustomerStore } from '../../zustand/customerStore';
-import buttonStyles from '../styles/ButtonStyles';
 import {
   BarChartBig,
   CircleDollarSign,
+  Heart,
   LogOut,
   ShoppingBag,
   SquareUser,
@@ -73,6 +73,14 @@ const AccountScreen = ({ navigation }: any) => {
         >
           <BarChartBig style={styles.icon} />
           <Text style={textStyles.normal}>Thống kê</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => navigation.navigate('FavoriteProductScreen')}
+        >
+          <Heart style={styles.icon} />
+
+          <Text style={textStyles.normal}>Sản phẩm yêu thích</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.option}

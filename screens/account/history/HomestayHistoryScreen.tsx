@@ -190,8 +190,8 @@ const HomestayHistoryScreen = ({ navigation }: any) => {
                       })
                     }
                   >
-                    <Text className='mr-1 text-[#A16207]'>Xem chi tiết</Text>
-                    <ChevronRightIcon color='#A16207' />
+                    <Text className='mr-1 text-[#60A5FA]'>Xem chi tiết</Text>
+                    <ChevronRightIcon color='#60A5FA' />
                   </TouchableOpacity>
                 </View>
               </View>

@@ -42,6 +42,7 @@ import FinancialStatistics from './screens/account/FinancialStatistics';
 import ProductReviewScreen from './screens/product/ProductReviewScreen';
 import { LogBox } from 'react-native';
 import { CoinWalletScreen } from './screens/account/CoinWalletScreen';
+import FavoriteProductScreen from './screens/account/FavoriteProductScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -238,6 +239,11 @@ export default function App() {
           <Stack.Screen
             name='CoinWalletScreen'
             component={CoinWalletScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='FavoriteProductScreen'
+            component={FavoriteProductScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
