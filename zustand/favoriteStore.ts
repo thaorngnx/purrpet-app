@@ -1,5 +1,10 @@
 import { create } from 'zustand';
-import { favoriteProduct, getFavorite } from '../api/favorite';
+import {
+  favoriteProduct,
+  getFavorite,
+  getFavoriteProductDetail,
+} from '../api/favorite';
+import { Product } from '../interface/Product';
 
 type ListFavoriteState = {
   loading: boolean;
@@ -7,14 +12,27 @@ type ListFavoriteState = {
   data: String[];
 };
 
+type ListFavoriteDetailState = {
+  loading: boolean;
+  error: string;
+  data: Product[];
+};
+
 type FavoriteStore = {
   listFavoriteState: ListFavoriteState;
+  listFavoriteDetailState: ListFavoriteDetailState;
   getFavorite: (params: any) => void;
+  getFavoriteProductDetail: (params: any) => void;
   favoriteProduct: (productCode: string) => void;
 };
 
 export const useFavoriteStore = create<FavoriteStore>((set, get) => ({
   listFavoriteState: {
+    loading: false,
+    error: '',
+    data: [],
+  },
+  listFavoriteDetailState: {
     loading: false,
     error: '',
     data: [],
@@ -38,6 +56,32 @@ export const useFavoriteStore = create<FavoriteStore>((set, get) => ({
     } catch (error: any) {
       set({
         listFavoriteState: {
+          loading: false,
+          error: error,
+          data: [],
+        },
+      });
+    }
+  },
+  getFavoriteProductDetail: async (params: any) => {
+    set({
+      listFavoriteDetailState: {
+        ...get().listFavoriteDetailState,
+        loading: true,
+      },
+    });
+    try {
+      const res = await getFavoriteProductDetail(params);
+      set({
+        listFavoriteDetailState: {
+          loading: false,
+          error: '',
+          data: res.data,
+        },
+      });
+    } catch (error: any) {
+      set({
+        listFavoriteDetailState: {
           loading: false,
           error: error,
           data: [],

@@ -4,10 +4,10 @@ import { Heart, ShoppingCart, StarIcon } from 'lucide-react-native';
 import { formatCurrency } from '../../../utils/formatData';
 import viewStyles from '../../styles/ViewStyles';
 import { useCartStore } from '../../../zustand/cartStore';
-// import { favoriteProduct } from '../../../api/favorite';
 import { useState } from 'react';
 import { addRecentlyViewedProduct } from '../../../utils/productAsyncStorage';
 import { favoriteProduct } from '../../../api/favorite';
+import { useFavoriteStore } from '../../../zustand/favoriteStore';
 
 const ProductCard = ({
   navigation,
@@ -19,7 +19,9 @@ const ProductCard = ({
   productKey: string;
 }) => {
   const { addToCart } = useCartStore();
-  const [favorite, setFavorite] = useState(false);
+
+  const favorite = useFavoriteStore((state) => state.listFavoriteState.data);
+  const { favoriteProduct } = useFavoriteStore();
 
   const handleAddToCart = () => {
     addToCart({
@@ -28,12 +30,7 @@ const ProductCard = ({
     });
   };
   const handleFavorite = () => {
-    console.log('Favorite');
-    favoriteProduct(product.purrPetCode).then((res) => {
-      if (res.err === 0) {
-        console.log('Favorite success');
-      }
-    });
+    favoriteProduct(product.purrPetCode);
   };
 
   if (!product || !product.images) {
@@ -102,7 +99,12 @@ const ProductCard = ({
       </View>
       <View style={viewStyles.flexRow} className='flex justify-between'>
         <TouchableOpacity onPress={() => handleFavorite()}>
-          <Heart color={'red'} fill={'red'} />
+          {favorite?.findIndex((item) => item === product.purrPetCode) ===
+          -1 ? (
+            <Heart color='#C54600' />
+          ) : (
+            <Heart color='#C54600' fill='#C54600' />
+          )}
         </TouchableOpacity>
         <Text style={styles.totalSale}>Đã bán {product.orderQuantity}</Text>
       </View>

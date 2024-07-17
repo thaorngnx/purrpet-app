@@ -18,25 +18,18 @@ import {
   ChevronDownSquareIcon,
   ChevronUpIcon,
   ChevronsRightIcon,
+  Heart,
   Star,
   StarHalf,
 } from 'lucide-react-native';
 import viewStyles from '../styles/ViewStyles';
 import { Product, ProductDetail } from '../../interface/Product';
 import { getActiveProducts, getProductDetailByCode } from '../../api/product';
-import { vi } from 'date-fns/locale';
 import ProductCard from '../components/Product/ProductCard';
 import { v4 as uuidv4 } from 'uuid';
 import { useCartStore } from '../../zustand/cartStore';
 import RenderHTML from 'react-native-render-html';
-
-const ratings = [
-  { stars: 5, width: '65%', percent: '65%' },
-  { stars: 4, width: '11%', percent: '11%' },
-  { stars: 3, width: '14%', percent: '14%' },
-  { stars: 2, width: '9%', percent: '9%' },
-  { stars: 1, width: '1%', percent: '1%' },
-];
+import { useFavoriteStore } from '../../zustand/favoriteStore';
 
 const DetailProductScreen = ({ navigation, route }: any) => {
   const { addToCart } = useCartStore();
@@ -49,7 +42,14 @@ const DetailProductScreen = ({ navigation, route }: any) => {
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const [tab, setTab] = useState(0);
   const [recommendProducts, setRecommendProducts] = useState<Product[]>([]);
-  const { height, width, scale, fontScale } = useWindowDimensions();
+  // const { height, width, scale, fontScale } = useWindowDimensions();
+
+  const favorite = useFavoriteStore((state) => state.listFavoriteState.data);
+  console.log('favorite', favorite);
+  console.log('product', product.purrPetCode);
+  console.log(favorite?.find((item) => item === product.purrPetCode));
+  const { favoriteProduct } = useFavoriteStore();
+
   useEffect(() => {
     getProductDetailByCode(product.purrPetCode).then((res) => {
       if (res.err === 0) {
@@ -70,6 +70,10 @@ const DetailProductScreen = ({ navigation, route }: any) => {
       }
     });
   }, [product]);
+
+  const handleFavorite = () => {
+    favoriteProduct(product.purrPetCode);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -583,6 +587,16 @@ const DetailProductScreen = ({ navigation, route }: any) => {
           </View>
         </View>
         <TouchableOpacity
+          style={styles.buttonFavorite}
+          onPress={() => handleFavorite()}
+        >
+          {favorite?.find((item) => item === product.purrPetCode) ? (
+            <Heart color='red' fill='red' />
+          ) : (
+            <Heart color='red' />
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity
           style={styles.buttonAddToCart}
           onPress={() => {
             addToCart({
@@ -642,10 +656,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#C54600',
   },
+  buttonFavorite: {
+    padding: 10,
+    width: 'auto',
+  },
   buttonQuantity: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 15,
+    padding: 10,
     flex: 1,
     // alignItems: 'center',
     alignContent: 'center',

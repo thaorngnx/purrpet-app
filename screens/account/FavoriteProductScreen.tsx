@@ -5,23 +5,35 @@ import { useEffect, useState } from 'react';
 import { getFavoriteProductDetail } from '../../api/favorite';
 import { Product } from '../../interface/Product';
 import { TouchableOpacity } from 'react-native';
-import { ArrowLeftIcon, ChevronRightIcon } from 'lucide-react-native';
+import {
+  ArrowLeftIcon,
+  ChevronRightIcon,
+  DeleteIcon,
+  Trash,
+} from 'lucide-react-native';
 import { formatCurrency } from '../../utils/formatData';
+import { useFavoriteStore } from '../../zustand/favoriteStore';
 
 const FavoriteProductScreen = ({ navigation }: any) => {
-  const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
+  // const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
+
+  const favoriteProducts = useFavoriteStore(
+    (state) => state.listFavoriteDetailState.data,
+  );
+  const { getFavoriteProductDetail, favoriteProduct } = useFavoriteStore();
 
   useEffect(() => {
-    const params = {
-      limit: 10,
-      page: 1,
-    };
-    getFavoriteProductDetail(params).then((res) => {
-      if (res.err === 0) {
-        setFavoriteProducts(res.data);
-      }
-    });
+    // const params = {
+    //   limit: 10,
+    //   page: 1,
+    // };
+    getFavoriteProductDetail({});
   }, []);
+
+  const handleUnfavorite = (productCode: string) => {
+    favoriteProduct(productCode);
+    getFavoriteProductDetail({});
+  };
 
   return (
     <SafeAreaView style={viewStyles.container}>
@@ -79,7 +91,14 @@ const FavoriteProductScreen = ({ navigation }: any) => {
                   </Text>
                 )}
               </View>
+              <TouchableOpacity
+                style={viewStyles.flexRow}
+                onPress={() => handleUnfavorite(item.purrPetCode)}
+              >
+                <Trash color='#EF4444' />
+              </TouchableOpacity>
             </View>
+
             <View style={viewStyles.flexRow} className='justify-end'>
               <TouchableOpacity
                 style={viewStyles.flexRow}
