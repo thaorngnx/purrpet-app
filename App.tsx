@@ -43,6 +43,7 @@ import ProductReviewScreen from './screens/product/ProductReviewScreen';
 import { LogBox } from 'react-native';
 import { CoinWalletScreen } from './screens/account/CoinWalletScreen';
 import FavoriteProductScreen from './screens/account/FavoriteProductScreen';
+import { useFavoriteStore } from './zustand/favoriteStore';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -50,6 +51,7 @@ export default function App() {
   const { getCart } = useCartStore();
   const { getActiveCategories } = useCategoryStore();
   const { getAllNotifications } = useNotificationStore();
+  const { getFavorite } = useFavoriteStore();
   const [isDarkMode, setIsDarkMode] = useState(
     Appearance.getColorScheme() === 'dark',
   );
@@ -77,6 +79,7 @@ export default function App() {
     //get cart from server
     getCart();
     getActiveCategories();
+    getFavorite();
     //block dark mode
     StatusBar.setBackgroundColor('white');
     StatusBar.setBarStyle('dark-content');

@@ -1,8 +1,8 @@
 import api from './token';
 
-export async function getFavorite(params: any) {
+export async function getFavorite() {
   try {
-    const response = await api.get('favorite', { params });
+    const response = await api.get('favorite');
     return response.data;
   } catch (error) {
     console.error(error);

@@ -21,7 +21,7 @@ type ListFavoriteDetailState = {
 type FavoriteStore = {
   listFavoriteState: ListFavoriteState;
   listFavoriteDetailState: ListFavoriteDetailState;
-  getFavorite: (params: any) => void;
+  getFavorite: () => void;
   getFavoriteProductDetail: (params: any) => void;
   favoriteProduct: (productCode: string) => void;
 };
@@ -37,7 +37,7 @@ export const useFavoriteStore = create<FavoriteStore>((set, get) => ({
     error: '',
     data: [],
   },
-  getFavorite: async (params: any) => {
+  getFavorite: async () => {
     set({
       listFavoriteState: {
         ...get().listFavoriteState,
@@ -45,7 +45,7 @@ export const useFavoriteStore = create<FavoriteStore>((set, get) => ({
       },
     });
     try {
-      const res = await getFavorite(params);
+      const res = await getFavorite();
       set({
         listFavoriteState: {
           loading: false,
@@ -93,7 +93,7 @@ export const useFavoriteStore = create<FavoriteStore>((set, get) => ({
     try {
       const res = await favoriteProduct(productCode);
       if (res.err === 0) {
-        get().getFavorite({});
+        get().getFavorite();
       }
     } catch (error: any) {
       console.error(error);

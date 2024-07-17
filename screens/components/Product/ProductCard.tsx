@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { addRecentlyViewedProduct } from '../../../utils/productAsyncStorage';
 import { favoriteProduct } from '../../../api/favorite';
 import { useFavoriteStore } from '../../../zustand/favoriteStore';
+import { useCustomerStore } from '../../../zustand/customerStore';
 
 const ProductCard = ({
   navigation,
@@ -21,6 +22,7 @@ const ProductCard = ({
   const { addToCart } = useCartStore();
 
   const favorite = useFavoriteStore((state) => state.listFavoriteState.data);
+  const customer = useCustomerStore((state) => state.customerState.data);
   const { favoriteProduct } = useFavoriteStore();
 
   const handleAddToCart = () => {
@@ -98,14 +100,16 @@ const ProductCard = ({
         </TouchableOpacity>
       </View>
       <View style={viewStyles.flexRow} className='flex justify-between'>
-        <TouchableOpacity onPress={() => handleFavorite()}>
-          {favorite?.findIndex((item) => item === product.purrPetCode) ===
-          -1 ? (
-            <Heart color='#C54600' />
-          ) : (
-            <Heart color='#C54600' fill='#C54600' />
-          )}
-        </TouchableOpacity>
+        {customer.accessToken && (
+          <TouchableOpacity onPress={() => handleFavorite()}>
+            {favorite?.findIndex((item) => item === product.purrPetCode) ===
+            -1 ? (
+              <Heart color='#C54600' />
+            ) : (
+              <Heart color='#C54600' fill='#C54600' />
+            )}
+          </TouchableOpacity>
+        )}
         <Text style={styles.totalSale}>Đã bán {product.orderQuantity}</Text>
       </View>
     </View>

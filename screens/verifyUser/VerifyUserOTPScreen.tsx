@@ -31,6 +31,7 @@ import textStyles from '../styles/TextStyles.ts';
 import { useCustomerStore } from '../../zustand/customerStore.ts';
 import viewStyles from '../styles/ViewStyles.ts';
 import { validateEmail } from '../../utils/validationData.ts';
+import { useFavoriteStore } from '../../zustand/favoriteStore.ts';
 
 const VerifyUserOTPScreen = ({ navigation, route }: any) => {
   // const customerState = useCustomerStore((state) => state.customerState);
@@ -40,6 +41,7 @@ const VerifyUserOTPScreen = ({ navigation, route }: any) => {
   const [error, setError] = useState({ message: '', status: false });
   const [otp, setOTP] = useState(['', '', '', '']);
   const [isOpen, setIsOpen] = useState(false);
+  const { getFavorite } = useFavoriteStore();
 
   const otpInputs = useRef<TextInput[]>([]);
 
@@ -95,6 +97,8 @@ const VerifyUserOTPScreen = ({ navigation, route }: any) => {
         if (res.data !== null) {
           console.log('verify success');
           setCustomer(res.data);
+          getFavorite();
+
           navigation.navigate('Tài khoản');
         } else {
           setIsOpen(true);
@@ -172,12 +176,9 @@ const VerifyUserOTPScreen = ({ navigation, route }: any) => {
         <ModalContent>
           <ModalHeader>
             <Heading size='lg'>Thông Báo</Heading>
-            <ModalCloseButton>
-              <Icon as={CloseIcon} />
-            </ModalCloseButton>
           </ModalHeader>
           <ModalBody>
-            <Text>
+            <Text className='text-black'>
               Hiện tại tài khoản của quý khách chưa có đơn hàng nào. Mời bạn
               tiếp tục mua hàng
             </Text>
@@ -190,7 +191,7 @@ const VerifyUserOTPScreen = ({ navigation, route }: any) => {
                 navigation.navigate('Sản phẩm');
               }}
             >
-              <Text>Tiếp tục mua sắm</Text>
+              <Text className='text-black font-bold'>Tiếp tục mua sắm</Text>
             </TouchableOpacity>
             {/* <Button
               variant='outline'

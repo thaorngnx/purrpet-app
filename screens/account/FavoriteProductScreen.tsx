@@ -43,6 +43,13 @@ const FavoriteProductScreen = ({ navigation }: any) => {
         </TouchableOpacity>
         <Text style={textStyles.title}>Sản phẩm yêu thích</Text>
       </View>
+      {favoriteProducts.length === 0 && (
+        <View>
+          <Text style={[textStyles.bold, { textAlign: 'center' }]}>
+            Không có sản phẩm yêu thích
+          </Text>
+        </View>
+      )}
       <FlatList
         data={favoriteProducts}
         keyExtractor={(item) => item.purrPetCode.toString()}

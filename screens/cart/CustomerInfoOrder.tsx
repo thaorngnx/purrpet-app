@@ -36,10 +36,13 @@ import buttonStyles from '../styles/ButtonStyles';
 import { IDistrict, IProvince, IWard } from '../../interface/Customer';
 import axios from 'axios';
 import viewStyles from '../styles/ViewStyles';
+import { getFavorite } from '../../api/favorite';
+import { useFavoriteStore } from '../../zustand/favoriteStore';
 
 const CustomerInfoOrder = () => {
   const customerState = useCustomerStore((state) => state.customerState.data);
   const { setCustomer } = useCustomerStore();
+  const { getFavorite } = useFavoriteStore();
 
   const hasCustomerInfo = Object.keys(customerState).length > 0;
   const [otpClick, setOtpClick] = useState(false);
@@ -198,6 +201,7 @@ const CustomerInfoOrder = () => {
           setEditInfo(true);
         } else {
           setCustomer(res.data);
+          getFavorite();
         }
       } else {
         customerInfo.otp = '';
@@ -278,6 +282,7 @@ const CustomerInfoOrder = () => {
         if (res.err === 0) {
           console.log('after create customer oke');
           setCustomer(res.data);
+          getFavorite();
           setError({ ...error, customerName: false, customerPhone: false });
         }
       });
