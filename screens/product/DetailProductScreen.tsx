@@ -30,6 +30,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useCartStore } from '../../zustand/cartStore';
 import RenderHTML from 'react-native-render-html';
 import { useFavoriteStore } from '../../zustand/favoriteStore';
+import { useCustomerStore } from '../../zustand/customerStore';
 
 const DetailProductScreen = ({ navigation, route }: any) => {
   const { addToCart } = useCartStore();
@@ -45,10 +46,9 @@ const DetailProductScreen = ({ navigation, route }: any) => {
   // const { height, width, scale, fontScale } = useWindowDimensions();
 
   const favorite = useFavoriteStore((state) => state.listFavoriteState.data);
-  console.log('favorite', favorite);
-  console.log('product', product.purrPetCode);
-  console.log(favorite?.find((item) => item === product.purrPetCode));
   const { favoriteProduct } = useFavoriteStore();
+
+  const customer = useCustomerStore((state) => state.customerState.data);
 
   useEffect(() => {
     getProductDetailByCode(product.purrPetCode).then((res) => {
@@ -586,16 +586,18 @@ const DetailProductScreen = ({ navigation, route }: any) => {
             </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity
-          style={styles.buttonFavorite}
-          onPress={() => handleFavorite()}
-        >
-          {favorite?.find((item) => item === product.purrPetCode) ? (
-            <Heart color='red' fill='red' />
-          ) : (
-            <Heart color='red' />
-          )}
-        </TouchableOpacity>
+        {customer.accessToken && (
+          <TouchableOpacity
+            style={styles.buttonFavorite}
+            onPress={() => handleFavorite()}
+          >
+            {favorite?.find((item) => item === product.purrPetCode) ? (
+              <Heart color='red' fill='red' />
+            ) : (
+              <Heart color='red' />
+            )}
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           style={styles.buttonAddToCart}
           onPress={() => {

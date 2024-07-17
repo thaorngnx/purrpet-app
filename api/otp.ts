@@ -26,25 +26,13 @@ export async function sendOTP(body: SendOTPBody) {
 export async function verifyOTP(body: VerifyOTPBody) {
   try {
     const response = await api.post('/otp/verify', body);
-    //if (response.data.err === 0) => save token to realm
     if (
       response.data.err === 0 &&
       response.data.access_token &&
       response.data.refresh_token
     ) {
-      // console.log('save token to realm');
-      // console.log('ac', response.data.access_token);
-      // console.log('rf', response.data.refresh_token);
       saveToken(response.data.access_token, response.data.refresh_token);
-      // realm.write(() => {
-      //   realm.create('Token', {
-      //     accessToken: response.data.access_token,
-      //     refreshToken: response.data.refresh_token,
-      //   });
-      // });
     }
-    const token = realm.objects<TokenSchema>('Token');
-    console.log('token', token);
     return response.data;
   } catch (error) {
     console.log(error);
